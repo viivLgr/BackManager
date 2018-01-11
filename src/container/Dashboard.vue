@@ -1,10 +1,5 @@
 <template>
   <div class="dashboard">
-    <InfoList v-for="(item, index) in dashboardData"
-              :key="index"
-      :title="item.title"
-      :icon="item.icon"
-      :list="item.list"></InfoList>
     <div class="info-list">
       <h2><img src="../static/img/icon-userinfo.png">基本信息</h2>
       <ul class="clearfix">
@@ -26,7 +21,7 @@
         </li>
         <li>
           <span class="tit">我的推广码：</span>
-          <span class="txt"><img :src="dashData.code"/></span>
+          <span class="txt"><img width="120" :src="dashData.code"/></span>
         </li>
       </ul>
     </div>
@@ -47,8 +42,7 @@
 </template>
 <script type="text/ecmascript-6">
   import InfoList from 'components/InfoList'
-  import userinfoIcon from 'static/img/icon-userinfo.png'
-//  import dataIcon from 'static/img/icon-data.png'
+  import qrCode from 'static/img/default-qrcode.png'
   import {formatMoney} from 'static/js/util'
   export default {
     data () {
@@ -60,7 +54,7 @@
           address: '浙江省滨江区南环路源越大厦',
           phone: '13456789389',
           email: 'viiv_lgr@163.com',
-          code: userinfoIcon
+          code: qrCode
         }
       }
     },
@@ -102,5 +96,9 @@
   .info-list ul li .tit{
     color: #666;
     font-size: 12px;
+  }
+  .info-list ul li .txt img{
+    padding: 20px;
+    vertical-align: text-top;
   }
 </style>

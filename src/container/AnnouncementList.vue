@@ -139,12 +139,4 @@
     }
 </script>
 <style>
-  .el-range-editor--small.el-input__inner{
-    width: inherit;
-    position: relative;
-  }
-  .el-range-editor--small .el-range__close-icon{
-    position: absolute;
-    top: 0;
-  }
 </style>

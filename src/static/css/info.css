@@ -10,6 +10,7 @@
   font-size: 14px;
   color: #3ac100;
   margin-right: 20px;
+  font-weight: bold;
 }
 .table{
   padding: 20px 0 0;
@@ -31,6 +32,7 @@
 }
 .el-dialog--center .el-dialog__header{
   padding-top: 15px;
+  line-height: 24px;
 }
 .el-dialog--center .el-dialog__body{
   padding-bottom: 15px;
@@ -88,6 +90,9 @@
 .form-wrapper .el-input--suffix{
   width: 300px;
 }
+.el-dialog__body .el-select{
+  width: 100%;
+}
 .form-wrapper .el-form-item--mini.el-form-item,
 .form-wrapper .el-form-item--small.el-form-item{
   position: relative;
@@ -120,4 +125,12 @@
 }
 .firstColumn{
   color: #199ef2;
+}
+.el-range-editor--small.el-input__inner{
+  width: inherit;
+  position: relative;
+}
+.el-range-editor--small .el-range__close-icon{
+  position: absolute;
+  top: 0;
 }

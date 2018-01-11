@@ -114,7 +114,7 @@
       },
       methods: {
         tableRowStyle ({row}) {
-          return row.readed === true ? { color: '#ccc' } : {}
+          return row.readed === true ? { color: '#737373' } : {}
         },
         searchOpen () {
           this.searchShow = true

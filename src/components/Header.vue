@@ -2,10 +2,12 @@
   <div class="header">
     <div class="logo"><span><i class="unionPay"></i>运营</span><i class="line">|</i>商户平台</div>
     <div class="user-info">
-      <el-button type="text"><img width="14" src="../static/img/icon-user.png" />{{name}}</el-button>
-      <el-button type="text" @click="showAnnouncement"><img width="20" src="../static/img/icon-msg.png" />公告</el-button>
-      <el-button type="text"  @click="searchOpen"><img width="14" src="../static/img/icon-setting.png" />设置</el-button>
-      <el-button type="text" @click="logout"><img width="14" src="../static/img/icon-logout.png" />退出</el-button>
+      <el-button type="text"><img width="12" src="../static/img/icon-user.png" />{{name}}</el-button>
+      <el-button type="text" @click="showAnnouncement">
+        <img :width="(messageLength > 0 ? '20':'16')" :src="(messageLength > 0 ? iconHasMsg: iconMsg)" />公告
+      </el-button>
+      <el-button type="text"  @click="searchOpen"><img width="12" src="../static/img/icon-setting.png" />设置</el-button>
+      <el-button type="text" @click="logout"><img width="12" src="../static/img/icon-logout.png" />退出</el-button>
     </div>
     <el-dialog
       v-show="searchShow"
@@ -36,6 +38,8 @@
   </div>
 </template>
 <script>
+  import iconMsg from 'static/img/icon-msg.png'
+  import iconMsg2 from 'static/img/icon-msg-has.png'
   import {passwordLevel} from 'static/js/util'
   export default {
     data () {
@@ -65,6 +69,9 @@
       return {
         name: 'linxin',
         searchShow: false,
+        iconMsg: iconMsg,
+        iconHasMsg: iconMsg2,
+        messageLength: 2,
         form: {
           userid: 'askdasd',
           pass: '',
@@ -159,6 +166,5 @@
   .user-info img{
     display: inline-block;
     margin-right: 5px;
-    vertical-align: middle;
   }
 </style>

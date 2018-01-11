@@ -3,7 +3,7 @@
     <el-menu
       :default-active="route"
       class="el-menu-vertical-demo"
-      background-color="#545c64"
+      background-color="#363e42"
       text-color="#fff"
       active-text-color="#ff740e"
       unique-opened router

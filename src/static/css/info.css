@@ -2,6 +2,7 @@
   float: left;
   font-size: 16px;
   line-height: 32px;
+  color: #1a1a1a;
 }
 .header .right{
   float: right;
@@ -12,13 +13,24 @@
   margin-right: 20px;
   font-weight: bold;
 }
+.el-menu li.is-opened .el-submenu__title,
+.el-menu li.is-opened .el-menu,
+.el-menu li.is-opened .el-menu-item{
+  background-color: #495459 !important;
+}
+.el-submenu .el-menu-item{
+  padding-left: 60px !important;
+}
 .table{
   padding: 20px 0 0;
   min-width: 960px;
 }
+.el-table{
+  color: #404040;
+}
 .el-table thead,
 .el-table thead .table-th{
-  color: #ff740e;
+  color: #ff6b00;
   font-weight: normal;
 }
 .pagination{

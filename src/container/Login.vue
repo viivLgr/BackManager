@@ -1,5 +1,6 @@
 <template>
   <div class="login-wrap">
+    <div class="login-bg"><img src="../static/img/login_bg.jpg"></div>
     <div class="ms-title"><span><i class="unionPay"></i>运营</span><i class="line">|</i>商户平台</div>
     <div class="ms-login">
       <h2 class="form-title">登录</h2>
@@ -82,10 +83,16 @@
     position: relative;
     width:100%;
     height:100%;
-    background-image: url("../static/img/login_bg.jpg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+  }
+  .login-bg{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .login-bg img{
+    width: 100%;
   }
   .ms-title{
     position: absolute;

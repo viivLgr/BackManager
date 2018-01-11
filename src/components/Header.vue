@@ -2,37 +2,38 @@
   <div class="header">
     <div class="logo"><span><i class="unionPay"></i>运营</span><i class="line">|</i>商户平台</div>
     <div class="user-info">
-      <el-button type="text"><Icon :img="userImg" />sda{{name}}</el-button>
-      <span class="el-dropdown-link">{{name}}</span>
+      <el-button type="text"><img width="14" src="../static/img/icon-user.png" />{{name}}</el-button>
+      <el-button type="text" @click="showAnnouncement"><img width="20" src="../static/img/icon-msg.png" />公告</el-button>
+      <el-button type="text"><img width="14" src="../static/img/icon-setting.png" />设置</el-button>
+      <el-button type="text" @click="logout"><img width="14" src="../static/img/icon-logout.png" />退出</el-button>
     </div>
   </div>
 </template>
 <script>
-  import Icon from 'components/Icon'
   export default {
     data () {
       return {
-        name: 'linxin',
-        userImg: '../static/img/unionPay.png'
+        name: 'linxin'
       }
     },
-    components: {
-      Icon
-    }
 //    computed: {
 //      username () {
 //        let username = localStorage.getItem('ms_username')
 //        return username ? username : this.name
 //      }
 //    },
-//    methods: {
-//      handleCommand (command) {
+    methods: {
+      showAnnouncement () {
+        this.$router.push('/announcementlist')
 //        if (command === 'loginout') {
 //          localStorage.removeItem('ms_username')
 //          this.$router.push('/login')
 //        }
-//      }
-//    }
+      },
+      logout () {
+        this.$router.push('/login')
+      }
+    }
   }
 </script>
 <style scoped>
@@ -44,12 +45,13 @@
     font-size: 22px;
     line-height: 70px;
     color: #fff;
+    background-color: #fff;
   }
   .header .logo{
     float: left;
     width: 200px;
     text-align: center;
-    background: #ff4400;
+    background: #199ef2;
     font-size: 16px;
   }
   .header .logo .unionPay{
@@ -67,27 +69,13 @@
   }
   .user-info {
     float: right;
-    padding-right: 50px;
+    padding-right: 20px;
     font-size: 16px;
     color: #ff4400;
   }
-  .user-info .el-dropdown-link{
-    position: relative;
+  .user-info img{
     display: inline-block;
-    padding-left: 50px;
-    color: #fff;
-    cursor: pointer;
+    margin-right: 5px;
     vertical-align: middle;
-  }
-  .user-info .user-logo{
-    position: absolute;
-    left:0;
-    top:15px;
-    width:40px;
-    height:40px;
-    border-radius: 50%;
-  }
-  .el-dropdown-menu__item{
-    text-align: center;
   }
 </style>

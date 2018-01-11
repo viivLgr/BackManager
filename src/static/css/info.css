@@ -1,0 +1,116 @@
+.header h2{
+  float: left;
+  font-size: 16px;
+  line-height: 32px;
+}
+.header .right{
+  float: right;
+}
+.header .right .right-info{
+  font-size: 14px;
+  color: green;
+  margin-right: 20px;
+}
+.table{
+  padding: 20px 0 0;
+  min-width: 960px;
+}
+.el-table thead,
+.el-table thead .table-th{
+  color: #ff740e;
+  font-weight: normal;
+}
+.pagination{
+  text-align: right;
+  padding: 40px 0 0;
+}
+.el-pagination button,
+.el-pagination span{
+  display: inline-block;
+  padding: 0 10px;
+}
+.el-dialog--center .el-dialog__header{
+  padding-top: 15px;
+}
+.el-dialog--center .el-dialog__body{
+  padding-bottom: 15px;
+}
+.el-dialog{
+  border-radius: 10px;
+}
+.el-dialog__header{
+  border-bottom: 1px solid #e5e5e5;
+}
+.el-dialog__title{
+  color: #199ef2;
+  font-size: 16px;
+}
+.el-dialog__body{
+  padding: 20px;
+}
+.dialog-list{
+  padding: 0 10px;
+}
+.dialog-list h3{
+  font-size: 14px;
+  padding-bottom: 10px;
+  color: #ff740e;
+}
+.dialog-list ul{
+  list-style: none;
+}
+.dialog-list li{
+  float: left;
+  width: 50%;
+  line-height: 30px;
+  padding: 0 0 10px 20px;
+  box-sizing: border-box;
+}
+.el-checkbox+.el-checkbox{
+  margin-left: 0px;
+}
+.el-checkbox{
+  margin-right: 10px;
+}
+.el-form-item:last-child{
+  margin-bottom: 0;
+}
+.form-wrapper .el-input--small{
+  max-width: 300px
+}
+.form-wrapper .el-input--suffix{
+  width: 300px;
+}
+.form-wrapper .el-form-item--mini.el-form-item,
+.form-wrapper .el-form-item--small.el-form-item{
+  position: relative;
+}
+.form-wrapper .el-form-item.is-required .el-form-item__label:before{
+  left: 460px;
+  position: absolute;
+}
+.form-wrapper .form-item h3{
+  font-size: 14px;
+  color: #ff740e;
+  padding: 20px 10px;
+}
+.form-wrapper .form-item h3 img{
+  width: 14px;
+  display: inline-block;
+  vertical-align: baseline;
+  margin-right: 5px;
+}
+.form-wrapper .form-item .context{
+  padding: 0 0 0 20px;
+}
+.form-wrapper .form-item .tips{
+  font-size: 12px;
+  color: #606266;
+  margin: 0 0 0 20px;
+}
+.form-wrapper .form-btn{
+  padding: 40px 0;
+}
+.firstColumn{
+  color: #199ef2;
+}

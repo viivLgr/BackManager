@@ -67,7 +67,7 @@
         self.$refs[formName].validate((valid) => {
           if (valid) {
             localStorage.setItem('ms_username', self.ruleForm.username)
-            self.$router.push('/index')
+            self.$router.push('/dashboard')
           } else {
             console.log('error submit!!')
             return false

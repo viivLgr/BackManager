@@ -12,4 +12,5 @@ export default {
 
 <style>
 @import "./static/css/main.css";
+@import "./static/css/info.css";
 </style>

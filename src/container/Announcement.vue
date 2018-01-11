@@ -7,6 +7,9 @@
       <p class="right">公告ID：{{id}}</p>
       <p class="right">{{createTime}}</p>
     </div>
+    <div class="back-btn">
+      <el-button type="primary" size="small" @click="goback">返回</el-button>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -23,6 +26,11 @@
       created () {
         console.log(this.$route)
         this.id = this.$route.query.id
+      },
+      methods: {
+        goback () {
+          this.$router.go(-1)
+        }
       }
     }
 </script>
@@ -49,5 +57,9 @@
   .container .right{
     text-align: right;
     line-height: 30px;
+  }
+  .back-btn{
+    padding-top: 100px;
+    text-align: center;
   }
 </style>

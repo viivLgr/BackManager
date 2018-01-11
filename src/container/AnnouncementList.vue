@@ -43,10 +43,26 @@
       width="30%"
       :before-close="searchClose"
     >
-      <span>这是一段信息</span>
+      <div>
+        <el-form ref="form" :model="form" size="small" label-width="105px">
+          <el-form-item label="公告ID：" prop="id">
+            <el-input v-model="form.id"></el-input>
+          </el-form-item>
+          <el-form-item label="添加日期：" prop="daterange">
+            <el-date-picker
+              v-model="form.daterange"
+              type="daterange"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd"
+              default-value="2017-12-01">
+            </el-date-picker>
+          </el-form-item>
+        </el-form>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="searchShow = false">取 消</el-button>
-        <el-button type="primary" @click="searchShow = false">确 定</el-button>
+        <el-button type="primary" @click="onSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -89,7 +105,11 @@
               createTime: '2017-11-09',
               readed: true
             }
-          ]
+          ],
+          form: {
+            id: '',
+            daterange: ''
+          }
         }
       },
       methods: {
@@ -110,9 +130,21 @@
         },
         currentChange (currentPage) {
           console.log('currentChange', currentPage)
+        },
+        onSubmit () {
+          const {id, daterange} = this.form
+          console.log('submit', {id, daterange})
         }
       }
     }
 </script>
 <style>
+  .el-range-editor--small.el-input__inner{
+    width: inherit;
+    position: relative;
+  }
+  .el-range-editor--small .el-range__close-icon{
+    position: absolute;
+    top: 0;
+  }
 </style>

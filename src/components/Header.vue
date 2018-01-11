@@ -60,7 +60,7 @@
     height: 20px;
     background: url("../static/img/unionPay.png") no-repeat;
     background-size: cover;
-    margin: 0 10px;
+    margin: 0 14px 0 0;
     vertical-align: middle;
   }
   .header .logo .line{

@@ -155,7 +155,8 @@
     checkRate,
     checkQQ,
     checkEmail,
-    checkFax
+    checkFax,
+    checkIDCard
   } from 'static/js/util'
   import { BankList } from 'static/js/bankList'
 
@@ -178,8 +179,8 @@
           businessScope: '',
           registeredCapital: '', // 注册资金
           mainAccountBank: '',
-          bankAccountName: '',
           bankName: '',
+          bankAccountName: '',
           bankAccount: '',
           legalPersonName: '',
           corporateIDNumber: '',
@@ -254,7 +255,8 @@
             {required: true, message: '请填写法人姓名', trigger: 'blur'}
           ],
           corporateIDNumber: [
-            {required: true, message: '请填写法人身份证号', trigger: 'blur'}
+            {required: true, message: '请填写法人身份证号', trigger: 'blur'},
+            {validator: checkIDCard, trigger: 'blur'}
           ],
           wechatRate: [
             {required: true, message: '请填写微信费率', trigger: 'blur'},

@@ -10,7 +10,6 @@
       <el-table
         :data="tableData"
         size="mini"
-        show-overflow-tooltip
         header-cell-class-name="table-th"
         @row-click="rowClick"
         style="width: 100%">
@@ -20,6 +19,7 @@
           :prop="item.prop"
           :label="item.label"
           header-align="center"
+          show-overflow-tooltip
           align="center"
         ></el-table-column>
       </el-table>
@@ -62,8 +62,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="searchShow = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button size="small" @click="searchShow = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog

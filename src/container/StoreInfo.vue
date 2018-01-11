@@ -10,7 +10,6 @@
       <el-table
         :data="tableData"
         size="mini"
-        show-overflow-tooltip
         header-cell-class-name="table-th"
         @row-click="rowClick"
         style="width: 100%">
@@ -46,31 +45,34 @@
     >
       <div>
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="105px">
-          <el-form-item label="代理商编号：" prop="agencyId">
-            <el-input v-model="form.agencyId"></el-input>
+          <el-form-item label="商户编号：" prop="storeId">
+            <el-input v-model="form.storeId"></el-input>
           </el-form-item>
-          <el-form-item label="代理商名称：" prop="agencyName">
-            <el-input v-model="form.agencyName"></el-input>
+          <el-form-item label="商户名称：" prop="storeName">
+            <el-input v-model="form.storeName"></el-input>
+          </el-form-item>
+          <el-form-item label="商户简称：" prop="shortName">
+            <el-input v-model="form.shortName"></el-input>
           </el-form-item>
           <el-form-item label="状态：" prop="status">
             <el-checkbox-group v-model="form.status">
               <el-checkbox label="开通" name="type"></el-checkbox>
-              <el-checkbox label="审核中" name="type"></el-checkbox>
+              <el-checkbox label="未审核" name="type"></el-checkbox>
               <el-checkbox label="审核不通过" name="type"></el-checkbox>
               <el-checkbox label="关闭" name="type"></el-checkbox>
-              <el-checkbox label="永久关闭" name="type"></el-checkbox>
+              <el-checkbox label="永久停用" name="type"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="searchShow = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button size="small" @click="searchShow = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
       v-show="infoShow"
-      title="下级代理商详细信息"
+      title="商户详细信息"
       center
       :visible.sync="infoShow"
       width="50%"
@@ -147,258 +149,135 @@
         tableData: [
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           },
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           },
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           },
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           },
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           },
           {
             storeId: 'AAAA123123',
-            storeTicket: 'GG1',
-            storeName: 'HD1233',
-            shortName: '浙江省杭州市江干区九环路778号',
-            postalCode: '浙江省杭州市江干区九环路778号',
+            storeTicket: 'M00051',
+            storeName: '杭州转折科技',
+            shortName: 'GG1',
+            postalCode: '311200',
             address: '浙江省杭州市江干区九环路778号',
-            limit: '张倚天',
-            registeredCapital: '张倚天',
-            agencyId: '13212341234',
+            limit: '110000',
+            registeredCapital: '110000',
+            agencyId: 'A00839897',
             status: '开通',
             createTime: '2017-11-09'
           }
         ],
         userInfos: [
           {
-            title: '基本信息',
+            title: '',
             list: [
               {
-                tit: '申请人名称',
-                txt: '张倚天'
+                tit: '商户编号',
+                txt: 'M000051'
               },
               {
-                tit: '申请人日期',
-                txt: '2017-1017'
+                tit: '商户特约小票',
+                txt: 'M000051'
               },
               {
-                tit: '代理商编号',
-                txt: '123123'
+                tit: '商户名称',
+                txt: '杭州转折科技'
               },
               {
-                tit: '操作员ID',
-                txt: '123123'
-              },
-              {
-                tit: '代理商名称',
-                txt: '大叔大婶多'
-              },
-              {
-                tit: '联系人电话',
-                txt: '132213123123'
+                tit: '商户简称',
+                txt: 'GG1'
               },
               {
                 tit: '状态',
-                txt: '张倚天'
+                txt: '开通'
               },
               {
                 tit: '邮编',
-                txt: '张倚天'
-              },
-              {
-                tit: '实际地址',
-                txt: '张倚天'
-              }
-            ]
-          },
-          {
-            title: '注册信息',
-            list: [
-              {
-                tit: '工商注册名称',
-                txt: '张倚天'
-              },
-              {
-                tit: '阻止机构代码',
-                txt: '2017-1017'
-              },
-              {
-                tit: '营业执照编号',
-                txt: '123123'
-              },
-              {
-                tit: '税务登记号',
-                txt: '123123'
+                txt: '322100'
               },
               {
                 tit: '注册资金',
-                txt: '大叔大婶多'
+                txt: '10000000'
               },
               {
-                tit: '经营范围',
-                txt: '132213123123'
+                tit: '所属代理商ID',
+                txt: 'A0909234'
               },
               {
-                tit: '注册资金',
-                txt: '张倚天'
-              },
-              {
-                tit: '法人身份证',
-                txt: '张倚天'
-              }
-            ]
-          },
-          {
-            title: '账户信息',
-            list: [
-              {
-                tit: '开户行联行号',
-                txt: '张倚天'
-              },
-              {
-                tit: '开户行名称',
-                txt: '2017-1017'
-              },
-              {
-                tit: '开户行账户名称',
-                txt: '123123'
-              },
-              {
-                tit: '开户行账号',
-                txt: '123123'
-              },
-              {
-                tit: '注册资金',
-                txt: '大叔大婶多'
-              }
-            ]
-          },
-          {
-            title: '成本费率',
-            list: [
-              {
-                tit: '微信扫码',
-                txt: '张倚天'
-              },
-              {
-                tit: '支付宝扫码',
-                txt: '2017-1017'
-              },
-              {
-                tit: 'QQ扫码',
-                txt: '123123'
-              },
-              {
-                tit: '微信公众号',
-                txt: '123123'
-              },
-              {
-                tit: '支付宝服务窗',
-                txt: '大叔大婶多'
-              },
-              {
-                tit: '网关支付',
-                txt: '132213123123'
-              },
-              {
-                tit: '快捷支付',
-                txt: '张倚天'
-              },
-              {
-                tit: 'WAP支付',
-                txt: '张倚天'
-              }
-            ]
-          },
-          {
-            title: '联系方式',
-            list: [
-              {
-                tit: '业务联系人',
-                txt: '张倚天'
-              },
-              {
-                tit: '业务联系电话',
-                txt: '2017-1017'
-              },
-              {
-                tit: '业务联系Email',
-                txt: '123123'
-              },
-              {
-                tit: '业务联系QQ/MSN',
-                txt: '123123'
-              },
-              {
-                tit: '传真',
-                txt: '大叔大婶多'
+                tit: '商户地址',
+                txt: '浙江省杭州市江干区九环路778号浙江省杭州市江干区九环路778号浙江省杭州市江干区九环路778号'
               }
             ]
           }
         ],
         form: {
-          agencyId: '',
-          agencyName: '',
+          storeId: '',
+          storeName: '',
+          shortName: '',
           status: []
         },
         rules: {
-          agencyId: [
-            {required: true, message: '请输入代理商编号', trigger: 'blur'},
+          storeId: [
+            {required: true, message: '请输入商户编号', trigger: 'blur'},
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ]
         }

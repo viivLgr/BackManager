@@ -22,24 +22,3 @@ a{text-decoration: none}
 /*}*/
 
 .clearfix{overflow:auto;_height:1%}
-
-/* container */
-.content{
-  background: none repeat scroll 0 0 #fff;
-  position: absolute;
-  left: 220px;
-  right: 20px;
-  top: 90px;
-  bottom: 0;
-  width: auto;
-  min-width: 960px;
-  padding: 20px 30px;
-  box-sizing: border-box;
-  overflow-y: scroll;
-}
-.move-enter-active,.move-leave-active{
-  transition: opacity .5s;
-}
-.move-enter,.move-leave{
-  opacity: 0;
-}

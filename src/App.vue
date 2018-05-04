@@ -5,12 +5,13 @@
 </template>
 
 <script>
+import "font-awesome/css/font-awesome.min.css";
 export default {
   name: 'app'
 }
 </script>
 
-<style>
-@import "./static/css/main.css";
+<style lang="scss">
+@import "./static/css/app.scss";
 @import "./static/css/info.css";
 </style>

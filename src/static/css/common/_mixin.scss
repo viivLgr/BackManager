@@ -1,0 +1,14 @@
+/*单行文本溢出*/
+@mixin single-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*多行文本溢出*/
+@mixin multi-line($a) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $a;
+  overflow: hidden;
+}

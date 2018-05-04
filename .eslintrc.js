@@ -9,7 +9,7 @@ module.exports = {
   env: {
     browser: true,
   },
-  // https://github.com/standard/standard/blob/master/docs/RULES-en.md
+  // https://github.com/standard/standard/blob/master/docs/README-zhcn.md
   extends: 'standard',
   // required to lint *.vue files
   plugins: [
@@ -19,6 +19,9 @@ module.exports = {
   rules: {
     // allow async-await
     'generator-star-spacing': 'off',
+    "quotes": "off",
+    "semi": "off",
+    "space-before-function-paren": "off",
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }

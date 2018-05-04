@@ -2,7 +2,7 @@
   <div class="info-list">
     <h2><img :src="icon">{{title}}</h2>
     <ul class="clearfix">
-      <li v-for="item in list">
+      <li v-for="(item,index) in list" :key="index">
         <span class="tit">{{item.tit}}：</span>
         <span class="txt">{{item.txt}}</span>
       </li>

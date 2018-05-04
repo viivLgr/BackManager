@@ -75,10 +75,10 @@
       :before-close="infoClose"
     >
       <div class="dialog-list">
-        <div v-for="info in userInfos" v-if="userInfos.length>0">
+        <div v-for="(info,index) in userInfos" v-if="userInfos.length>0" :key="index">
           <h3>{{info.title}}</h3>
           <ul class="info-list clearfix">
-            <li v-for="(list,i) in info.list">
+            <li v-for="(list,i) in info.list" :key="i">
               <span class="tit">{{list.tit}}</span>：
               <span class="txt">{{list.txt}}</span>
             </li>

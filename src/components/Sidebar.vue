@@ -10,25 +10,25 @@
     >
       <template v-for="(item,index) in items">
         <template v-if="item.subs">
-          <el-submenu :index="item.index">
+          <el-submenu :key="index">
             <template slot="title">
               <img :src="item.icon" />{{item.title}}
             </template>
             <template v-for="(sub,idx) in item.subs">
-              <el-menu-item-group text-color="#fff">
+              <el-menu-item-group text-color="#fff" :key="idx">
                 <template slot="title">
                   <img :src="sub.icon" />
                   <span style="color:#fff;font-size:14px;">{{sub.title}}</span>
                 </template>
                 <template v-for="(list,i) in sub.list">
-                  <el-menu-item :index="list.index" router><span class="dot">·</span>{{list.title}}</el-menu-item>
+                  <el-menu-item :index="list.index" :key="i" router><span class="dot">·</span>{{list.title}}</el-menu-item>
                 </template>
               </el-menu-item-group>
             </template>
           </el-submenu>
         </template>
         <template v-else>
-          <el-menu-item :index="item.index">
+          <el-menu-item :key="item.index">
             <img :src="item.icon" />{{ item.title }}
           </el-menu-item>
         </template>

@@ -1,4 +1,4 @@
-# backmanager
+# Pay-admin
 
 > A Vue.js project
 

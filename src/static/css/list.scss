@@ -1,0 +1,73 @@
+.operating {
+  padding: 20px 20px 0;
+}
+.header{
+  h2{
+    border-left: 5px solid $color;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+
+.table {
+  padding: 20px;
+  min-width: 960px;
+  .table-btn{
+    text-align: right;
+    padding: 0 20px 20px 0;
+  }
+  .el-table {
+    color: $font-color;;
+  }
+  .el-table thead,
+  .el-table thead .table-th {
+    color: $color;
+    font-weight: normal;
+  }
+}
+.pagination {
+  text-align: right;
+  padding: 20px 0 0;
+}
+.el-pagination button,
+.el-pagination span {
+  display: inline-block;
+  padding: 0 10px;
+}
+
+.detail-input{
+  .el-input__inner{
+    width: 200px;
+  }
+  .btn-item{
+    padding-left: 30px;
+  }
+  .el-range-editor{
+    padding-right: 0;
+    padding-left: 2px;
+  }
+}
+
+/* 权限管理 */
+.feature-checked-wrap{
+  .feature-checked-item{
+    display: inline-block;
+    padding: 20px 10px;
+  }
+  .el-table__expanded-cell[class*=cell]{
+    padding: 0 0 0 50px;
+  }
+}
+.operate-list{
+  padding: 10px 0 0;
+  i{
+    padding-right: 10px;
+    cursor: pointer;
+  }
+  .operate-body{
+    padding: 0 20px 0 30px;
+  }
+}
+
+

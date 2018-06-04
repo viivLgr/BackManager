@@ -1,6 +1,6 @@
 # Pay-admin
 
-> A Vue.js project
+> 瓜子科技支付管理系统
 
 ## Build Setup
 

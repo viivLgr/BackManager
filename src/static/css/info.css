@@ -1,47 +1,3 @@
-.header h2{
-  float: left;
-  font-size: 16px;
-  line-height: 32px;
-  color: #1a1a1a;
-}
-.header .right{
-  float: right;
-}
-.header .right .right-info{
-  font-size: 14px;
-  color: #3ac100;
-  margin-right: 20px;
-  font-weight: bold;
-}
-.el-menu li.is-opened .el-submenu__title,
-.el-menu li.is-opened .el-menu,
-.el-menu li.is-opened .el-menu-item{
-  background-color: #495459 !important;
-}
-.el-submenu .el-menu-item{
-  padding-left: 60px !important;
-}
-.table{
-  padding: 20px 0 0;
-  min-width: 960px;
-}
-.el-table{
-  color: #404040;
-}
-.el-table thead,
-.el-table thead .table-th{
-  color: #ff6b00;
-  font-weight: normal;
-}
-.pagination{
-  text-align: right;
-  padding: 40px 0 0;
-}
-.el-pagination button,
-.el-pagination span{
-  display: inline-block;
-  padding: 0 10px;
-}
 .el-dialog--center .el-dialog__header{
   padding-top: 15px;
   line-height: 24px;
@@ -135,11 +91,11 @@
 .form-wrapper .form-btn{
   padding: 40px 0;
 }
-.firstColumn{
+/* .firstColumn{
   color: #199ef2;
-}
+} */
 .el-range-editor--small.el-input__inner{
-  width: inherit;
+  /* width: inherit; */
   position: relative;
 }
 .el-range-editor--small .el-range__close-icon{

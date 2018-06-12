@@ -4,78 +4,13 @@
       <h2>差错交易</h2>
     </div>
     <div class="detail-input">
-        <el-form :inline="true" :model="searchForm" :rules="rules" ref="searchForm" class="demo-form-inline" size="mini" label-width="100px">
+        <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini" label-width="100px">
             <div>
-                <el-form-item label="商户号" prop="storeId">
-                    <el-input v-model="searchForm.storeId" placeholder="请输入商户号"></el-input>
-                </el-form-item>
-                <el-form-item label="商户名称" prop="storeName">
-                    <el-input v-model="searchForm.storeName" placeholder="请输入商户名称"></el-input>
-                </el-form-item>
-                <el-form-item label="订单号" prop="orderId">
-                    <el-input v-model="searchForm.orderId" placeholder="请输入订单号"></el-input>
-                </el-form-item>
-                <el-form-item label="商户订单号" prop="storeOrderId">
-                    <el-input v-model="searchForm.storeOrderId" placeholder="请输入商户订单"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="交易时间" prop="tradeTime">
-                    <el-date-picker
-                    v-model="searchForm.tradeTime"
-                    type="daterange"
-                    align="right"
-                    unlink-panels
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :picker-options="pickerOptions">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="交易状态" prop="tradeStatus">
-                    <el-select v-model="searchForm.tradeStatus" placeholder="请选择交易状态">
-                        <el-option label="成功" value="1"></el-option>
-                        <el-option label="失败" value="4"></el-option>
-                        <el-option label="处理中" value="2"></el-option>
-                        <el-option label="待支付" value="3"></el-option>
-                        <el-option label="关闭" value="5"></el-option>
+                <el-form-item label="处理状态">
+                    <el-select v-model="searchForm.processFlag" placeholder="请选择处理状态">
+                        <el-option value="">全部</el-option>
+                        <el-option v-for="(item, index) in processFlagList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="交易类型" prop="tradeType">
-                    <el-select v-model="searchForm.tradeType" placeholder="请选择交易类型">
-                        <el-option label="充值" value="recharge"></el-option>
-                        <el-option label="提现" value="withdraw"></el-option>
-                        <el-option label="消费" value="consumption"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="支付产品" prop="payProduct">
-                    <el-select v-model="searchForm.payProduct" placeholder="请选择支付产品">
-                        <el-option label="快捷" value="fast"></el-option>
-                        <el-option label="网关" value="gateway"></el-option>
-                        <el-option label="代扣" value="withholding"></el-option>
-                        <el-option label="支付宝" value="alipay"></el-option>
-                        <el-option label="代付" value="payfor"></el-option>
-                        <el-option label="微信" value="wechat"></el-option>
-                    </el-select>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="渠道编码" prop="channelCode">
-                    <el-input v-model="searchForm.channelCode" placeholder="请输入渠道编码"></el-input>
-                </el-form-item>
-                <el-form-item label="渠道名称" prop="channelName">
-                    <el-input v-model="searchForm.channelName" placeholder="请输入渠道名称"></el-input>
-                </el-form-item>
-                <el-form-item label="收款人姓名" prop="payeeName">
-                    <el-input v-model="searchForm.payeeName" placeholder="请输入收款人姓名"></el-input>
-                </el-form-item>
-                <el-form-item label="付款人姓名" prop="payerName">
-                    <el-input v-model="searchForm.payerName" placeholder="请输入付款人姓名"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="银行卡号" prop="bankCardNumber">
-                    <el-input v-model="searchForm.bankCardNumber" placeholder="请输入银行卡号"></el-input>
                 </el-form-item>
                 <el-form-item class="btn-item">
                     <el-button type="primary" @click="searchSubmit('searchForm')">查询</el-button>
@@ -91,27 +26,38 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="id" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="storeId" label="商户名" fixed width="120"></el-table-column>
-        <el-table-column align="center" prop="storeName" label="商户名称" fixed></el-table-column>
-        <el-table-column align="center" prop="orderId" label="订单号" fixed width="160"></el-table-column>
-        <el-table-column align="center" prop="storeOrderId" label="商户订单号" width="170"></el-table-column>
-        <el-table-column align="center" prop="tradeType" label="交易类型"></el-table-column>
-        <el-table-column align="center" prop="payProduct" label="支付产品"></el-table-column>
+        <el-table-column align="center" prop="platTradeTime" label="交易日期" fixed></el-table-column>
+        <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
-        <el-table-column align="center" prop="tradeAmount" label="交易金额"></el-table-column>
+        <el-table-column align="center" prop="channelMerchantId" label="渠道商户号" width="90"></el-table-column>
+        <el-table-column align="center" prop="channelOrderNo" label="渠道订单号" width="90"></el-table-column>
+        <el-table-column align="center" prop="sendChannelOrderNo" label="平台上送订单号" width="110"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="交易时间"></el-table-column>
+        <el-table-column align="center" prop="tradeAmount" label="支付金额"></el-table-column>
         <el-table-column align="center" prop="fees" label="手续费"></el-table-column>
-        <el-table-column align="center" prop="tradeStatus" label="交易状态"></el-table-column>
-        <el-table-column align="center" prop="payerName" label="付款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="payeeName" label="收款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="bankCardNumber" label="银行卡号" width="100"></el-table-column>
-        <el-table-column align="center" prop="tradeCreateTime" label="交易创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="tradeFinishTime" label="交易完成时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="tradeStatus" label="渠道交易状态" width="100"></el-table-column>
+        <el-table-column align="center" prop="status" label="平台交易状态" width="100"></el-table-column>
+        <el-table-column align="center" prop="outRespCode" label="渠道返回码" width="90"></el-table-column>
+        <el-table-column align="center" prop="outRespDesc" label="渠道返回描述" width="100"></el-table-column>
+        <el-table-column align="center" prop="processFlag" label="处理状态"></el-table-column>
+        <el-table-column align="center" prop="processResult" label="处理结果"></el-table-column>
+        <el-table-column align="center" prop="platTradeTime" label="创建时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="tradeFinishTime" label="修改时间" width="150"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-button @click="handleDetail(scope.row)" type="warning" size="mini">详情</el-button>
+            <el-button @click="handleDetail(scope.row)" type="warning" size="mini">处理</el-button>
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <div class="pagination">
+      <el-pagination background layout="prev, pager, next" 
+        v-if="page.totalPages > 1"
+        @current-change="handleCurrentChange"
+        :current-page="page.page"
+        :page-size="page.rows" 
+        :total="page.total"
+      />
     </div>
     <el-dialog
       v-show="detailShow"
@@ -217,149 +163,56 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { axiosMixin, listMixin } from "static/js/mixin.js";
+import _trade from "service/trade-service.js";
 export default {
+  mixins: [axiosMixin, listMixin],
   data() {
     return {
+      processFlagList: [
+        { dicCode: true, dicName: "处理" },
+        { dicCode: false, dicName: "未处理" }
+      ],
       detailShow: false,
       detailForm: {},
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
-            }
-          },
-          {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
-            }
-          }
-        ]
-      },
-      searchForm: {
-        storeId: "",
-        storeName: "",
-        orderId: "",
-        storeOrderId: "",
-        tradeStatus: "",
-        tradeType: "",
-        payProduct: "",
-        channelCode: "",
-        channelName: "",
-        payeeName: "",
-        payerName: "",
-        bankCardNumber: "",
-        tradeTime: ""
-      },
-      rules: {
-        storeId: [
-          { required: false, message: "请输入商户号", trigger: "blur" }
-        ],
-        storeName: [
-          { required: false, message: "请输入商户名称", trigger: "blur" }
-        ],
-        orderId: [
-          { required: false, message: "请输入订单号", trigger: "blur" }
-        ],
-        storeOrderId: [
-          { required: false, message: "请输入商户订单", trigger: "blur" }
-        ],
-        tradeStatus: [
-          { required: false, message: "请选择交易状态", trigger: "blur" }
-        ],
-        tradeType: [
-          { required: false, message: "请选择交易类型", trigger: "blur" }
-        ],
-        payProduct: [
-          { required: false, message: "请选择支付产品", trigger: "blur" }
-        ],
-        channelCode: [
-          { required: false, message: "请输入渠道编码", trigger: "blur" }
-        ],
-        channelName: [
-          { required: false, message: "请输入渠道名称", trigger: "blur" }
-        ],
-        payeeName: [
-          { required: false, message: "请输入收款人姓名", trigger: "blur" }
-        ],
-        payerName: [
-          { required: false, message: "请输入付款人姓名", trigger: "blur" }
-        ],
-        bankCardNumber: [
-          { required: false, message: "请输入银行卡号", trigger: "blur" }
-        ],
-        tradeTime: [
-          { required: false, message: "请选择交易时间", trigger: "blur" }
-        ]
-      },
-      tableData: [
-        {
-          id: "1",
-          storeId: "M201804200107",
-          storeName: "德御科技",
-          orderId: "WDC2018042714452814",
-          storeOrderId: "WZLD2018042618522149",
-          tradeType: "消费",
-          payProduct: "网关",
-          channelName: "XXXX",
-          tradeAmount: "49896.00",
-          fees: "2.00",
-          tradeStatus: "成功",
-          payerName: "--",
-          payeeName: "张三",
-          bankCardNumber: "6226*****3921",
-          tradeCreateTime: "2018-04-30 11:32:20",
-          tradeFinishTime: "2018-04-30 11:32:40"
-        },
-        {
-          id: "2",
-          storeId: "M201804200107",
-          storeName: "德御科技",
-          orderId: "WDC2018042714452814",
-          storeOrderId: "WZLD2018042618522149",
-          tradeType: "消费",
-          payProduct: "网关",
-          channelName: "XXXX",
-          tradeAmount: "49896.00",
-          fees: "2.00",
-          tradeStatus: "成功",
-          payerName: "--",
-          payeeName: "张三",
-          bankCardNumber: "6226*****3921",
-          tradeCreateTime: "2018-04-30 11:32:20",
-          tradeFinishTime: "2018-04-30 11:32:40"
-        }
-      ]
+      searchForm: {},
+      tableData: []
     };
   },
+  created() {
+    this._renderTableDate();
+  },
   methods: {
-    searchSubmit(searchForm) {
-      this.$refs[searchForm].validate(valid => {
-        if (valid) {
-          let username = this.$refs[searchForm].model.feature;
-          console.log("submit!", username);
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+    // 获取列表
+    _renderTableDate(data) {
+      this.loading = true;
+      _trade.getPayCheckUpErrorList(data).then(res => {
+        this.renderTableDate(res, (item, index) => {
+          return {
+            no: index + 1,
+            channelCode: item.channelCode,
+            channelMerchantId: item.channelMerchantId,
+            channelName: item.channelName,
+            channelOrderNo: item.channelOrderNo,
+            channelStatus: item.channelStatus,
+            errorId: item.errorId,
+            fee: item.fee,
+            outRespCode: item.outRespCode,
+            outRespDesc: item.outRespDesc,
+            payAmount: item.payAmount,
+            platTradeTime: item.platTradeTime,
+            processFlag: item.processFlag,
+            processResult: item.processResult,
+            sendChannelOrderNo: item.sendChannelOrderNo,
+            status: item.status,
+            statusName: item.statusName
+          };
+        });
       });
+    },
+    // 查询
+    searchSubmit(searchForm) {
+      this._renderTableDate(this.searchForm);
     },
     detailClose() {
       this.detailShow = false;
@@ -367,34 +220,19 @@ export default {
     },
     detailSubmit() {
       console.log("detailSubmit!");
+      _trade.updatePayCheckUpErrorList(this.detailForm.orderId).then(res => {
+        this.filterAxios(res, res => {
+          console.log("res", res);
+        });
+      });
     },
     handleDetail(row) {
       let id = row.id;
       this.detailShow = true;
       this.detailForm = {
-        storeId: row.storeId,
-        storeName: row.storeName,
-        storeFees: row.storeFees,
-        channelCode: row.channelCode,
-        channelName: row.channelName,
-        channelFees: row.channelFees,
         orderId: row.orderId,
-        storeOrderId: row.storeOrderId,
-        channelOrderId: row.channelOrderId,
-        tradeType: row.tradeType,
-        payProduct: row.payProduct,
-        tradeStatus: row.tradeStatus,
-        tradeTotalAmount: row.tradeTotalAmount,
-        tradeAmount: row.tradeAmount,
-        fees: row.fees,
-        tradeCreateTime: row.tradeCreateTime,
-        sendChannelTime: row.sendChannelTime,
-        tradeFinishTime: row.tradeFinishTime,
-        payeeName: row.payeeName,
-        payerName: row.payerName,
-        bankCardNumber: row.bankCardNumber,
-        profitName: row.profitName,
-        profitAmount: row.profitAmount
+        processFlag: row.processFlag,
+        processResult: row.processResult
       };
       console.log("handleDetail!", row, id);
     }

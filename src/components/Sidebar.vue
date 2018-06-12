@@ -57,137 +57,137 @@ export default {
       route: "dashbard",
       items: [
         {
-          icon: "el-icon-menu",
+          icon: "fa fa-area-chart",
           index: "dashboard",
           title: "首页概览"
         },
         {
-          icon: "fa fa-folder-o",
+          icon: "fa fa-key",
           index: "2",
           title: "权限管理",
           list: [
             {
-              icon: "el-icon-document",
+              icon: "fa fa-dashboard",
               index: "features_list",
               title: "功能列表"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-user-secret",
               index: "user_rights",
               title: "用户权限"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-user-plus",
               index: "user_list",
               title: "用户管理"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-shield",
               index: "role_list",
               title: "角色管理"
             }
           ]
         },
+        // {
+        //   icon: "fa fa-cogs",
+        //   index: "3",
+        //   title: "系统参数",
+        //   list: [
+        //     {
+        //       icon: "fa fa-anchor",
+        //       index: "code_manage",
+        //       title: "码值管理"
+        //     },
+        //     {
+        //       icon: "fa fa-bug",
+        //       index: "error_code_manage",
+        //       title: "错误码管理"
+        //     }
+        //   ]
+        // },
         {
-          icon: "fa fa-folder-o",
-          index: "3",
-          title: "系统参数",
-          list: [
-            {
-              icon: "el-icon-document",
-              index: "code_manage",
-              title: "码值管理"
-            },
-            {
-              icon: "el-icon-document",
-              index: "error_code_manage",
-              title: "错误码管理"
-            }
-          ]
-        },
-        {
-          icon: "fa fa-folder-o",
+          icon: "fa fa-sitemap",
           index: "4",
           title: "交易管理",
           list: [
             {
-              icon: "el-icon-document",
+              icon: "fa fa-handshake-o",
               index: "trade_list",
               title: "交易列表"
             },
+            // {
+            //   icon: "fa fa-lightbulb-o",
+            //   index: "trade_suspicious",
+            //   title: "可疑交易"
+            // },
+            // {
+            //   icon: "fa fa-check-square-o",
+            //   index: "reconciliation",
+            //   title: "对账"
+            // },
             {
-              icon: "el-icon-document",
-              index: "trade_suspicious",
-              title: "可疑交易"
-            },
-            {
-              icon: "el-icon-document",
-              index: "reconciliation",
-              title: "对账"
-            },
-            {
-              icon: "el-icon-document",
+              icon: "fa fa-gavel",
               index: "error_handling",
               title: "差错处理"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-cubes",
               index: "reports",
               title: "报表"
             }
           ]
         },
         {
-          icon: "fa fa-folder-o",
+          icon: "fa fa-server",
           index: "5",
           title: "商户管理",
           list: [
             {
-              icon: "el-icon-document",
+              icon: "fa fa-users",
               index: "store_list",
               title: "商户列表"
             }
           ]
         },
         {
-          icon: "fa fa-folder-o",
+          icon: "fa fa-sliders",
           index: "6",
           title: "路由管理",
           list: [
             {
-              icon: "el-icon-document",
+              icon: "fa fa-share-alt",
               index: "channel_manage",
               title: "渠道列表"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-share-alt-square",
               index: "store_channel_list",
               title: "商户渠道列表"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-credit-card",
               index: "card_bin_list",
               title: "卡bin管理"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-bank",
               index: "bank_list",
               title: "银行列表"
             }
           ]
         },
         {
-          icon: "fa fa-folder-o",
+          icon: "fa fa-briefcase",
           index: "7",
           title: "应用管理",
           list: [
             {
-              icon: "el-icon-document",
+              icon: "fa fa-tags",
               index: "app_list",
               title: "应用列表"
             },
             {
-              icon: "el-icon-document",
+              icon: "fa fa-share-square-o",
               index: "open_app_list",
               title: "开放平台接口列表"
             }
@@ -223,6 +223,7 @@ export default {
 }
 .sidebar > ul {
   height: 100%;
+  overflow-y: auto;
 }
 .sidebar > ul .el-menu-item img,
 .sidebar > ul .el-submenu__title img {

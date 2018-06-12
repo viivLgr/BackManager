@@ -173,22 +173,18 @@ export default {
     // 查询卡类型
     getCardType() {
       const _this = this;
-      _common
-        .getDictionaryList({
-          cardType: "CARD_TYPE"
-        })
-        .then(res => {
-          _this.filterAxios(res, res => {
-            _this.cardType = res.cardType;
-          });
+      _common.getDictionaryList("CARD_TYPE").then(res => {
+        _this.filterAxios(res, res => {
+          _this.cardType = res.cardType;
         });
+      });
     },
     // 获取银行
     getBinkList() {
       _router.getBankList().then(res => {
         this.filterAxios(res, res => {
           this.bankList = res.list;
-          console.log('bankList', this.bankList)
+          console.log("bankList", this.bankList);
         });
       });
     },

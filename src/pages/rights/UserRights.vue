@@ -154,142 +154,58 @@ export default {
     },
     // 点击修改权限按钮,获得用户权限
     handleUpdate(row) {
-      const _this = this;
-      _this.updateInfo = {
+      this.updateInfo = {
         userId: row.userId
-      }
-      _user.getUserRight(_this.updateInfo.userId).then(res => {
-        _this.filterAxios(res, res => {
+      };
+      _user.getUserRight(this.updateInfo.userId).then(res => {
+        this.filterAxios(res, res => {
           const list = res;
-          _this._renderRightList(list);
+          this._renderRightList(list);
         });
       });
       this.updateShow = true;
-      // this.$nextTick(() => {
-      //   this._handelChecked();
-      // });
-    },
-    // 选择权限 可不要
-    handleCheckedOperateChange(value) {
-      const level = value.level.split('-');
-      const levelLength = level.length;
-      let parent = this.rightsList;
-      let current = this.rightsList[+level[0]];
-      if (levelLength > 1) {
-        parent = parent[+level[0]];
-        current = current.list[+level[1]];
-      }
-      if (levelLength > 2) {
-        parent = parent.list[+level[1]];
-        current = current.list[+level[2]];
-      }
-      if (levelLength > 3) {
-        parent = parent.list[+level[2]];
-        current = current.list[+level[3]];
-      }
-      console.log('parent', parent);
-      console.log('current', current);
-    },
-    // 可不要
-    handleCheckedOperateAll(value) {
-      this.rightsList.forEach((feature, index) => {
-        if (feature.lists) {
-          if (feature.checked) {
-            feature.lists.forEach((feat, ind) => {
-              this.rightsList[index].lists[ind].checked = true;
-              if (feat.lists) {
-                feat.lists.forEach((fea, id) => {
-                  this.rightsList[index].lists[ind].lists[id].checked = true;
-                  if (fea.lists) {
-                    fea.lists.forEach((f, i) => {
-                      this.rightsList[index].lists[ind].lists[id].list[i].checked = true;
-                      fea.operateList((o, od) => {
-                        this.rightsList[index].lists[ind].lists[id].operateList[i].checked = true;
-                      });
-                    });
-                  }
-                  if (fea.operateList) {
-                    fea.operateList.forEach((o, i) => {
-                      this.rightsList[index].lists[ind].lists[id].operateList[i].checked = true;
-                    });
-                  }
-                });
-              }
-              if (feat.operateList) {
-                feat.operateList.forEach((ope, id) => {
-                  this.rightsList[index].lists[ind].operateList[id].checked = true;
-                });
-              }
-            });
-          } else {
-            feature.lists.forEach((feat, ind) => {
-              this.rightsList[index].lists[ind].checked = false;
-              if (feat.lists) {
-                feat.lists.forEach((fea, id) => {
-                  this.rightsList[index].lists[ind].lists[id].checked = false;
-                  if (fea.lists) {
-                    fea.lists.forEach((f, i) => {
-                      this.rightsList[index].lists[ind].lists[id].list[i].checked = false;
-                      fea.operateList((o, od) => {
-                        this.rightsList[index].lists[ind].lists[id].operateList[i].checked = false;
-                      });
-                    });
-                  }
-                  if (fea.operateList) {
-                    fea.operateList.forEach((o, i) => {
-                      this.rightsList[index].lists[ind].lists[id].operateList[i].checked = false;
-                    });
-                  }
-                });
-              }
-              if (feat.operateList) {
-                feat.operateList.forEach((ope, id) => {
-                  this.rightsList[index].lists[ind].operateList[id].checked = false;
-                });
-              }
-            });
-          }
-        }
-      });
-      console.log("handleCheckedCitiesChange", value, this.rightsList);
     },
     updateClose() {
       this.updateShow = false;
       this.rightsList = [];
     },
     updateSubmit() {
-      const _this = this;
       this.formatUpdateResult();
-      console.log('_this.updateInfo', _this.updateInfo)
-      _user.updateUserRight(_this.updateInfo.userId, { funcIds: this.updateInfo.funcIds }).then(res => {
-        _this.updateClose();
-        _this.filterAxios(res, res => {
-          _this.successTips('修改成功');
+      _user
+        .updateUserRight(this.updateInfo.userId, {
+          funcIds: this.updateInfo.funcIds
         })
-      })
+        .then(res => {
+          this.updateClose();
+          this.filterAxios(res, res => {
+            this.successTips("修改成功");
+          });
+        });
     },
     // 格式化修改数据
     formatUpdateResult() {
-      console.log(this.rightsList);
       const result = [];
       this.rightsList.forEach(lv1 => {
         if (lv1.checked) {
-          result.push(lv1.funcId)
-          lv1.list && lv1.list.forEach(lv2 => {
-            if (lv2.checked) {
-              result.push(lv2.funcId);
-              lv2.list && lv2.list.forEach(lv3 => {
-                if (lv3.checked) {
-                  result.push(lv3.funcId)
-                  lv3.list && lv3.list.forEach(lv4 => {
-                    lv4.checked && result.push(lv4.funcId);
-                  })
-                }
-              });
-            }
-          });
+          result.push(lv1.funcId);
+          lv1.list &&
+            lv1.list.forEach(lv2 => {
+              if (lv2.checked) {
+                result.push(lv2.funcId);
+                lv2.list &&
+                  lv2.list.forEach(lv3 => {
+                    if (lv3.checked) {
+                      result.push(lv3.funcId);
+                      lv3.list &&
+                        lv3.list.forEach(lv4 => {
+                          lv4.checked && result.push(lv4.funcId);
+                        });
+                    }
+                  });
+              }
+            });
         }
-      })
+      });
       this.updateInfo.funcIds = JSON.stringify(result);
     },
     // 渲染用户权限
@@ -298,22 +214,25 @@ export default {
       const _this = this;
       list.forEach((lv1, id1) => {
         // 第一级
-        const lv1Temp = _this.setItem(lv1, id1 + '');
+        const lv1Temp = _this.setItem(lv1, id1 + "");
         if (lv1.children && lv1.children.length > 0) {
           const lv1TempChildren = [];
           lv1.children.forEach((lv2, id2) => {
             // 第二级
-            const lv2Temp = _this.setItem(lv2, id1 + '-' + id2);
+            const lv2Temp = _this.setItem(lv2, id1 + "-" + id2);
             if (lv2.children && lv2.children.length > 0) {
               const lv2TempChildren = [];
               lv2.children.forEach((lv3, id3) => {
                 // 第三级
-                const lv3Temp = _this.setItem(lv3, id1 + '-' + id2 + '-' + id3);
+                const lv3Temp = _this.setItem(lv3, id1 + "-" + id2 + "-" + id3);
                 if (lv3.children && lv3.children.length > 0) {
                   const lv3TempChildren = [];
                   lv3Temp.children.forEach((lv4, id4) => {
                     // 第四级
-                    const lv4Temp = _this.setItem(lv4, id1 + '-' + id2 + '-' + id3 + '-' + id4);
+                    const lv4Temp = _this.setItem(
+                      lv4,
+                      id1 + "-" + id2 + "-" + id3 + "-" + id4
+                    );
                     lv3TempChildren.push(lv4Temp);
                   });
                   lv3Temp.children = lv3TempChildren;
@@ -340,45 +259,7 @@ export default {
         channelId: item.funcLevel,
         parendId: item.funcLevel - 1,
         show: false
-      }
-    },
-    // 计算checked权限
-    _handelChecked() {
-      let checkedRows1 = [];
-      let checkedRows2 = [];
-      let checkedRows3 = [];
-      this.rightsList.forEach((item, index) => {
-        if (item.checked) {
-          checkedRows1.push(item);
-          item.lists.forEach((itm, idx) => {
-            if (itm.checked) {
-              checkedRows2.push(itm);
-              if (itm.lists) {
-                itm.lists.forEach((it, id) => {
-                  if (it.checked) {
-                    checkedRows3.push(it);
-                  }
-                });
-              }
-            }
-          });
-        }
-      });
-      this._toggleSelection(checkedRows1, "1");
-      this._toggleSelection(checkedRows2, "2");
-      this._toggleSelection(checkedRows3, "3");
-    },
-    // 用户权限修改设置已选择
-    _toggleSelection(rows, i) {
-      if (rows) {
-        rows.forEach(row => {
-          console.log("row", row, this.$refs, this.$refs["multipleTable" + i]);
-          console.log("i", i);
-          this.$refs["multipleTable" + i].toggleRowSelection(row);
-        });
-      } else {
-        this.$refs.multipleTable.clearSelection();
-      }
+      };
     }
   }
 };

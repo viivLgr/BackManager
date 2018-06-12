@@ -7,6 +7,7 @@
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
              <el-form-item label="状态" prop="status">
                 <el-select v-model="searchForm.status" placeholder="请选择">
+                    <el-option label="全部" value=""></el-option>
                     <el-option label="正常" value="VALID"></el-option>
                     <el-option label="失效" value="INVALID"></el-option>
                 </el-select>
@@ -29,16 +30,18 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantId" label="商户号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantName" label="商户名称"></el-table-column>
-        <el-table-column align="center" prop="productName" label="产品名称" width="150"></el-table-column>
-        <el-table-column align="center" prop="rateTypeDesc" label="产品费率类型" width="94"></el-table-column>
+        <el-table-column align="center" prop="merchantName" label="商户名称" fixed width="100"></el-table-column>
+        <el-table-column align="center" prop="productName" label="产品名称" fixed width="100"></el-table-column>
+        <el-table-column align="center" prop="rateTypeDesc" label="产品费率类型" width="140"></el-table-column>
         <el-table-column align="center" prop="rateDesc" label="产品费率" width="70"></el-table-column>
-        <el-table-column align="center" prop="agentName" label="代理商名称" width="84"></el-table-column>
-        <el-table-column align="center" prop="agentRateType" label="代理商费率类型" width="110"></el-table-column>
-        <el-table-column align="center" prop="agentRate" label="代理商费率" width="100"></el-table-column>
+        <template v-if="storeInfo.agentMerchantName">
+          <el-table-column align="center" prop="merchantAgentName" label="代理商名称" width="84"></el-table-column>
+          <el-table-column align="center" prop="merchantAgentRateTypeDesc" label="代理商费率类型" width="140"></el-table-column>
+          <el-table-column align="center" prop="merchantAgentRateDesc" label="代理商费率" width="100"></el-table-column>
+        </template>
         <el-table-column align="center" prop="status" label="状态" width="100"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="修改时间" width="160"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
@@ -71,21 +74,24 @@
           <el-form-item label="商户名称">
             <el-input v-model="form.merchantName" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="代理商名称">
-            <el-input v-model="form.agentName" :disabled="true"></el-input>
+          <el-form-item label="代理商名称" v-if="storeInfo.agentMerchantName">
+            <el-input v-model="storeInfo.agentMerchantName" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="产品" prop="productCode">
-            <el-select v-model="form.productCode" placeholder="请选择产品">
-                <el-option v-for="(item, index) in selectProductList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
+          <el-form-item label="产品" prop="productValue">
+            <el-select v-model="form.productValue" placeholder="请选择产品" @change="handleProductCodeChange">
+                <el-option v-for="(item, index) in selectProductList" :key="index" :label="item.dicName" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="类型" prop="rateType">
-            <el-select v-model="form.rateType" placeholder="请选择类型">
+          <el-form-item label="费率类型" prop="rateType">
+            <el-select v-model="form.rateType" placeholder="" :disabled="true">
                 <el-option v-for="(item, index) in selectTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="代理商费率" prop="rate">
-            <el-input type="number" v-model="form.rate" placeholder="请输入代理商费率"></el-input>
+          <el-form-item label="费率" prop="rate">
+            <el-input type="number" v-model="form.rate" placeholder="请输入费率"></el-input>
+          </el-form-item>
+          <el-form-item label="代理商费率" v-if="storeInfo.agentMerchantName">
+            <el-input type="number" v-model="form.merchantAgentRate" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
@@ -103,12 +109,24 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
-import { formatDate } from "static/js/format.js";
+import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _product from "service/product-service.js";
+import _common from "service/common-service.js";
 export default {
-  mixins: [axiosMixin, listMixin, validMixin],
+  mixins: [axiosMixin, listMixin],
   data() {
+    const checkRate = (rule, value, callback) => {
+      if (
+        this.storeInfo.agentMerchantName &&
+        this.form.merchantAgentRate < value
+      ) {
+        callback(new Error("费率须小于代理商费率"));
+      }
+      if (value < 0) {
+        callback(new Error("费率不得小于0"));
+      }
+      callback();
+    };
     return {
       storeInfo: {},
       searchForm: {
@@ -116,40 +134,15 @@ export default {
         status: ""
       },
       rules: {
-        roleId: [{ required: true, message: "请选择角色", trigger: "blur" }],
-        linkmanName: [
-          { required: true, message: "请输入姓名", trigger: "blur" }
+        productValue: [
+          { required: true, message: "请选择产品", trigger: "blur" }
         ],
-        userName: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { validator: this.checkPass, trigger: "blur" }
-        ],
-        checkPass: [
-          { required: true, message: "请输入确认密码", trigger: "blur" },
-          { validator: this.checkPass2, trigger: "blur" }
-        ],
-        linkmanPhone: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
-          { validator: this.checkPhone, trigger: "blur" }
-        ],
-        linkmanEmail: [
-          { required: true, message: "请输入邮箱", trigger: "blur" },
-          {
-            type: "email",
-            message: "请输入正确格式的邮箱邮箱",
-            trigger: "blur"
-          }
-        ],
-        qq: [
-          { required: true, message: "请输入QQ号", trigger: "blur" },
-          { validator: this.checkQQ, trigger: "blur" }
-        ],
-        wechat: [
-          { required: true, message: "请输入微信号", trigger: "blur" },
-          { validator: this.checkWechat, trigger: "blur" }
+        // rateType: [
+        //   { required: true, message: "请选择费率类型", trigger: "blur" }
+        // ],
+        rate: [
+          { required: true, message: "请输入费率", trigger: "blur" },
+          { validator: checkRate, trigger: "blur" }
         ],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
       },
@@ -163,16 +156,18 @@ export default {
   created() {
     this.storeInfo = this.$route.query;
     this.searchForm.merchantId = this.storeInfo.merchantId;
-    this._renderTableDate({ merchantId: this.storeInfo.merchantId });
-    this.getProductAndTypeList();
+    this.selectProductList.length <= 0 && this.getProductList();
+    this.getRateTypeList().then(res => {
+      this._renderTableDate({ merchantId: this.storeInfo.merchantId });
+    });
   },
   methods: {
     // 获取产品列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _product.getList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
+          const typeDescList = this.selectTypeList.map(item => item.dicName);
           return {
             no: index + 1,
             id: item.id,
@@ -181,15 +176,20 @@ export default {
             productCode: item.productCode,
             productName: item.productName,
             rateType: item.rateType,
-            rateTypeDesc: item.rateTypeDesc,
+            rateTypeDesc: typeDescList[item.rateType - 1],
             rate: item.rate,
-            rateDesc: item.rate + (item.rateType === "1" ? "元" : ''),
-            agentName: item.agentName,
-            agentRateType: item.agentRateType,
-            agentRate: item.agentRate,
+            rateDesc: item.rate + (item.rateType === "1" ? "元" : ""),
+            merchantAgentName: item.merchantAgentName,
+            merchantAgentRateType: item.merchantAgentRateType,
+            merchantAgentRateTypeDesc:
+              typeDescList[item.merchantAgentRateType - 1],
+            merchantAgentRate: item.merchantAgentRate,
+            merchantAgentRateDesc:
+              item.merchantAgentRate +
+              (item.merchantAgentRateType === "1" ? "元" : ""),
             status: item.status === "VALID" ? "生效" : "失效",
-            createTime: formatDate(item.createTime),
-            updateTime: formatDate(item.modifiedTime),
+            createTime: item.createTime,
+            updateTime: item.modifiedTime,
             operate: {
               update: true
             }
@@ -199,15 +199,7 @@ export default {
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
-      this.$refs[searchForm].validate(valid => {
-        if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+      this._renderTableDate(this.$refs[searchForm].model);
     },
     formClose() {
       this.addShow = false;
@@ -223,9 +215,11 @@ export default {
           id: row.id,
           merchantId: row.merchantId,
           merchantName: row.merchantName,
-          agentName: row.agentName,
+          merchantAgentName: row.merchantAgentName,
+          merchantAgentRate: row.merchantAgentRate,
           productCode: row.productCode,
-          rateTypeCode: row.rateTypeCode,
+          productValue:
+            row.productCode + "-" + row.merchantAgentRate + "-" + row.rateType,
           rateType: row.rateType,
           rate: row.rate,
           status: row.status === "生效" ? "VALID" : "INVALID"
@@ -235,27 +229,30 @@ export default {
           formTitle: "添加",
           merchantId: _this.storeInfo.merchantId,
           merchantName: _this.storeInfo.merchantName,
-          agentName: _this.storeInfo.agentName
+          agentMerchantName: _this.storeInfo.agentMerchantName
         };
       }
       _this.addShow = true;
     },
     formSubmit() {
-      const _this = this;
       this.$refs.form.validate(valid => {
         if (valid) {
-          delete _this.form.merchantName;
-          delete _this.form.agentName;
-          if (_this.form.formTitle === "添加") {
-            delete _this.form.formTitle;
-            _product.add(_this.form).then(res => {
-              _this.formatResult(res, "添加成功");
+          delete this.form.merchantName;
+          delete this.form.agentName;
+          if (this.form.formTitle === "添加") {
+            delete this.form.formTitle;
+            delete this.form.merchantName;
+            delete this.form.agentMerchantName;
+            delete this.form.merchantAgentRate;
+            delete this.form.merchantAgentRateType;
+            _product.add(this.form).then(res => {
+              this.formatResult(res, "添加成功");
             });
           } else {
-            delete _this.form.formTitle;
-            delete _this.form.merchantId;
-            _product.update(_this.form).then(res => {
-              _this.formatResult(res, "修改成功");
+            delete this.form.formTitle;
+            delete this.form.merchantId;
+            _product.update(this.form.id, this.form).then(res => {
+              this.formatResult(res, "修改成功");
             });
           }
         } else {
@@ -272,17 +269,51 @@ export default {
         _this._renderTableDate({ merchantId: this.storeInfo.merchantId });
       });
     },
-    // 获取可选择产品和类型列表
-    getProductAndTypeList() {
-      const _this = this;
-      _product
-        .getProductAndTypeList({ merchantId: _this.merchantId })
-        .then(res => {
-          _this.filterAxios(res, res => {
-            _this.selectProductList = res.PRODUCT_CODE;
-            _this.selectTypeList = res.PROD_RATE_TYPE;
+    // 获取可选择产品列表
+    getProductList() {
+      // 如果有代理商，可选择的产品列表为代理商已有的
+      if (this.storeInfo.agentMerchantName) {
+        _product.getAgentProductList(this.storeInfo.merchantId).then(res => {
+          this.filterAxios(res, res => {
+            res.map(item => {
+              this.selectProductList.push({
+                ...item,
+                value:
+                  item.dicCode +
+                  "-" +
+                  item.merchantAgentRate +
+                  "-" +
+                  item.merchantAgentRateType
+              });
+            });
           });
         });
+      } else {
+        // 没有代理商，字典表里所有产品均可选择
+        _common.getDictionaryList("PRODUCT_CODE").then(res => {
+          this.filterAxios(res, res => {
+            this.selectProductList = res;
+          });
+        });
+      }
+    },
+    // 获取可选择费率类型列表
+    getRateTypeList() {
+      return _common.getDictionaryList("PROD_RATE_TYPE").then(res => {
+        this.filterAxios(res, res => {
+          this.selectTypeList = res;
+        });
+      });
+    },
+    // 根据商户号和产品code查询费率类型
+    handleProductCodeChange() {
+      // 有代理商的时候查询代理商费率
+      if (this.storeInfo.agentMerchantName) {
+        const productValueList = this.form.productValue.split("-");
+        this.form.productCode = productValueList[0];
+        this.form.merchantAgentRate = productValueList[1];
+        this.form.rateType = productValueList[2];
+      }
     }
   }
 };

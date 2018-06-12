@@ -14,6 +14,7 @@
             </el-form-item>
             <el-form-item label="状态">
                 <el-select v-model="searchForm.status" placeholder="请选择状态">
+                    <el-option label="全部" value=""></el-option>
                     <el-option label="正常" value="VALID"></el-option>
                     <el-option label="失效" value="INVALID"></el-option>
                 </el-select>
@@ -43,7 +44,7 @@
         <el-table-column align="center" prop="linkmanEmail" label="联系人邮箱" width="150"></el-table-column>
         <el-table-column align="center" prop="status" label="商户状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="入网时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="agentName" label="代理商户" width="120"></el-table-column>
+        <el-table-column align="center" prop="agentMerchantName" label="代理商户" width="120"></el-table-column>
         <el-table-column align="center" prop="amount" label="商户余额"></el-table-column>
         <el-table-column align="center" prop="freezingAmount" label="冻结金额"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right" width="480">
@@ -77,7 +78,7 @@
       >
       <div class="detail-input">
         <el-form :inline="true" ref="form" :model="form" :rules="rules" size="small" label-width="105px">
-          <div>
+          <div class="el-form-line">
             <el-form-item label="商户号" prop="merchantId">
               <el-input v-model="form.merchantId" placeholder="请输入商户号" :disabled="form.title==='修改'"></el-input>
             </el-form-item>
@@ -91,7 +92,7 @@
               </el-select>
             </el-form-item>
           </div>
-          <div>
+          <div class="el-form-line">
             <el-form-item label="联系人姓名" prop="linkmanName">
               <el-input v-model="form.linkmanName" placeholder="请输入联系人姓名"></el-input>
             </el-form-item>
@@ -102,9 +103,9 @@
               <el-input v-model="form.linkmanEmail" placeholder="请输入联系人邮箱"></el-input>
             </el-form-item>
           </div>
-          <div>
-            <el-form-item label="代理商户名称" prop="agentName">
-              <el-input v-model="form.agentName" :disabled="true"></el-input>
+          <div class="el-form-line">
+            <el-form-item label="代理商户名称" prop="merchantAgentName">
+              <el-input v-model="form.merchantAgentName" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="银行卡类型" prop="cardType">
               <el-select v-model="form.cardType" placeholder="请选择银行卡类型">
@@ -116,7 +117,7 @@
               <el-input v-model="form.bankCardNo" placeholder="请输入银行卡号"></el-input>
             </el-form-item>
           </div>
-          <div>
+          <div class="el-form-line">
             <el-form-item label="账户名称" prop="accountName">
               <el-input v-model="form.accountName" placeholder="请输入账户名称"></el-input>
             </el-form-item>
@@ -127,7 +128,7 @@
               <el-input v-model="form.branchNo" placeholder="请输入联行号"></el-input>
             </el-form-item>
           </div>
-          <div>
+          <div class="el-form-line">
             <el-form-item label="支付密码" prop="payPassword">
               <el-input v-model="form.payPassword" placeholder="请输入支付密码"></el-input>
             </el-form-item>
@@ -158,7 +159,7 @@
       center
       >
       <div>
-        <el-form ref="form" :model="addUserForm" :rules="addUserRules" size="small" label-width="105px">
+        <el-form ref="addUserForm" :model="addUserForm" :rules="addUserRules" size="small" label-width="105px">
           <el-form-item label="商户">
             <el-input v-model="addUserForm.merchantName" :disabled="true"></el-input>
           </el-form-item>
@@ -172,6 +173,9 @@
           </el-form-item>
           <el-form-item label="用户名" prop="userName">
             <el-input v-model="addUserForm.userName" placeholder="请输入用户名"></el-input>
+          </el-form-item>
+          <el-form-item label="昵称" prop="nickName">
+            <el-input v-model="addUserForm.nickName" placeholder="请输入昵称"></el-input>
           </el-form-item>
           <el-form-item label="登录密码" prop="password">
             <el-input v-model="addUserForm.password" type="password" placeholder="请输入登录密码"></el-input>
@@ -241,12 +245,12 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
-import { formatMoney, formatDate } from "static/js/format.js";
+import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { formatMoney } from "static/js/format.js";
 import _store from "service/store-service.js";
 import _user from "service/user-service.js";
 export default {
-  mixins: [axiosMixin, listMixin, validMixin],
+  mixins: [axiosMixin, listMixin],
   data() {
     const checkBranchNo = (rule, value, callback) => {
       if (this.form.cardType === "PUB" && value === "") {
@@ -265,6 +269,25 @@ export default {
     const checkMd5Key = (rule, value, callback) => {
       if (this.form.title === "添加" && value === "") {
         callback(new Error("应用密钥不能为空"));
+      } else {
+        callback();
+      }
+    };
+    const validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else {
+        if (this.addUserForm.checkPass !== "") {
+          this.$refs.addUserForm.validateField("checkPass");
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value !== this.addUserForm.password) {
+        callback(new Error("两次输入密码不一致!"));
       } else {
         callback();
       }
@@ -304,8 +327,8 @@ export default {
             trigger: "blur"
           }
         ],
-        agentName: [
-          { required: true, message: "请输入代理商名称", trigger: "blur" }
+        agentMerchantName: [
+          { required: false, message: "请输入代理商名称", trigger: "blur" }
         ],
         cardType: [
           { required: true, message: "请选择卡类型", trigger: "blur" }
@@ -337,9 +360,7 @@ export default {
             trigger: "blur"
           }
         ],
-        md5Key: [
-          { validator: checkMd5Key, trigger: "blur" }
-        ],
+        md5Key: [{ validator: checkMd5Key, trigger: "blur" }],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
       },
       appInfoForm: {},
@@ -353,13 +374,14 @@ export default {
         userName: [
           { required: true, message: "请输入用户名", trigger: "blur" }
         ],
+        nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { validator: this.checkPass, trigger: "blur" }
+          { validator: validatePass, trigger: "blur" }
         ],
         checkPass: [
           { required: true, message: "请输入确认密码", trigger: "blur" },
-          { validator: this.checkPass2, trigger: "blur" }
+          { validator: validatePass2, trigger: "blur" }
         ],
         linkmanPhone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
@@ -388,7 +410,6 @@ export default {
   },
   created() {
     this._renderTableDate();
-    this.getRoleList();
   },
   methods: {
     // 获取列表
@@ -400,7 +421,7 @@ export default {
           _this.renderTableDate(res, (item, index) => {
             return {
               no: index + 1,
-              agentName: item.agentName,
+              id: item.id,
               merchantId: item.merchantId,
               merchantName: item.merchantName,
               linkmanName: item.linkmanName,
@@ -409,10 +430,11 @@ export default {
               merchantType:
                 item.merchantType === "AGENT" ? "代理商户" : "普通商户",
               merchantAgentId: item.merchantAgentId,
+              agentMerchantName: item.agentMerchantName,
               amount: formatMoney(item.amount),
               freezingAmount: formatMoney(item.freezingAmount),
               status: item.status === "VALID" ? "生效" : "失效",
-              createTime: formatDate(item.createTime),
+              createTime: item.createTime,
               operate: {
                 add: item.merchantType === "AGENT",
                 update: true
@@ -446,71 +468,63 @@ export default {
       if (row instanceof Object) {
         if (type && type === "update") {
           // 修改
-          _this.getStoreInfo(row.merchantId);
+          _this.getStoreInfo(row.id);
         } else {
           _this.form = {
             title: "添加",
             merchantAgentId: row.merchantId,
-            agentName: row.agentName
+            merchantAgentName: row.merchantName
           };
         }
       } else {
         _this.form = {
-          title: "添加",
-          merchantAgentId: localStorage.getItem("ms_userId"),
-          agentName: localStorage.getItem("ms_userName")
+          title: "添加"
         };
       }
+      console.log("this.form", this.form);
     },
     // 获取商户详细信息
-    getStoreInfo(merchantId) {
+    getStoreInfo(id) {
       const _this = this;
-      _store.getStoreDetailInfo({ merchantId: merchantId }).then(res => {
-        _this.filterAxios(
-          res,
-          res => {
-            _this.form = {
-              title: "修改",
-              merchantId: res.merchantId,
-              merchantName: res.merchantName,
-              merchantType: res.merchantType,
-              linkmanName: res.linkmanName,
-              linkmanPhone: res.linkmanPhone,
-              linkmanEmail: res.linkmanEmail,
-              merchantAgentId: res.merchantAgentId + "",
-              agentName: res.agentName,
-              cardType: res.cardType,
-              bankCardNo: res.bankCardNo,
-              accountName: res.accountName,
-              bankName: res.bankName,
-              branchNo: res.branchNo,
-              payPassword: res.payPassword,
-              md5Key: res.md5Key,
-              status: res.status
-            };
-          },
-          res => {
-            console.log("err", res);
-          }
-        );
+      _store.getStoreDetailInfo(id).then(res => {
+        _this.filterAxios(res, res => {
+          _this.form = {
+            title: "修改",
+            merchantId: res.merchantId,
+            merchantName: res.merchantName,
+            merchantType: res.merchantType,
+            linkmanName: res.linkmanName,
+            linkmanPhone: res.linkmanPhone,
+            linkmanEmail: res.linkmanEmail,
+            merchantAgentId: res.merchantAgentId + "",
+            merchantAgentName: res.merchantAgentName,
+            cardType: res.cardType,
+            bankCardNo: res.bankCardNo,
+            accountName: res.accountName,
+            bankName: res.bankName,
+            branchNo: res.branchNo,
+            payPassword: res.payPassword,
+            md5Key: res.md5Key,
+            status: res.status
+          };
+        });
       });
     },
     addSubmit() {
-      const _this = this;
       this.$refs.form.validate(valid => {
         if (valid) {
-          if (_this.form.title === "添加") {
-            delete _this.form.title;
-            _this.form.agentName && delete _this.form.agentName;
-            _store.addStroreUser(_this.form).then(res => {
-              _this.formatResult(res, "添加成功");
+          if (this.form.title === "添加") {
+            delete this.form.title;
+            this.form.agentMerchantName && delete this.form.agentMerchantName;
+            _store.addStroreUser(this.form).then(res => {
+              this.formatResult(res, "添加成功");
             });
           } else {
             // 修改
-            delete _this.form.title;
-            _this.form.agentName && delete _this.form.agentName;
-            _store.updateStroreUser(_this.form).then(res => {
-              _this.formatResult(res, "修改成功");
+            delete this.form.title;
+            this.form.agentMerchantName && delete this.form.agentMerchantName;
+            _store.updateStroreUser(this.form.id, this.form).then(res => {
+              this.formatResult(res, "修改成功");
             });
           }
         } else {
@@ -525,19 +539,17 @@ export default {
       this.form = {};
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     },
     // 修改应用信息
     handleAppInfo(row) {
-      const _this = this;
-      _this.appInfoForm = {};
-      _this.getAppInfo(row.merchantId);
-      _this.updateAppInfoShow = true;
+      this.appInfoForm = {};
+      this.getAppInfo(row.merchantId);
+      this.updateAppInfoShow = true;
     },
     updateAppInfoClose() {
       this.updateAppInfoShow = false;
@@ -545,40 +557,38 @@ export default {
       this.appInfoForm = {};
     },
     appSubmit() {
-      const _this = this;
-      delete _this.appInfoForm.merchantId;
-      _store.updateAppInfo(_this.appInfoForm).then(res => {
-        _this.filterAxios(res, res => {
-          _this.successTips("应用信息修改成功");
-          _this.updateAppInfoClose();
+      _store
+        .updateAppInfo(this.appInfoForm.merchantId, this.appInfoForm)
+        .then(res => {
+          this.filterAxios(res, res => {
+            this.successTips("应用信息修改成功");
+            this.updateAppInfoClose();
+          });
         });
-      });
     },
     // 获取应用信息详细信息
     getAppInfo(merchantId) {
-      const _this = this;
-      _store.getStoreAppInfo({ merchantId: merchantId }).then(res => {
-        _this.filterAxios(res, res => {
-          _this.storeAppInfo = res;
-          _this.appInfoForm = {
-            merchantId: _this.storeAppInfo.merchantId,
-            appId: _this.storeAppInfo.appId,
-            id: _this.storeAppInfo.id,
-            md5Key: _this.storeAppInfo.md5Key,
-            status: _this.storeAppInfo.status
+      _store.getStoreAppInfo(merchantId).then(res => {
+        this.filterAxios(res, res => {
+          this.storeAppInfo = res;
+          this.appInfoForm = {
+            merchantId: this.storeAppInfo.merchantId,
+            appId: this.storeAppInfo.appId,
+            id: this.storeAppInfo.id,
+            md5Key: this.storeAppInfo.md5Key,
+            status: this.storeAppInfo.status
           };
         });
       });
     },
     // 去产品列表页面
     goProductList(row) {
-      //  "/product_list?merchantId=" + row.merchantId
       this.$router.push({
         path: "/product_list",
         query: {
           merchantId: row.merchantId,
           merchantName: row.merchantName,
-          agentName: row.agentName
+          agentMerchantName: row.agentMerchantName
         }
       });
     },
@@ -589,8 +599,8 @@ export default {
         merchantId: row.merchantId,
         merchantName: row.merchantName
       };
+      this.roleList.length <= 0 && this.getRoleList();
       _this.addUserShow = true;
-      console.log("handleForm", row);
     },
     addUserClose() {
       this.addUserShow = false;
@@ -598,14 +608,15 @@ export default {
       this.$refs["addUserForm"] && this.$refs["addUserForm"].resetFields();
     },
     addUserSubmit() {
-      const _this = this;
       this.$refs.addUserForm.validate(valid => {
         if (valid) {
-          _user.addUser(_this.form).then(res => {
-            _this.filterAxios(res, res => {
-              _this.successTips("添加用户成功");
-              _this.addUserClose();
-              _this._renderTableDate();
+          console.log("addUserForm", this.addUserForm);
+          delete this.form.checkPass; // 去掉确认密码属性
+          _user.addUser(this.addUserForm).then(res => {
+            this.filterAxios(res, res => {
+              this.successTips("添加用户成功");
+              this.addUserClose();
+              this._renderTableDate();
             });
           });
         } else {

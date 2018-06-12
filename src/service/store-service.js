@@ -1,27 +1,27 @@
 import { _axios } from "static/js/axios.js";
 const _store = {
   getStoreList: function (data) {
-    return _axios('/admin/merchant/list', 'POST', data);
+    return _axios('/business/merchant/pageList', 'POST', data);
   },
   // 添加商户
   addStroreUser: function (data) {
-    return _axios('/admin/merchant/insert', 'POST', data);
+    return _axios('/business/merchant/add', 'POST', data);
   },
-  // 添加商户
-  updateStroreUser: function (data) {
-    return _axios('/admin/merchant/update', 'POST', data);
+  // 修改商户
+  updateStroreUser: function (id, data) {
+    return _axios('/business/merchant/' + id + '/update', 'POST', data);
   },
   // 查询商户详细信息
-  getStoreDetailInfo: function(data) {
-    return _axios('/admin/merchant/querybyid', 'POST', data);
+  getStoreDetailInfo: function(id) {
+    return _axios('/business/merchant/' + id + '/detail');
   },
   // 查询应用信息详细信息
-  getStoreAppInfo: function(data) {
-    return _axios('/admin/merchant/apply', 'POST', data);
+  getStoreAppInfo: function(merchantId) {
+    return _axios('/business/merchant/' + merchantId + '/merchantOpenApp/detail');
   },
   // 修改应用信息详细信息
-  updateAppInfo: function(data) {
-    return _axios('/admin/merchant/applyupdate', 'POST', data);
+  updateAppInfo: function(merchantId, data) {
+    return _axios('/business/merchant/' + merchantId + '/merchantOpenApp/update', 'POST', data);
   }
 }
 

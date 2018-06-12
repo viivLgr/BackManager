@@ -9,7 +9,8 @@ const _user = {
   },
   // 用户权限用户列表
   userRightUserList: function (data) {
-    return _axios('/sys/user/function/pageList', 'POST', data);
+    // return _axios('/sys/user/function/pageList', 'POST', data);
+    return _axios('/sys/user/pageList/forPermission', 'POST', data);
   },
   // 获取用户权限
   getUserRight: function (data) {

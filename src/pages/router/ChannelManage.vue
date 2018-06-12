@@ -69,7 +69,7 @@
       center
       >
       <div class="detail-input">
-        <el-form :inline="true" ref="form" :model="form" :rules="rules" size="small" label-width="110px">
+        <el-form :inline="true" ref="form" :model="form" :rules="this.form.title === '修改' ? rules : {}" size="small" label-width="110px">
             <div>
                 <el-form-item label="渠道编码" prop="channelCode">
                     <el-input v-model="form.channelCode" placeholder="请输入渠道编码" :disabled="form.disabled"></el-input>
@@ -246,28 +246,20 @@ export default {
     // 获取产品类型
     getProductCodeList() {
       const _this = this;
-      _common
-        .getDictionaryList({
-          productCode: "PRODUCT_CODE"
-        })
-        .then(res => {
-          _this.filterAxios(res, res => {
-            _this.productCodeList = res.productCode;
-          });
+      _common.getDictionaryList("PRODUCT_CODE").then(res => {
+        _this.filterAxios(res, res => {
+          _this.productCodeList = res;
         });
+      });
     },
     // 获取渠道类型
     getChannelTypeList() {
       const _this = this;
-      _common
-        .getDictionaryList({
-          channelType: "CHANNEL_TYPE"
-        })
-        .then(res => {
-          _this.filterAxios(res, res => {
-            _this.channelTypeList = res.channelType;
-          });
+      _common.getDictionaryList("CHANNEL_TYPE").then(res => {
+        _this.filterAxios(res, res => {
+          _this.channelTypeList = res;
         });
+      });
     },
     // 查询
     searchSubmit(searchForm) {
@@ -296,7 +288,6 @@ export default {
     // 获取渠道详情
     getChannelDetail(channelId, type) {
       const _this = this;
-      console.log('channelId', channelId);
       _router.getChannelDetail(channelId).then(res => {
         _this.filterAxios(res, res => {
           _this.form = {

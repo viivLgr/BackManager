@@ -3,9 +3,9 @@
     <div class="logo">转折支付平台管理系统</div>
     <div class="user-info">
       <el-button type="text"><i class="fa fa-user"/>{{userInfo.userName}}</el-button>
-      <el-button type="text"  @click="searchOpen">
+      <!-- <el-button type="text"  @click="searchOpen">
         <i class="fa fa-gear"/>设置
-      </el-button>
+      </el-button> -->
       <el-button type="text" @click="logout">
         <i class="fa fa-power-off"/>退出
       </el-button>

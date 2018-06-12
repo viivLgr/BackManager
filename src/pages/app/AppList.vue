@@ -134,8 +134,7 @@ export default {
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
-      _this._renderTableDate(_this.searchForm);
+      this._renderTableDate(this.searchForm);
     },
     // 去接口列表
     handelInterface(row) {

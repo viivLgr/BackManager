@@ -3,7 +3,8 @@
     <!-- <div class="login-bg"><img src="../static/img/login_bg.jpg"></div> -->
     <div class="login">
       <h1>
-        <img src="../static/img/unionPay.png" alt="转折科技"><br/>
+        <!-- <img src="../static/img/unionPay.png" alt="转折科技"><br/> -->
+        <img src="../static/img/logo.png" alt="转折科技"><br/>
         转折支付平台管理系统
       </h1>
       <el-form :model="ruleForm" ref="ruleForm" :rules="rules" label-width="0px" class="demo-ruleForm">
@@ -17,9 +18,9 @@
         <div class="login-btn">
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
         </div>
-        <div class="login-tips">
+        <!-- <div class="login-tips">
           <el-checkbox v-model="checked">记住我</el-checkbox>
-        </div>
+        </div> -->
       </el-form>
     </div>
     <div class="footer">Copyright &copy; 2017.All Right Reserved</div>
@@ -28,7 +29,7 @@
 <script type="text/ecmascript-6">
 import _user from "service/user-service.js";
 import { axiosMixin } from "static/js/mixin.js";
-import Util from 'util/util.js'
+import Util from "util/util.js";
 
 const _util = new Util();
 
@@ -73,22 +74,24 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      const _this = this;
-      _this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          _user.login(_this.ruleForm).then(res => {
-            _this.filterAxios(
+          _user.login(this.ruleForm).then(res => {
+            this.filterAxios(
               res,
               res => {
-                _util.setStorage('userInfo', {
+                _util.setStorage("userInfo", {
                   ...res,
-                  userName: _this.ruleForm.userName
+                  userName: this.ruleForm.userName
                 });
                 _util.setStorage("token", res.token);
-                _this.$router.push(_this.$route.query.redirect || "/dashboard");
+                const redirect = this.$route.query.redirect
+                  ? decodeURIComponent(this.$route.fullPath.split("?redirect=")[1])
+                  : null;
+                this.$router.push(redirect || "/dashboard");
               },
               errMsg => {
-                _this.errMsg = errMsg;
+                this.errMsg = errMsg;
               }
             );
           });
@@ -132,6 +135,7 @@ export default {
       padding: 10px 0;
       img {
         padding: 10px 0;
+        width: 120px;
       }
     }
     .fa {

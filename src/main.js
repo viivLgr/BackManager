@@ -16,6 +16,7 @@ router.beforeEach((to, from, next) => {
     if (window.localStorage.getItem('token')) { // 获取当前的token是否存在
       next();
     } else {
+      console.log('to.fullPath', to.fullPath)
       next({
         path: '/login',
         query: {

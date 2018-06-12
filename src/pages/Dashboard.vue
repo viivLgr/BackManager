@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    dashboard
+    首页概览
   </div>
 </template>
 <script type="text/ecmascript-6">

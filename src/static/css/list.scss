@@ -62,11 +62,19 @@
 .operate-list{
   padding: 10px 0 0;
   i{
-    padding-right: 10px;
+    padding-right: 5px;
     cursor: pointer;
   }
   .operate-body{
     padding: 0 20px 0 30px;
+  }
+}
+
+// 表单多行排列
+.el-form-line{
+  display: flex;
+  .el-form-item{
+    flex: 1;
   }
 }
 

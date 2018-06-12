@@ -35,7 +35,7 @@
         style="width: 100%">
         <el-table-column align="center" prop="userId" label="序号" width="100" fixed></el-table-column>
         <el-table-column align="center" prop="userName" label="用户名" fixed></el-table-column>
-        <el-table-column align="center" prop="linkmanName" label="姓名" width="120"></el-table-column>
+        <el-table-column align="center" prop="linkmanName" label="姓名"></el-table-column>
         <el-table-column align="center" prop="linkmanPhone" label="联系方式" width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="所属机构"></el-table-column>
         <el-table-column align="center" prop="linkmanEmail" label="邮箱" width="150"></el-table-column>

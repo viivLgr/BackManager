@@ -2,17 +2,17 @@ import { _axios } from "static/js/axios.js";
 const _product = {
   // 产品列表
   getList: function (data) {
-    return _axios('/admin/merchant/productlist', 'POST', data);
+    return _axios('/business/merchant/merchantProduct/pageList', 'POST', data);
   },
   // 添加产品前查询产品列表和类型
-  getProductAndTypeList(data) {
-    return _axios('/admin/merchant/productname', 'POST', data);
+  getAgentProductList(merchantId) {
+    return _axios('/business/merchant/merchantProduct/agentProductList?merchantId=' + merchantId);
   },
   add: function (data) {
-    return _axios('/admin/merchant/product/insert', 'POST', data);
+    return _axios('/business/merchant/merchantProduct/add?merchantId=' + data.merchantId, 'POST', data);
   },
-  update: function (data) {
-    return _axios('/admin/merchant/product/update', 'POST', data);
+  update: function (id, data) {
+    return _axios('/business/merchant/merchantProduct/' + id + '/update', 'POST', data);
   }
 }
 

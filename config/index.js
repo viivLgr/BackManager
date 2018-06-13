@@ -50,7 +50,8 @@ module.exports = {
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    // assetsSubDirectory: 'static',
+    assetsSubDirectory: '//s.payadmin.viivlgr.cn/BackManager/dist/',
     assetsPublicPath: './',
 
     /**

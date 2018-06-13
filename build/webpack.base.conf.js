@@ -78,11 +78,11 @@ module.exports = {
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 80000,
-          name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
-        }
+        loader: 'file?name=fonts/[hash].[ext]',
+        // options: {
+        //   limit: 80000,
+        //   name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
+        // }
       }
     ]
   },

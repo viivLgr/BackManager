@@ -14,7 +14,7 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="roleId" label="序号"></el-table-column>
+        <el-table-column align="center" prop="no" label="序号"></el-table-column>
         <el-table-column align="center" prop="roleName" label="角色名称"></el-table-column>
         <el-table-column align="center" prop="remark" label="备注"></el-table-column>
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
@@ -55,8 +55,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="有效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -71,6 +70,7 @@
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _user from "service/user-service.js";
+import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -94,12 +94,13 @@ export default {
       const _this = this;
       _this.loading = true;
       _user.roleList(data).then(res => {
-        _this.renderTableDate(res, item => {
+        _this.renderTableDate(res, (item, index) => {
           return {
+            no: index + 1,
             roleId: item.roleId,
             roleName: item.roleName,
             remark: item.remark,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {

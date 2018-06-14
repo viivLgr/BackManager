@@ -2,7 +2,7 @@
  * @Author: viivLgr
  * @Date: 2018-06-01 14:16:31
  * @Last Modified by: viivLgr
- * @Last Modified time: 2018-06-13 18:06:48
+ * @Last Modified time: 2018-06-14 18:23:07
  */
 
 import {
@@ -17,7 +17,8 @@ import {
   validBankNo,
   validChinses
 } from "static/js/validate.js";
-import Util from 'util/util.js'
+import Util from 'util/util.js';
+import _common from 'service/common-service.js';
 
 const _util = new Util();
 // 请求mixin
@@ -34,13 +35,12 @@ export const axiosMixin = {
     filterAxios: function (res, callback, failback) {
       res = res.data;
       if (res.errCode === ERR_OK) {
-        callback && callback(res.result);
+        typeof callback === 'function' && callback(res.result);
       } else if (res.errCode === NEED_LOGIN) {
-        // 登录过期
         this.$router.push('/login?redirect=' + this.$route.fullPath);
       } else {
-        !failback && this.errorTips(res.errMsg);
-        failback && failback(res.errMsg);
+        (!failback || typeof failback !== 'function') && this.errorTips(res.errMsg);
+        typeof failback === 'function' && failback(res.errMsg);
       }
     },
     // 成功提示
@@ -63,6 +63,7 @@ export const listMixin = {
     return {
       loading: false,
       tableData: [],
+      statusList: [],
       page: {
         page: 1,
         rows: 20,
@@ -74,7 +75,18 @@ export const listMixin = {
       updateForm: {}
     }
   },
+  created() {
+    this.getStatusList();
+  },
   methods: {
+    // 获取状态列表
+    getStatusList() {
+      _common.getDictionaryList('RECORD_STATUS').then(res => {
+        this.filterAxios(res, res => {
+          this.statusList = res;
+        })
+      })
+    },
     // 翻页
     handleCurrentChange(val) {
       this._renderTableDate({

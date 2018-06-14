@@ -10,8 +10,8 @@
             </el-form-item>
             <el-form-item label="状态" prop="status">
                 <el-select v-model="searchForm.status" placeholder="请选择">
-                    <el-option label="正常" value="VALID"></el-option>
-                    <el-option label="失效" value="INVALID"></el-option>
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -27,7 +27,7 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="funcId" label="序号" width="100"></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" width="100"></el-table-column>
         <el-table-column align="center" prop="funcName" label="功能" width="150"></el-table-column>
         <el-table-column align="center" prop="funcLevel" label="级别"></el-table-column>
         <el-table-column align="center" prop="funcPath" label="URL" width="200"></el-table-column>
@@ -77,8 +77,7 @@
           </el-form-item>
           <el-form-item label="状态">
               <el-select v-model="addForm.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="失效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -106,8 +105,7 @@
           </el-form-item>
           <el-form-item label="状态">
               <el-select v-model="updateForm.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="失效" value="INVALID"></el-option>
+                  <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -121,7 +119,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
-// import { formatDate } from "static/js/format.js";
+import { computedStatusDesc, computedStatus } from "static/js/format.js";
 import _feature from "service/feature-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -149,15 +147,16 @@ export default {
       const _this = this;
       _this.loading = true;
       _feature.getList(data).then(res => {
-        _this.renderTableDate(res, item => {
+        _this.renderTableDate(res, (item, index) => {
           return {
+            no: index + 1,
             funcId: item.funcId,
             funcName: item.funcName,
             funcLevel: item.funcLevel,
             funcPath: item.funcPath,
             parentFuncId: item.parentFuncId,
             parentName: item.parentName,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             updateTime: item.modifiedTime,
             operate: {
               add: item.funcLevel < 4 && item.status === 'VALID',
@@ -213,7 +212,7 @@ export default {
         funcPath: row.funcPath,
         // funcLevel: row.funcLevel,
         // parentFuncId: row.parentFuncId,
-        status: row.status === '生效' ? 'VALID' : 'INVALID'
+        status: computedStatus(row.status)
       };
     },
     // 修改

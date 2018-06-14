@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="header clearfix">
+      <v-back path="back"/>
       <h2>渠道支持银行列表</h2>
     </div>
     <div class="operating">
@@ -35,8 +36,9 @@
         <el-table-column align="center" prop="bankShortNameEn" label="英文简称"></el-table-column>
         <el-table-column align="center" prop="supportiveBankTypeName" label="支持银行卡类型" width="120"></el-table-column>
         <el-table-column align="center" prop="bankBranchId" label="联行号" width="150"></el-table-column>
-        <el-table-column align="center" prop="singleMinAmount" label="单笔最低金额" width="120"></el-table-column>
-        <el-table-column align="center" prop="singleMaxAmount" label="单笔最高金额" width="120"></el-table-column>
+        <el-table-column align="center" prop="singleMinAmount" label="单笔最低金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="singleMaxAmount" label="单笔最高金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="status" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right">
@@ -77,10 +79,14 @@
               </el-select>
           </el-form-item>
           <el-form-item label="单笔最低限额">
-            <el-input v-model="form.singleMinAmount" placeholder="请输入单笔最低限额"></el-input>
+            <el-input v-model="form.singleMinAmount" placeholder="请输入单笔最低限额">
+              <el-button slot="append">分</el-button>
+            </el-input>
           </el-form-item>
           <el-form-item label="单笔最高限额">
-            <el-input v-model="form.singleMaxAmount" placeholder="请输入单笔最高限额"></el-input>
+            <el-input v-model="form.singleMaxAmount" placeholder="请输入单笔最高限额">
+              <el-button slot="append">分</el-button>
+            </el-input>
           </el-form-item>
           <el-form-item label="支持银行卡类型">
               <el-select v-model="form.supportiveBankType" placeholder="请选择银行卡类型">
@@ -89,8 +95,7 @@
           </el-form-item>
           <el-form-item label="状态">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -103,11 +108,16 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import vBack from "components/Back.vue";
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _router from "service/router-service.js";
 import _common from "service/common-service.js";
+import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
+  components: {
+    vBack
+  },
   data() {
     return {
       searchForm: {
@@ -159,7 +169,7 @@ export default {
             bankBranchId: item.bankBranchId,
             singleMinAmount: item.singleMinAmount,
             singleMaxAmount: item.singleMaxAmount,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -202,7 +212,6 @@ export default {
               bankName: item.bankName
             });
           });
-          console.log("bankList", this.bankList);
         });
       });
     },
@@ -233,7 +242,7 @@ export default {
             singleMinAmount: row.singleMinAmount,
             singleMaxAmount: row.singleMaxAmount,
             supportiveBankType: row.supportiveBankType,
-            status: row.status === "生效" ? "VALID" : "INVALID"
+            status: computedStatus(row.status)
           };
           if (this.bankList.length > 0) this.addShow = true;
         });

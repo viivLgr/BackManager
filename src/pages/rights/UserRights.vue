@@ -21,7 +21,7 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="userId" label="序号"></el-table-column>
+        <el-table-column align="center" prop="no" label="序号"></el-table-column>
         <el-table-column align="center" prop="userName" label="用户名"></el-table-column>
         <el-table-column align="center" prop="linkmanPhone" label="联系方式"></el-table-column>
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
@@ -138,8 +138,9 @@ export default {
       const _this = this;
       _this.loading = true;
       _user.userRightUserList(data).then(res => {
-        _this.renderTableDate(res, item => {
+        _this.renderTableDate(res, (item, index) => {
           return {
+            no: index + 1,
             userId: item.userId,
             userName: item.userName,
             linkmanPhone: item.linkmanPhone,

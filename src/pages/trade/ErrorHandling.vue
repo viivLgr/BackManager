@@ -33,8 +33,8 @@
         <el-table-column align="center" prop="channelOrderNo" label="渠道订单号" width="90"></el-table-column>
         <el-table-column align="center" prop="sendChannelOrderNo" label="平台上送订单号" width="110"></el-table-column>
         <el-table-column align="center" prop="channelName" label="交易时间"></el-table-column>
-        <el-table-column align="center" prop="tradeAmount" label="支付金额"></el-table-column>
-        <el-table-column align="center" prop="fees" label="手续费"></el-table-column>
+        <el-table-column align="center" prop="tradeAmount" label="支付金额(单位:分)" width="150"></el-table-column>
+        <el-table-column align="center" prop="fees" label="手续费(单位:分)" width="120"></el-table-column>
         <el-table-column align="center" prop="tradeStatus" label="渠道交易状态" width="100"></el-table-column>
         <el-table-column align="center" prop="status" label="平台交易状态" width="100"></el-table-column>
         <el-table-column align="center" prop="outRespCode" label="渠道返回码" width="90"></el-table-column>

@@ -15,8 +15,7 @@
             <el-form-item label="状态">
                 <el-select v-model="searchForm.status" placeholder="请选择状态">
                     <el-option label="全部" value=""></el-option>
-                    <el-option label="正常" value="VALID"></el-option>
-                    <el-option label="失效" value="INVALID"></el-option>
+                    <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item class="btn-item">
@@ -45,8 +44,8 @@
         <el-table-column align="center" prop="status" label="商户状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="入网时间" width="150"></el-table-column>
         <el-table-column align="center" prop="agentMerchantName" label="代理商户" width="120"></el-table-column>
-        <el-table-column align="center" prop="amount" label="商户余额"></el-table-column>
-        <el-table-column align="center" prop="freezingAmount" label="冻结金额"></el-table-column>
+        <el-table-column align="center" prop="amount" label="商户余额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="freezingAmount" label="冻结金额(单位:分)" width="140"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right" width="480">
           <template slot-scope="scope">
             <el-button @click="goProductList(scope.row)" type="warning" size="mini">产品列表</el-button>
@@ -87,8 +86,7 @@
             </el-form-item>
             <el-form-item label="商户类型" prop="merchantType">
               <el-select v-model="form.merchantType" placeholder="请选择商户类型">
-                  <el-option label="普通商户" value="COMMON"></el-option>
-                  <el-option label="代理商户" value="AGENT"></el-option>
+                  <el-option v-for="(item, index) in merchantTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
             </el-form-item>
           </div>
@@ -137,8 +135,7 @@
             </el-form-item>
             <el-form-item label="状态">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="正常" value="VALID"></el-option>
-                  <el-option label="失效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
             </el-form-item>
           </div>
@@ -197,9 +194,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="addUserForm.status" placeholder="请选择状态">
-                  <el-option label="有效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
-                  <!-- <el-option label="冻结" value="2"></el-option> -->
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -231,8 +226,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="appInfoForm.status" placeholder="请选择状态">
-                  <el-option label="有效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -246,9 +240,10 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
-import { formatMoney } from "static/js/format.js";
 import _store from "service/store-service.js";
 import _user from "service/user-service.js";
+import _common from "service/common-service.js";
+import { computedStatusDesc, computedAgentDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -405,7 +400,8 @@ export default {
         ],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
       },
-      roleList: []
+      roleList: [],
+      merchantTypeList: []
     };
   },
   created() {
@@ -427,16 +423,15 @@ export default {
               linkmanName: item.linkmanName,
               linkmanPhone: item.linkmanPhone,
               linkmanEmail: item.linkmanEmail,
-              merchantType:
-                item.merchantType === "AGENT" ? "代理商户" : "普通商户",
+              merchantType: computedAgentDesc(item.merchantType),
               merchantAgentId: item.merchantAgentId,
               agentMerchantName: item.agentMerchantName,
-              amount: formatMoney(item.amount),
-              freezingAmount: formatMoney(item.freezingAmount),
-              status: item.status === "VALID" ? "生效" : "失效",
+              amount: item.amount,
+              freezingAmount: item.freezingAmount,
+              status: computedStatusDesc(item.status),
               createTime: item.createTime,
               operate: {
-                add: item.merchantType === "AGENT",
+                add: item.merchantType === "MER_AGENT",
                 update: true
               }
             };
@@ -449,12 +444,9 @@ export default {
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
-      _this.$refs[searchForm].validate(valid => {
+      this.$refs[searchForm].validate(valid => {
         if (valid) {
-          let username = this.$refs[searchForm].model.feature;
-          _this._renderTableDate(_this.searchForm);
-          console.log("submit!", username);
+          this._renderTableDate(this.searchForm);
         } else {
           console.log("error submit!!");
           return false;
@@ -464,7 +456,9 @@ export default {
     // 添加商户
     handleStore(row, type) {
       const _this = this;
-      _this.addShow = true;
+      if (this.getMerchantTypeList.length === 0) {
+        this.getMerchantTypeList();
+      }
       if (row instanceof Object) {
         if (type && type === "update") {
           // 修改
@@ -481,7 +475,7 @@ export default {
           title: "添加"
         };
       }
-      console.log("this.form", this.form);
+      _this.addShow = true;
     },
     // 获取商户详细信息
     getStoreInfo(id) {
@@ -610,7 +604,6 @@ export default {
     addUserSubmit() {
       this.$refs.addUserForm.validate(valid => {
         if (valid) {
-          console.log("addUserForm", this.addUserForm);
           delete this.form.checkPass; // 去掉确认密码属性
           _user.addUser(this.addUserForm).then(res => {
             this.filterAxios(res, res => {
@@ -631,6 +624,15 @@ export default {
       _user.roleList().then(res => {
         _this.filterAxios(res, res => {
           this.roleList = res.list;
+        });
+      });
+    },
+    // merchantTypeList
+    getMerchantTypeList() {
+      const _this = this;
+      _common.getDictionaryList("MERCHANT_TYPE").then(res => {
+        _this.filterAxios(res, res => {
+          this.merchantTypeList = res;
         });
       });
     }

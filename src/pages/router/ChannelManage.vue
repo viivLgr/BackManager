@@ -41,7 +41,7 @@
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
         <el-table-column align="center" prop="sort" label="排序"></el-table-column>
         <el-table-column align="center" prop="allowTradeTime" label="渠道交易时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="dayMaxAmount" label="日限额" width="150"></el-table-column>
+        <el-table-column align="center" prop="dayMaxAmount" label="日限额(单元:分)" width="150"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
         <el-table-column align="center" label="操作" width="300" fixed="right">
@@ -101,8 +101,7 @@
             <div>
                 <el-form-item label="签名方式" prop="signType">
                     <el-select v-model="form.signType" placeholder="请选择签名方式" :disabled="form.disabled">
-                        <el-option label="RSA" value="RSA"></el-option>
-                        <el-option label="MD5" value="MD5"></el-option>
+                        <el-option v-for="(item, index) in signTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="证书路径" prop="certPath">
@@ -128,7 +127,9 @@
                     <el-input v-model="form.channelAppid" placeholder="请输入appid" :disabled="form.disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="渠道日限额" prop="dayMaxAmount">
-                    <el-input type="number" v-model="form.dayMaxAmount" placeholder="请输入appid" :disabled="form.disabled"></el-input>
+                    <el-input type="number" v-model="form.dayMaxAmount" placeholder="请输入渠道日限额" :disabled="form.disabled">
+                      <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="渠道费率类型" prop="rateType">
                     <el-select v-model="form.rateType" placeholder="请选择渠道费率类型" :disabled="form.disabled">
@@ -138,15 +139,16 @@
             </div>
             <div>
                 <el-form-item label="渠道费率" prop="rate">
-                    <el-input v-model="form.rate" placeholder="请输入费率" :disabled="form.disabled"></el-input>
+                    <el-input v-model="form.rate" placeholder="请输入渠道费率" :disabled="form.disabled">
+                      <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="渠道排序" prop="sort">
                     <el-input v-model="form.sort" placeholder="请输入渠道排序" :disabled="form.disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="结算方式" prop="settleType">
                     <el-select v-model="form.settleType" placeholder="请选择结算方式" :disabled="form.disabled">
-                        <el-option label="t+1日结算" value="T1"></el-option>
-                        <el-option label="当日结算" value="D0"></el-option>
+                        <el-option v-for="(item, index) in settleTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
             </div>
@@ -163,8 +165,7 @@
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="form.status" placeholder="请选择状态" :disabled="form.disabled">
-                        <el-option label="生效" value="VALID"></el-option>
-                        <el-option label="无效" value="INVALID"></el-option>
+                      <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
             </div>
@@ -181,12 +182,16 @@
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _router from "service/router-service.js";
 import _common from "service/common-service.js";
+import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
     const checkSettleTime = (rule, value, callback) => {
-      if (this.form.settleType === 'T1' && value === '') {
+      if (this.form.settleType === "T1" && value === "") {
         callback(new Error("结算方式为T1时，必须输入结算时间"));
+      }
+      if (this.form.settleType === "D0" && value !== "") {
+        callback(new Error("结算方式为D0时，不必输入结算时间"));
       }
       callback();
     };
@@ -239,15 +244,21 @@ export default {
           { required: true, message: "请输入渠道日限额", trigger: "blur" }
         ],
         rate: [{ required: true, message: "请输入费率", trigger: "blur" }],
-        rateType: [{ required: true, message: "请选择费率类型", trigger: "blur" }],
-        settleType: [{ required: true, message: "请选择结算方式", trigger: "blur" }],
+        rateType: [
+          { required: true, message: "请选择费率类型", trigger: "blur" }
+        ],
+        settleType: [
+          { required: true, message: "请选择结算方式", trigger: "blur" }
+        ],
         settleTime: [{ validator: checkSettleTime, trigger: "blur" }],
         sort: [{ required: true, message: "请输入渠道排序", trigger: "blur" }],
         status: [{ required: true, message: "请选择渠道状态", trigger: "blur" }]
       },
       productCodeList: [],
       channelTypeList: [],
-      rateTypeList: []
+      rateTypeList: [],
+      settleTypeList: [],
+      signTypeList: []
     };
   },
   created() {
@@ -255,6 +266,8 @@ export default {
     this.getProductCodeList();
     this.getChannelTypeList();
     this.getRateTypeList();
+    this.getSettleTypeList();
+    this.getSignypeList();
   },
   methods: {
     // 获取渠道列表
@@ -275,7 +288,7 @@ export default {
             sort: item.sort,
             allowTradeTime: item.allowTradeTime,
             dayMaxAmount: item.dayMaxAmount,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -306,6 +319,22 @@ export default {
       _common.getDictionaryList("PROD_RATE_TYPE").then(res => {
         this.filterAxios(res, res => {
           this.rateTypeList = res;
+        });
+      });
+    },
+    // 获取结算类型
+    getSettleTypeList() {
+      _common.getDictionaryList("SETTLE_TYPE").then(res => {
+        this.filterAxios(res, res => {
+          this.settleTypeList = res;
+        });
+      });
+    },
+    // 获取签名方式类型
+    getSignypeList() {
+      _common.getDictionaryList("SIGN_TYPE").then(res => {
+        this.filterAxios(res, res => {
+          this.signTypeList = res;
         });
       });
     },
@@ -408,7 +437,6 @@ export default {
     },
     // 查看支持银行列表
     handleSupportBankList(channelId, channelName) {
-      console.log("handleSupportBankList!", channelId);
       this.$router.push({
         path: "/channel_support_bank",
         query: {

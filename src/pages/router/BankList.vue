@@ -83,8 +83,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -99,6 +98,7 @@
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _router from "service/router-service.js";
+import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -137,7 +137,7 @@ export default {
             bankBranchId: item.bankBranchId,
             bankPictureUrlBig: item.bankPictureUrlBig,
             bankPictureUrlSmall: item.bankPictureUrlSmall,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -164,7 +164,7 @@ export default {
           bankBranchId: row.bankBranchId,
           bankPictureUrlBig: row.bankPictureUrlBig,
           bankPictureUrlSmall: row.bankPictureUrlSmall,
-          status: row.status === "生效" ? "VALID" : "INVALID"
+          status: computedStatus(row.status)
         };
       } else {
         _this.form = {

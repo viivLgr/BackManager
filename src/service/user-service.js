@@ -13,12 +13,12 @@ const _user = {
     return _axios('/sys/user/pageList/forPermission', 'POST', data);
   },
   // 获取用户权限
-  getUserRight: function (data) {
-    return _axios('/sys/func/detail/' + data);
+  getUserRight: function (pathUserId) {
+    return _axios('/sys/user/' + pathUserId + '/permissionTree');
   },
   // 修改用户权限
-  updateUserRight: function (userId, data) {
-    return _axios('/sys/func/' + userId + '/update', 'POST', data);
+  updateUserRight: function (pathUserId, data) {
+    return _axios('/sys/user/' + pathUserId + '/permission/update', 'POST', data);
   },
   // 用户列表
   userList: function (data) {

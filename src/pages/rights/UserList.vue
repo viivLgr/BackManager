@@ -33,7 +33,7 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="userId" label="序号" width="100" fixed></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" width="100" fixed></el-table-column>
         <el-table-column align="center" prop="userName" label="用户名" fixed></el-table-column>
         <el-table-column align="center" prop="linkmanName" label="姓名"></el-table-column>
         <el-table-column align="center" prop="linkmanPhone" label="联系方式" width="120"></el-table-column>
@@ -104,9 +104,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
-                  <!-- <el-option label="冻结" value="2"></el-option> -->
+                  <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -121,6 +119,7 @@
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
 import _user from "service/user-service.js";
+import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin, validMixin],
   data() {
@@ -203,8 +202,9 @@ export default {
       const _this = this;
       _this.loading = true;
       _user.userList(data).then(res => {
-        _this.renderTableDate(res, item => {
+        _this.renderTableDate(res, (item, index) => {
           return {
+            no: index + 1,
             userId: item.userId,
             userName: item.userName,
             nickName: item.nickName,
@@ -216,7 +216,7 @@ export default {
             roleId: item.roleId,
             wechat: item.wechat,
             qq: item.qq,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             operate: {
               add: true,
@@ -243,7 +243,6 @@ export default {
       const _this = this;
       _user.roleList().then(res => {
         _this.filterAxios(res, res => {
-          console.log("roleList:", res);
           this.roleList = res.list;
         });
       });
@@ -256,7 +255,6 @@ export default {
             ...this.form,
             ...res
           };
-          console.log('this.form', this.form);
         });
       });
     },
@@ -268,7 +266,6 @@ export default {
           ...this.form,
           formTitle: "修改"
         };
-        console.log('update', this.form);
       } else {
         this.form = {
           formTitle: "添加",

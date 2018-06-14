@@ -35,8 +35,8 @@
         <el-table-column align="center" prop="channelCode" label="渠道编码"></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称" width="120"></el-table-column>
         <el-table-column align="center" prop="productCodeName" label="产品类型" width="90"></el-table-column>
-        <el-table-column align="center" prop="merSingleMinAmount" label="商户最小限额" width="100"></el-table-column>
-        <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额" width="120"></el-table-column>
+        <el-table-column align="center" prop="merSingleMinAmount" label="商户最小限额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额(单位:分)" width="140"></el-table-column>
         <el-table-column align="center" prop="validTime" label="生效时间" width="150"></el-table-column>
         <el-table-column align="center" prop="invalidTime" label="失效时间" width="150"></el-table-column>
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
@@ -62,7 +62,7 @@
       v-show="addShow"
       :visible.sync="addShow"
       :title="form.title"
-      width="40%"
+      width="560px"
       :before-close="formClose"
       center
       >
@@ -111,8 +111,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="生效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -126,7 +125,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
-import { getTimestamps, formatDate } from "static/js/format.js";
+import { getTimestamps, formatDate, computedStatusDesc, computedStatus } from "static/js/format.js";
 import _router from "service/router-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -253,7 +252,7 @@ export default {
             merDayMaxAmount: item.merDayMaxAmount,
             productCode: item.productCode,
             productCodeName: item.productCodeName,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             validTimeList: [
               getTimestamps(item.validTime),
               getTimestamps(item.invalidTime)
@@ -304,7 +303,7 @@ export default {
           merSingleMinAmount: row.merSingleMinAmount,
           merSingleMaxAmount: row.merSingleMaxAmount,
           validTimeList: row.validTimeList,
-          status: row.status === "生效" ? "VALID" : "INVALID"
+          status: computedStatus(row.status)
         };
       } else {
         this.form = {

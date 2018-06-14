@@ -1,15 +1,15 @@
 <template>
   <div class="container">
     <div class="header clearfix">
+      <v-back path="back"/>
       <h2>产品列表</h2>
     </div>
     <div class="operating">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
              <el-form-item label="状态" prop="status">
                 <el-select v-model="searchForm.status" placeholder="请选择">
-                    <el-option label="全部" value=""></el-option>
-                    <el-option label="正常" value="VALID"></el-option>
-                    <el-option label="失效" value="INVALID"></el-option>
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -88,15 +88,18 @@
             </el-select>
           </el-form-item>
           <el-form-item label="费率" prop="rate">
-            <el-input type="number" v-model="form.rate" placeholder="请输入费率"></el-input>
+            <el-input type="number" v-model="form.rate" placeholder="请输入费率">
+              <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
+            </el-input>
           </el-form-item>
           <el-form-item label="代理商费率" v-if="storeInfo.agentMerchantName">
-            <el-input type="number" v-model="form.merchantAgentRate" :disabled="true"></el-input>
+            <el-input type="number" v-model="form.merchantAgentRate" :disabled="true">
+              <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
+            </el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="有效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -109,9 +112,11 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import vBack from "components/Back.vue";
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import _product from "service/product-service.js";
 import _common from "service/common-service.js";
+import { computedRateDesc, computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -156,7 +161,7 @@ export default {
   created() {
     this.storeInfo = this.$route.query;
     this.searchForm.merchantId = this.storeInfo.merchantId;
-    this.selectProductList.length <= 0 && this.getProductList();
+    this.getProductList();
     this.getRateTypeList().then(res => {
       this._renderTableDate({ merchantId: this.storeInfo.merchantId });
     });
@@ -177,17 +182,15 @@ export default {
             productName: item.productName,
             rateType: item.rateType,
             rateTypeDesc: typeDescList[item.rateType - 1],
-            rate: item.rate,
-            rateDesc: item.rate + (item.rateType === "1" ? "元" : ""),
+            rate: item.rate || "",
+            rateDesc: computedRateDesc(item.rate, item.rateType),
             merchantAgentName: item.merchantAgentName,
             merchantAgentRateType: item.merchantAgentRateType,
             merchantAgentRateTypeDesc:
               typeDescList[item.merchantAgentRateType - 1],
-            merchantAgentRate: item.merchantAgentRate,
-            merchantAgentRateDesc:
-              item.merchantAgentRate +
-              (item.merchantAgentRateType === "1" ? "元" : ""),
-            status: item.status === "VALID" ? "生效" : "失效",
+            merchantAgentRate: item.merchantAgentRate || "",
+            merchantAgentRateDesc: computedRateDesc(item.merchantAgentRate, item.merchantAgentRateType),
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -222,7 +225,7 @@ export default {
             row.productCode + "-" + row.merchantAgentRate + "-" + row.rateType,
           rateType: row.rateType,
           rate: row.rate,
-          status: row.status === "生效" ? "VALID" : "INVALID"
+          status: computedStatus(row.status)
         };
       } else {
         _this.form = {
@@ -315,6 +318,9 @@ export default {
         this.form.rateType = productValueList[2];
       }
     }
+  },
+  components: {
+    vBack
   }
 };
 </script>

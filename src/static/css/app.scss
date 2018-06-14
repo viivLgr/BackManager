@@ -3,20 +3,4 @@
 @import "common/_mixin";
 @import "common/_reset";
 @import "common/_common";
-.header h2 {
-  float: left;
-  font-size: 16px;
-  line-height: 32px;
-  color: #1a1a1a;
-}
 
-.header .right {
-  float: right;
-}
-
-.header .right .right-info {
-  font-size: 14px;
-  color: #3ac100;
-  margin-right: 20px;
-  font-weight: bold;
-}

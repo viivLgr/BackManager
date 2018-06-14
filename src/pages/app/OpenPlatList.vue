@@ -10,8 +10,8 @@
             </el-form-item>
             <el-form-item label="状态">
                 <el-select v-model="searchForm.status" placeholder="请选择">
-                    <el-option label="正常" value="VALID"></el-option>
-                    <el-option label="失效" value="INVALID"></el-option>
+                  <el-option label="全部" value=""></el-option>
+                  <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
@@ -70,8 +70,7 @@
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
-                  <el-option label="有效" value="VALID"></el-option>
-                  <el-option label="无效" value="INVALID"></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
           </el-form-item>
         </el-form>
@@ -86,6 +85,7 @@
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
 import _app from "service/app-service.js";
+import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin, validMixin],
   data() {
@@ -124,7 +124,7 @@ export default {
             interfaceId: item.interfaceId,
             interfaceName: item.interfaceName,
             interfaceVersion: item.interfaceVersion,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: computedStatusDesc(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -148,14 +148,13 @@ export default {
           interfaceId: row.interfaceId,
           interfaceName: row.interfaceName,
           interfaceVersion: row.interfaceVersion,
-          status: row.status === "生效" ? "VALID" : "INVALID"
+          status: computedStatus(row.status)
         };
       } else {
         _this.form = {
           formTitle: "添加",
           interfaceName: "",
-          interfaceVersion: "",
-          status: "VALID"
+          interfaceVersion: ""
         };
       }
       _this.addShow = true;

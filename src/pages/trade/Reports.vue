@@ -73,11 +73,11 @@
         <el-table-column align="center" prop="totalRecords" label="交易总笔数"></el-table-column>
         <el-table-column align="center" prop="successRecords" label="成功笔数"></el-table-column>
         <el-table-column align="center" prop="failRecords" label="失败笔数"></el-table-column>
-        <el-table-column align="center" prop="totalAmount" label="交易总金额"></el-table-column>
-        <el-table-column align="center" prop="successAmount" label="成功总金额"></el-table-column>
-        <el-table-column align="center" prop="failAmount" label="失败总金额"></el-table-column>
-        <el-table-column align="center" prop="merchantTotalFee" label="商户手续费"></el-table-column>
-        <el-table-column align="center" prop="agentTotalFee" label="代理商手续费"></el-table-column>
+        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="merchantTotalFee" label="商户手续费(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="agentTotalFee" label="代理商手续费(单位:分)" width="140"></el-table-column>
       </el-table>
     </div>
     <!-- 渠道 -->
@@ -95,10 +95,10 @@
         <el-table-column align="center" prop="totalRecords" label="交易总笔数"></el-table-column>
         <el-table-column align="center" prop="successRecords" label="成功笔数"></el-table-column>
         <el-table-column align="center" prop="failRecords" label="失败笔数"></el-table-column>
-        <el-table-column align="center" prop="totalAmount" label="交易总金额"></el-table-column>
-        <el-table-column align="center" prop="successAmount" label="成功总金额"></el-table-column>
-        <el-table-column align="center" prop="failAmount" label="失败总金额"></el-table-column>
-        <el-table-column align="center" prop="totalFee" label="手续费总金额"></el-table-column>
+        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="totalFee" label="手续费总金额(单位:分)" width="140"></el-table-column>
       </el-table>
     </div>
     <!-- 利润 -->
@@ -112,13 +112,13 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="tradeDate" label="交易时间"></el-table-column>
-        <el-table-column align="center" prop="totalAmount" label="交易总金额"></el-table-column>
-        <el-table-column align="center" prop="successAmount" label="成功总金额"></el-table-column>
-        <el-table-column align="center" prop="failAmount" label="失败总金额"></el-table-column>
-        <el-table-column align="center" prop="merchantFee" label="商户手续费"></el-table-column>
-        <el-table-column align="center" prop="agentFee" label="代理商手续费"></el-table-column>
-        <el-table-column align="center" prop="channelFee" label="渠道手续费"></el-table-column>
-        <el-table-column align="center" prop="profit" label="利润"></el-table-column>
+        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="merchantFee" label="商户手续费(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="agentFee" label="代理商手续费(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="channelFee" label="渠道手续费(单位:分)"></el-table-column>
+        <el-table-column align="center" prop="profit" label="利润(单位:分)"></el-table-column>
       </el-table>
     </div>
     <!-- <div class="total-wrap" v-show="activeName === 'report-day' || activeName === 'report-month'">

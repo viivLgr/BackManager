@@ -2,10 +2,29 @@
   padding: 20px 20px 0;
 }
 .header{
+  .back-right{
+    float: left;
+    margin-right: 10px; 
+    // display: block;
+    // margin-bottom: 10px;
+  }
   h2{
+    float: left;
     border-left: 5px solid $color;
     padding-left: 10px;
     margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 32px;
+    color: #1a1a1a;
+  }
+  .right {
+    float: right;
+    .right-info {
+      font-size: 14px;
+      color: #3ac100;
+      margin-right: 20px;
+      font-weight: bold;
+    }
   }
 }
 
@@ -15,7 +34,8 @@
   min-width: 960px;
   .table-btn{
     text-align: right;
-    padding: 0 20px 20px 0;
+    padding: 0 20px 40px 0;
+    margin-top: -66px;
   }
   .el-table {
     color: $font-color;;
@@ -37,8 +57,14 @@
 }
 
 .detail-input{
+
   .el-input__inner{
     width: 200px;
+  }
+  .el-input-group--append{
+    .el-input__inner{
+      width: 155px;
+    }
   }
   .el-date-editor{
     width: 200px;

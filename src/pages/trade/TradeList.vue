@@ -92,8 +92,8 @@
         <el-table-column align="center" prop="tradeTypeName" label="交易类型"></el-table-column>
         <el-table-column align="center" prop="productName" label="支付产品"></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称" width="150"></el-table-column>
-        <el-table-column align="center" prop="payAmount" label="交易金额"></el-table-column>
-        <el-table-column align="center" prop="fee" label="手续费"></el-table-column>
+        <el-table-column align="center" prop="payAmount" label="交易金额(单位:分)" width="150"></el-table-column>
+        <el-table-column align="center" prop="fee" label="手续费(单位:分)" width="120"></el-table-column>
         <el-table-column align="center" prop="statusName" label="交易状态"></el-table-column>
         <el-table-column align="center" prop="payerName" label="付款人姓名" width="100"></el-table-column>
         <el-table-column align="center" prop="payeeName" label="收款人姓名" width="100"></el-table-column>
@@ -126,7 +126,7 @@
       >
       <div class="detail-input">
         <el-form :inline="true" ref="detailForm" :model="detailForm" size="mini" label-width="105px">
-            <div>
+            <div class="row">
                 <el-form-item label="商户号">
                     <el-input v-model="detailForm.merchantId" readonly></el-input>
                 </el-form-item>
@@ -134,10 +134,12 @@
                     <el-input v-model="detailForm.merchantName" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="商户费率">
-                    <el-input v-model="detailForm.merchantRate" readonly></el-input>
+                    <el-input v-model="detailForm.merchantRate" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="渠道编码">
                     <el-input v-model="detailForm.channelCode" readonly></el-input>
                 </el-form-item>
@@ -145,10 +147,12 @@
                     <el-input v-model="detailForm.channelName" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="渠道费率">
-                    <el-input v-model="detailForm.channelRate" readonly></el-input>
+                    <el-input v-model="detailForm.channelRate" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="订单号">
                     <el-input v-model="detailForm.orderId" readonly></el-input>
                 </el-form-item>
@@ -159,7 +163,7 @@
                     <el-input v-model="detailForm.sendChannelOrderNo" readonly></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="订单类型">
                     <el-input v-model="detailForm.tradeTypeName" readonly></el-input>
                 </el-form-item>
@@ -170,18 +174,24 @@
                     <el-input v-model="detailForm.statusName" readonly></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="交易总金额">
-                    <el-input v-model="detailForm.totalAmount" readonly></el-input>
+                    <el-input v-model="detailForm.totalAmount" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="实际金额">
-                    <el-input v-model="detailForm.payAmount" readonly></el-input>
+                    <el-input v-model="detailForm.payAmount" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="手续费">
-                    <el-input v-model="detailForm.fee" readonly></el-input>
+                    <el-input v-model="detailForm.fee" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="交易发生时间">
                     <el-input v-model="detailForm.createTime" readonly></el-input>
                 </el-form-item>
@@ -192,7 +202,7 @@
                     <el-input v-model="detailForm.completeTime" readonly></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="收款人姓名">
                     <el-input v-model="detailForm.payeeName" readonly></el-input>
                 </el-form-item>
@@ -203,12 +213,14 @@
                     <el-input v-model="detailForm.payerAccount" readonly></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="分润人姓名">
                     <el-input v-model="detailForm.profitName" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="分润人金额">
-                    <el-input v-model="detailForm.profitAmount" readonly></el-input>
+                    <el-input v-model="detailForm.profitAmount" readonly>
+                        <el-button slot="append">分</el-button>
+                    </el-input>
                 </el-form-item>
             </div>
         </el-form>

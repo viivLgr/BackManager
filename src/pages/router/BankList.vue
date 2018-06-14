@@ -54,12 +54,12 @@
       v-show="addShow"
       :visible.sync="addShow"
       :title="form.title"
-      width="40%"
+      width="30vw"
       :before-close="formClose"
       center
       >
       <div>
-        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="110px">
+        <el-form ref="form" :model="form" :rules="rules" size="small" label-width="130px">
           <el-form-item label="银行编码" prop="bankCode">
             <el-input v-model="form.bankCode" placeholder="请输入银行编码"></el-input>
           </el-form-item>
@@ -75,20 +75,11 @@
           <el-form-item label="联行号" prop="bankBranchId">
             <el-input v-model="form.bankBranchId" placeholder="请输入联行号"></el-input>
           </el-form-item>
-          <el-form-item label="图片地址大图" prop="bankPictureUrlBig">
-            <el-upload
-                class="upload-uploader"
-                :show-file-list="false"
-                drag
-                accept="image/*"
-                action="https://jsonplaceholder.typicode.com/posts/">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <div v-else>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-                </div>
-                </el-upload>
+          <el-form-item label="图片地址-大图" prop="bankPictureUrlBig">
+            <el-input v-model="form.bankPictureUrlBig" placeholder="请输入图片地址-大图"></el-input>
+          </el-form-item>
+          <el-form-item label="图片地址-小图" prop="bankPictureUrlSmall">
+            <el-input v-model="form.bankPictureUrlSmall" placeholder="请输入图片地址-小图"></el-input>
           </el-form-item>
           <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
@@ -111,73 +102,26 @@ import _router from "service/router-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
-    const _this = this;
-    const validMerchantId = (rule, value, callback) => {
-      _router.validMerchantId({ merchantId: value }).then(res => {
-        _this.filterAxios(
-          res,
-          res => {
-            _this.form = {
-              ..._this.form,
-              merchantName: res.merchantName
-            };
-            console.log("_this.form", _this.form);
-            callback();
-          },
-          errMsg => {
-            callback(new Error(errMsg));
-          }
-        );
-      });
-    };
-    const validMerSingleMinAmount = (rule, value, callback) => {
-      if (value < 0) {
-        callback(new Error("最小限额必须大于0"));
-      } else if (_this.form.merSingleMaxAmount !== "") {
-        _this.$refs.form.validateField("merSingleMaxAmount");
-      }
-      callback();
-    };
-    const validMerSingleMaxAmount = (rule, value, callback) => {
-      if (value <= _this.form.merSingleMinAmount) {
-        callback(new Error("最大限额必须大于最小限额"));
-      } else if (value > 999999999999) {
-        callback(new Error("最大限额不得大于999999999999"));
-      } else {
-        callback();
-      }
-    };
     return {
       searchForm: {},
       form: {},
-      channelList: [],
       rules: {
-        merchantId: [
-          { required: true, message: "请输入商户号", trigger: "blur" },
-          { validator: validMerchantId, trigger: "blur" }
-        ],
-        channelId: [{ required: true, message: "请选择渠道", trigger: "blur" }],
-        merSingleMinAmount: [
-          { required: true, message: "请输入商户最小限额", trigger: "blur" },
-          { validator: validMerSingleMinAmount, trigger: "blur" }
-        ],
-        merSingleMaxAmount: [
-          { required: true, message: "请输入商户最大限额", trigger: "blur" },
-          { validator: validMerSingleMaxAmount, trigger: "blur" }
-        ],
-        validTimeList: [
-          { required: true, message: "请选择生效时间", trigger: "blur" }
-        ],
+        bankCode: [{ required: true, message: "请输入银行编码", trigger: "blur" }],
+        bankName: [{ required: true, message: "请输入银行名称", trigger: "blur" }],
+        bankShortName: [{ required: true, message: "请输入简称", trigger: "blur" }],
+        bankShortNameEn: [{ required: true, message: "请输入英文简称", trigger: "blur" }],
+        bankBranchId: [{ required: true, message: "请选输入联行号", trigger: "blur" }],
+        bankPictureUrlBig: [{ required: true, message: "请选输入图片地址-大图", trigger: "blur" }],
+        bankPictureUrlSmall: [{ required: true, message: "请选输入图片地址-小图", trigger: "blur" }],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
-      },
-      imageUrl: ""
+      }
     };
   },
   created() {
     this._renderTableDate();
   },
   methods: {
-    // 获取渠道列表
+    // 获取银行列表
     _renderTableDate(data) {
       const _this = this;
       _this.loading = true;
@@ -203,50 +147,28 @@ export default {
         });
       });
     },
-    // 获取渠道列表
-    getChannelList() {
-      const _this = this;
-      _router.getChannelList().then(res => {
-        _this.filterAxios(res, res => {
-          _this.channelList = res.list;
-        });
-      });
-    },
     searchSubmit(searchForm) {
-      const _this = this;
-      this.$refs[searchForm].validate(valid => {
-        if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+      this._renderTableDate(this.$refs[searchForm].model);
     },
     // 添加 修改
     handleForm(row) {
       const _this = this;
-      if (!_this.channelList.length) {
-        this.getChannelList();
-      }
       if (row instanceof Object) {
-        console.log("channelId", row);
         _this.form = {
           title: "修改",
-          disabled: true,
-          merchantChannelId: row.merchantChannelId,
-          merchantId: row.merchantId,
-          merchantName: row.merchantName,
-          channelId: row.channelId,
-          merSingleMinAmount: row.merSingleMinAmount,
-          merSingleMaxAmount: row.merSingleMaxAmount,
-          validTimeList: row.validTimeList,
+          bankListId: row.bankListId,
+          bankCode: row.bankCode,
+          bankName: row.bankName,
+          bankShortName: row.bankShortName,
+          bankShortNameEn: row.bankShortNameEn,
+          bankBranchId: row.bankBranchId,
+          bankPictureUrlBig: row.bankPictureUrlBig,
+          bankPictureUrlSmall: row.bankPictureUrlSmall,
           status: row.status === "生效" ? "VALID" : "INVALID"
         };
       } else {
         _this.form = {
-          title: "添加",
-          disabled: false
+          title: "添加"
         };
       }
       _this.addShow = true;
@@ -257,24 +179,17 @@ export default {
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formSubmit() {
-      const _this = this;
       this.$refs.form.validate(valid => {
         if (valid) {
-          delete _this.form.disabled;
-          delete _this.form.merchantName;
-          _this.form.validTime = _this.form.validTimeList[0];
-          _this.form.invalidTime = _this.form.validTimeList[1];
-          delete _this.form.validTimeList;
-          if (_this.form.title === "添加") {
-            delete _this.form.title;
-            _router.addStoreChannelList(_this.form).then(res => {
-              _this.formatResult(res, "添加成功");
+          if (this.form.title === "添加") {
+            delete this.form.title;
+            _router.addBank(this.form).then(res => {
+              this.formatResult(res, "添加成功");
             });
           } else {
-            delete _this.form.title;
-            delete _this.form.merchantId;
-            _router.updateStoreChannelList(_this.form).then(res => {
-              _this.formatResult(res, "修改成功");
+            delete this.form.title;
+            _router.updateBank(this.form.bankListId, this.form).then(res => {
+              this.formatResult(res, "修改成功");
             });
           }
         } else {

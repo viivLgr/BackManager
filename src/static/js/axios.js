@@ -2,14 +2,14 @@ import axios from 'axios';
 import Util from 'util/util.js';
 
 const _util = new Util();
-// const host = 'http://192.168.31.134:8089';
+const host = 'http://192.168.31.134:8089';
 // const host = 'http://192.168.31.156:8081';
 export function _axios(url, method, data) {
   // 去掉空字段和空对象
   deleteEmptyProperty(data);
   return axios({
     method: method || 'GET',
-    url: url,
+    url: host + url,
     headers: getHeader(),
     data: data || {}
   });

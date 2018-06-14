@@ -2,7 +2,7 @@
  * @Author: viivLgr
  * @Date: 2018-06-01 14:16:31
  * @Last Modified by: viivLgr
- * @Last Modified time: 2018-06-12 10:15:20
+ * @Last Modified time: 2018-06-13 18:06:48
  */
 
 import {
@@ -32,15 +32,14 @@ export const axiosMixin = {
   },
   methods: {
     filterAxios: function (res, callback, failback) {
-      const _this = this;
       res = res.data;
       if (res.errCode === ERR_OK) {
         callback && callback(res.result);
       } else if (res.errCode === NEED_LOGIN) {
         // 登录过期
-        _this.$router.push('/login?redirect=' + this.$route.fullPath);
+        this.$router.push('/login?redirect=' + this.$route.fullPath);
       } else {
-        !failback && _this.errorTips(res.errMsg);
+        !failback && this.errorTips(res.errMsg);
         failback && failback(res.errMsg);
       }
     },

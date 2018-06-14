@@ -5,44 +5,48 @@ const _router = {
     return _axios('/business/route/channel/pageList', 'POST', data);
   },
   // 获取渠道详情
-  getChannelDetail: function (pathChannelId) {
-    return _axios('/business/route/channel/' + pathChannelId);
+  getChannelDetail: function (channelId) {
+    return _axios('/business/route/channel/' + channelId + '/detail');
   },
   // 添加渠道
   addChannel: function (data) {
     return _axios('/business/route/channel/add', 'POST', data);
   },
   // 修改渠道
-  updateChannel: function (pathchannelId, data) {
-    return _axios('/business/route/channel/update/' + pathchannelId, 'POST', data);
+  updateChannel: function (channelId, data) {
+    return _axios('/business/route/channel/' + channelId + '/update', 'POST', data);
   },
   // 渠道支持银行列表
   getSupportBankList: function (data) {
-    return _axios('/business/route/channel/supportBank/pageList', 'POST', data);
+    return _axios('/business/route/channel/supBank/pageList?channelId=' + data.channelId, 'POST', data);
+  },
+  // 渠道可添加银行列表
+  getValidBankList: function (channelId) {
+    return _axios('/business/route/channel/supBank/availableBankList?channelId=' + channelId);
   },
   // 添加渠道支持银行
   addSupportBankList: function (data) {
-    return _axios('/business/route/channel/supportBank/add', 'POST', data);
+    return _axios('/business/route/channel/supBank/add?channelId=' + data.channelId, 'POST', data);
   },
   // 修改渠道支持银行
-  updateSupportBankList: function (pathid, data) {
-    return _axios('/business/route/channel/supportBank/update/' + pathid, 'POST', data);
+  updateSupportBankList: function (id, data) {
+    return _axios('/business/route/channel/supBank/' + id + '/update', 'POST', data);
   },
   // 商户渠道列表
   getStoreChannelList: function (data) {
     return _axios('/business/route/merchant/channel/pageList', 'POST', data);
   },
-  // 校验商户号以及回显商户名称
-  validMerchantId: function(pathMerchantlId) {
-    return _axios('/business/route/merchant/name/' + pathMerchantlId);
+  // 根据商户号回显商户列表
+  validMerchantId: function(merchantId) {
+    return _axios('/business/route/merchant/channel/availableMerchantList?merchantId=' + merchantId);
   },
   // 添加商户渠道
   addStoreChannelList: function (data) {
     return _axios('/business/route/merchant/channel/add', 'POST', data);
   },
   // 修改商户渠道
-  updateStoreChannelList: function (pathMerchantChannelId, data) {
-    return _axios('/business/route/channel/update/' + pathMerchantChannelId, 'POST', data);
+  updateStoreChannelList: function (merchantChannelId, data) {
+    return _axios('/business/route/merchant/channel/' + merchantChannelId + '/update', 'POST', data);
   },
   // 卡bin管理
   cardBinList: function (data) {
@@ -51,6 +55,14 @@ const _router = {
   // 银行列表
   getBankList: function (data) {
     return _axios('/business/route/bank/pageList', 'POST', data);
+  },
+  // 添加银行
+  addBank: function (data) {
+    return _axios('/business/route/bank/add', 'POST', data);
+  },
+  // 修改银行
+  updateBank: function (bankListId, data) {
+    return _axios('/business/route/bank/' + bankListId + '/update', 'POST', data);
   }
 }
 

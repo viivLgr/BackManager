@@ -160,7 +160,7 @@ export default {
             status: item.status === "VALID" ? "生效" : "失效",
             updateTime: item.modifiedTime,
             operate: {
-              add: item.funcLevel < 4,
+              add: item.funcLevel < 4 && item.status === 'VALID',
               update: true
             }
           };

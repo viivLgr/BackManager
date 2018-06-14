@@ -34,12 +34,14 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" fixed></el-table-column>
-        <el-table-column align="center" prop="channelTypeDesc" label="渠道类型" width="100"></el-table-column>
-        <el-table-column align="center" prop="productTypeDesc" label="产品类型" width="100"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="channelTypeName" label="渠道类型" width="100"></el-table-column>
+        <el-table-column align="center" prop="productName" label="产品类型" width="100"></el-table-column>
         <el-table-column align="center" prop="gatewayGroup" label="网关组"></el-table-column>
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
         <el-table-column align="center" prop="sort" label="排序"></el-table-column>
+        <el-table-column align="center" prop="allowTradeTime" label="渠道交易时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="dayMaxAmount" label="日限额" width="150"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
         <el-table-column align="center" label="操作" width="300" fixed="right">
@@ -64,7 +66,7 @@
       v-show="addShow"
       :visible.sync="addShow"
       :title="form.title"
-      width="54%"
+      width="70vw"
       :before-close="formClose"
       center
       >
@@ -77,20 +79,18 @@
                 <el-form-item label="渠道名称" prop="channelName">
                     <el-input v-model="form.channelName" placeholder="请输入渠道名称" :disabled="form.disabled"></el-input>
                 </el-form-item>
-            </div>
-            <div>
                 <el-form-item label="渠道类型" prop="channelType">
-                    <el-select v-model="form.channelType" placeholder="请选择类型" :disabled="form.disabled">
+                    <el-select v-model="form.channelType" placeholder="请选择渠道类型" :disabled="form.disabled">
                         <el-option v-for="(item, index) in channelTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
+            </div>
+            <div>
                 <el-form-item label="产品类型" prop="productCode">
-                    <el-select v-model="form.productCode" placeholder="请选择类型" :disabled="form.disabled">
+                    <el-select v-model="form.productCode" placeholder="请选择产品类型" :disabled="form.disabled">
                         <el-option v-for="(item, index) in productCodeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
-            </div>
-            <div>
                 <el-form-item label="网关分组" prop="gatewayGroup">
                     <el-input v-model="form.gatewayGroup" placeholder="请输入网关分组" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -108,16 +108,14 @@
                 <el-form-item label="证书路径" prop="certPath">
                     <el-input v-model="form.certPath" placeholder="请输入证书路径" :disabled="form.disabled"></el-input>
                 </el-form-item>
-            </div>
-            <div>
                 <el-form-item label="密钥" prop="secretKey">
                     <el-input v-model="form.secretKey" placeholder="请输入密钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
+            </div>
+            <div>
                 <el-form-item label="渠道公钥" prop="channelPubKey">
                     <el-input v-model="form.channelPubKey" placeholder="请输入渠道公钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
-            </div>
-            <div>
                 <el-form-item label="转折公钥" prop="pubKey">
                     <el-input v-model="form.pubKey" placeholder="请输入转折公钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -129,13 +127,39 @@
                 <el-form-item label="appid" prop="channelAppid">
                     <el-input v-model="form.channelAppid" placeholder="请输入appid" :disabled="form.disabled"></el-input>
                 </el-form-item>
-                <el-form-item label="费率" prop="rate">
-                    <el-input v-model="form.rate" placeholder="请输入费率" :disabled="form.disabled"></el-input>
+                <el-form-item label="渠道日限额" prop="dayMaxAmount">
+                    <el-input type="number" v-model="form.dayMaxAmount" placeholder="请输入appid" :disabled="form.disabled"></el-input>
+                </el-form-item>
+                <el-form-item label="渠道费率类型" prop="rateType">
+                    <el-select v-model="form.rateType" placeholder="请选择渠道费率类型" :disabled="form.disabled">
+                        <el-option v-for="(item, index) in rateTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
+                    </el-select>
                 </el-form-item>
             </div>
             <div>
-                <el-form-item label="渠道排序">
+                <el-form-item label="渠道费率" prop="rate">
+                    <el-input v-model="form.rate" placeholder="请输入费率" :disabled="form.disabled"></el-input>
+                </el-form-item>
+                <el-form-item label="渠道排序" prop="sort">
                     <el-input v-model="form.sort" placeholder="请输入渠道排序" :disabled="form.disabled"></el-input>
+                </el-form-item>
+                <el-form-item label="结算方式" prop="settleType">
+                    <el-select v-model="form.settleType" placeholder="请选择结算方式" :disabled="form.disabled">
+                        <el-option label="t+1日结算" value="T1"></el-option>
+                        <el-option label="当日结算" value="D0"></el-option>
+                    </el-select>
+                </el-form-item>
+            </div>
+            <div>
+                <el-form-item label="结算时间" prop="settleTime">
+                    <el-time-picker
+                      :disabled="form.disabled"
+                      v-model="form.settleTime"
+                      placeholder="请选择结算时间">
+                    </el-time-picker>
+                </el-form-item>
+                <el-form-item label="渠道交易时间" prop="allowTradeTime">
+                    <el-input v-model="form.allowTradeTime" placeholder="请输入渠道交易时间" :disabled="form.disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="状态">
                     <el-select v-model="form.status" placeholder="请选择状态" :disabled="form.disabled">
@@ -147,8 +171,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="formClose">取 消</el-button>
-        <el-button size="small" type="primary" @click="formSubmit">确 定</el-button>
+        <el-button size="small" @click="formClose">{{form.disabled ? '确 定' : '取 消'}}</el-button>
+        <el-button size="small" v-if="!form.disabled" type="primary" @click="formSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -160,6 +184,12 @@ import _common from "service/common-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
+    const checkSettleTime = (rule, value, callback) => {
+      if (this.form.settleType === 'T1' && value === '') {
+        callback(new Error("结算方式为T1时，必须输入结算时间"));
+      }
+      callback();
+    };
     return {
       searchForm: {},
       searchRules: {},
@@ -202,37 +232,49 @@ export default {
         channelAppid: [
           { required: true, message: "请输入appid", trigger: "blur" }
         ],
+        allowTradeTime: [
+          { required: true, message: "请输入渠道交易时间", trigger: "blur" }
+        ],
+        dayMaxAmount: [
+          { required: true, message: "请输入渠道日限额", trigger: "blur" }
+        ],
         rate: [{ required: true, message: "请输入费率", trigger: "blur" }],
+        rateType: [{ required: true, message: "请选择费率类型", trigger: "blur" }],
+        settleType: [{ required: true, message: "请选择结算方式", trigger: "blur" }],
+        settleTime: [{ validator: checkSettleTime, trigger: "blur" }],
         sort: [{ required: true, message: "请输入渠道排序", trigger: "blur" }],
         status: [{ required: true, message: "请选择渠道状态", trigger: "blur" }]
       },
-      productCodeList: {},
-      channelTypeList: {}
+      productCodeList: [],
+      channelTypeList: [],
+      rateTypeList: []
     };
   },
   created() {
     this._renderTableDate();
     this.getProductCodeList();
     this.getChannelTypeList();
+    this.getRateTypeList();
   },
   methods: {
     // 获取渠道列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _router.getChannelList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             channelId: item.channelId,
             channelCode: item.channelCode,
             channelName: item.channelName,
             channelType: item.channelType,
-            channelTypeDesc: item.channelTypeDesc,
+            channelTypeName: item.channelTypeName,
             productCode: item.productCode,
-            productTypeDesc: item.productTypeDesc,
+            productName: item.productName,
             gatewayGroup: item.gatewayGroup,
             sort: item.sort,
+            allowTradeTime: item.allowTradeTime,
+            dayMaxAmount: item.dayMaxAmount,
             status: item.status === "VALID" ? "生效" : "失效",
             createTime: item.createTime,
             updateTime: item.modifiedTime,
@@ -245,28 +287,33 @@ export default {
     },
     // 获取产品类型
     getProductCodeList() {
-      const _this = this;
       _common.getDictionaryList("PRODUCT_CODE").then(res => {
-        _this.filterAxios(res, res => {
-          _this.productCodeList = res;
+        this.filterAxios(res, res => {
+          this.productCodeList = res;
         });
       });
     },
     // 获取渠道类型
     getChannelTypeList() {
-      const _this = this;
       _common.getDictionaryList("CHANNEL_TYPE").then(res => {
-        _this.filterAxios(res, res => {
-          _this.channelTypeList = res;
+        this.filterAxios(res, res => {
+          this.channelTypeList = res;
+        });
+      });
+    },
+    // 获取费率类型
+    getRateTypeList() {
+      _common.getDictionaryList("PROD_RATE_TYPE").then(res => {
+        this.filterAxios(res, res => {
+          this.rateTypeList = res;
         });
       });
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
       this.$refs[searchForm].validate(valid => {
         if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
+          this._renderTableDate(this.$refs[searchForm].model);
         } else {
           console.log("error submit!!");
           return false;
@@ -291,10 +338,12 @@ export default {
       _router.getChannelDetail(channelId).then(res => {
         _this.filterAxios(res, res => {
           _this.form = {
+            channelId: channelId,
             channelCode: res.channelCode,
             channelName: res.channelName,
             channelType: res.channelType,
             productCode: res.productCode,
+            productName: res.productName,
             gatewayGroup: res.gatewayGroup,
             channelMerId: res.channelMerId,
             signType: res.signType,
@@ -304,7 +353,12 @@ export default {
             pubKey: res.pubKey,
             prvKey: res.prvKey,
             channelAppid: res.channelAppid,
+            allowTradeTime: res.allowTradeTime,
+            dayMaxAmount: res.dayMaxAmount,
             rate: res.rate,
+            rateType: res.rateType,
+            settleType: res.settleType,
+            settleTime: res.settleTime,
             sort: res.sort,
             status: res.status
           };
@@ -324,19 +378,18 @@ export default {
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formSubmit() {
-      const _this = this;
       this.$refs.form.validate(valid => {
         if (valid) {
-          delete _this.form.disabled; // 去掉确认密码属性
-          if (_this.form.title === "添加") {
-            delete _this.form.title;
-            _router.addChannel(_this.form).then(res => {
-              _this.formatResult(res, "添加成功");
+          delete this.form.disabled; // 去掉确认密码属性
+          if (this.form.title === "添加") {
+            delete this.form.title;
+            _router.addChannel(this.form).then(res => {
+              this.formatResult(res, "添加成功");
             });
           } else {
-            delete _this.form.title;
-            _router.updateChannel(_this.form).then(res => {
-              _this.formatResult(res, "修改成功");
+            delete this.form.title;
+            _router.updateChannel(this.form.channelId, this.form).then(res => {
+              this.formatResult(res, "修改成功");
             });
           }
         } else {

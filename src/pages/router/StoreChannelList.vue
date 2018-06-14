@@ -33,8 +33,8 @@
         <el-table-column align="center" prop="merchantId" label="商户号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码"></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
-        <el-table-column align="center" prop="productTypeDesc" label="产品类型" width="90"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" width="120"></el-table-column>
+        <el-table-column align="center" prop="productCodeName" label="产品类型" width="90"></el-table-column>
         <el-table-column align="center" prop="merSingleMinAmount" label="商户最小限额" width="100"></el-table-column>
         <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额" width="120"></el-table-column>
         <el-table-column align="center" prop="validTime" label="生效时间" width="150"></el-table-column>
@@ -68,15 +68,27 @@
       >
       <div>
         <el-form ref="form" :model="form" :rules="rules" size="small" label-width="110px">
-          <el-form-item label="商户号" prop="merchantId">
-            <el-input v-model="form.merchantId" placeholder="请输入商户号" :disabled="form.disabled"></el-input>
-          </el-form-item>
-          <el-form-item label="商户名称" prop="merchantName">
-            <el-input v-model="form.merchantName" placeholder="请输入商户名称" :disabled="true"></el-input>
-          </el-form-item>
-          <el-form-item label="渠道" prop="channelCode">
-              <el-select v-model="form.channelCode" placeholder="请选择渠道">
-                  <el-option v-for="(item, index) in channelList" :key="index" :label="item.channelName" :value="item.channelCode"></el-option>
+          <template v-if="form.title === '添加'">
+            <el-form-item label="商户号" prop="addMerchantId">
+              <el-input v-model="form.addMerchantId" placeholder="请输入商户号"></el-input>
+            </el-form-item>
+            <el-form-item label="商户" v-if="merchantList.length > 0" prop="merchantId">
+              <el-select v-model="form.merchantId" placeholder="请选择商户">
+                  <el-option v-for="(item, index) in merchantList" :key="index" :label="item.merchantName" :value="item.merchantId"></el-option>
+              </el-select>
+            </el-form-item>
+          </template>
+          <template v-else>
+            <el-form-item label="商户号" prop="merchantId">
+              <el-input v-model="form.merchantId" placeholder="请输入商户号" :disabled="form.disabled"></el-input>
+            </el-form-item>
+            <el-form-item label="商户名称" prop="merchantName">
+              <el-input v-model="form.merchantName" placeholder="请输入商户名称" :disabled="true"></el-input>
+            </el-form-item>
+          </template>
+          <el-form-item label="渠道" prop="channelId">
+              <el-select v-model="form.channelId" placeholder="请选择渠道">
+                  <el-option v-for="(item, index) in channelList" :key="index" :label="item.channelName" :value="item.channelId"></el-option>
               </el-select>
           </el-form-item>
           <el-form-item label="商户最小限额" prop="merSingleMinAmount">
@@ -120,23 +132,26 @@ export default {
   mixins: [axiosMixin, listMixin],
   data() {
     const _this = this;
-    const validMerchantId = (rule, value, callback) => {
-      _router.validMerchantId(value).then(res => {
-        _this.filterAxios(
-          res,
-          res => {
-            _this.form = {
-              ..._this.form,
-              merchantName: res.merchantName
-            };
-            console.log("_this.form", _this.form);
-            callback();
-          },
-          errMsg => {
-            callback(new Error(errMsg));
-          }
-        );
-      });
+    // 根据商户号得到商户列表
+    const validAddMerchantId = (rule, value, callback) => {
+      if (this.form.title === "添加") {
+        if (value === "") {
+          this.merchantList = [];
+          callback(new Error("请输入商户号"));
+        } else {
+          _router.validMerchantId(value).then(res => {
+            this.filterAxios(res, res => {
+              if (res === undefined) {
+                this.merchantList = [];
+                callback(new Error("没有找到您输入的商户号，请重新输入"));
+              } else {
+                this.merchantList = res;
+                callback();
+              }
+            });
+          });
+        }
+      }
     };
     const validMerSingleMinAmount = (rule, value, callback) => {
       if (value < 0) {
@@ -157,14 +172,18 @@ export default {
     };
     return {
       searchForm: {},
-      form: {},
+      form: {
+        title: ""
+      },
       channelList: [],
       rules: {
+        addMerchantId: [{ validator: validAddMerchantId, trigger: "change" }],
         merchantId: [
-          { required: true, message: "请输入商户号", trigger: "blur" },
-          { validator: validMerchantId, trigger: "blur" }
+          { required: true, message: "请输入商户号", trigger: "blur" }
         ],
-        channelCode: [{ required: true, message: "请选择渠道", trigger: "blur" }],
+        channelId: [
+          { required: true, message: "请选择渠道", trigger: "blur" }
+        ],
         merSingleMinAmount: [
           { required: true, message: "请输入商户最小限额", trigger: "blur" },
           { validator: validMerSingleMinAmount, trigger: "blur" }
@@ -208,7 +227,8 @@ export default {
             }
           }
         ]
-      }
+      },
+      merchantList: []
     };
   },
   created() {
@@ -232,9 +252,12 @@ export default {
             merSingleMaxAmount: item.merSingleMaxAmount,
             merDayMaxAmount: item.merDayMaxAmount,
             productCode: item.productCode,
-            productTypeDesc: item.productTypeDesc,
+            productCodeName: item.productCodeName,
             status: item.status === "VALID" ? "生效" : "失效",
-            validTimeList: [getTimestamps(item.validTime), getTimestamps(item.invalidTime)],
+            validTimeList: [
+              getTimestamps(item.validTime),
+              getTimestamps(item.invalidTime)
+            ],
             validTime: item.validTime,
             invalidTime: item.invalidTime,
             createTime: item.createTime,
@@ -278,7 +301,6 @@ export default {
           merchantId: row.merchantId,
           merchantName: row.merchantName,
           channelId: row.channelId,
-          channelCode: row.channelCode,
           merSingleMinAmount: row.merSingleMinAmount,
           merSingleMaxAmount: row.merSingleMaxAmount,
           validTimeList: row.validTimeList,
@@ -295,6 +317,7 @@ export default {
     formClose() {
       this.addShow = false;
       this.form = {};
+      this.merchantList = [];
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formSubmit() {
@@ -312,10 +335,11 @@ export default {
             });
           } else {
             delete this.form.title;
-            delete this.form.merchantId;
-            _router.updateStoreChannelList(this.form.merchantChannelId, this.form).then(res => {
-              this.formatResult(res, "修改成功");
-            });
+            _router
+              .updateStoreChannelList(this.form.merchantChannelId, this.form)
+              .then(res => {
+                this.formatResult(res, "修改成功");
+              });
           }
         } else {
           console.log("error submit!!");

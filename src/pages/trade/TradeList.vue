@@ -91,7 +91,7 @@
         <el-table-column align="center" prop="orderNo" label="商户订单号" width="170"></el-table-column>
         <el-table-column align="center" prop="tradeTypeName" label="交易类型"></el-table-column>
         <el-table-column align="center" prop="productName" label="支付产品"></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" width="150"></el-table-column>
         <el-table-column align="center" prop="payAmount" label="交易金额"></el-table-column>
         <el-table-column align="center" prop="fee" label="手续费"></el-table-column>
         <el-table-column align="center" prop="statusName" label="交易状态"></el-table-column>
@@ -120,7 +120,7 @@
       v-show="detailShow"
       :visible.sync="detailShow"
       title="交易详情"
-      width="66%"
+      width="66vw"
       :before-close="detailClose"
       center
       >

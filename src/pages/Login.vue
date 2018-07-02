@@ -1,9 +1,7 @@
 <template>
   <div class="login-wrap">
-    <!-- <div class="login-bg"><img src="../static/img/login_bg.jpg"></div> -->
     <div class="login">
       <h1>
-        <!-- <img src="../static/img/unionPay.png" alt="转折科技"><br/> -->
         <img src="../static/img/logo.png" alt="转折科技"><br/>
         转折支付平台管理系统
       </h1>
@@ -18,9 +16,6 @@
         <div class="login-btn">
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
         </div>
-        <!-- <div class="login-tips">
-          <el-checkbox v-model="checked">记住我</el-checkbox>
-        </div> -->
       </el-form>
     </div>
     <div class="footer">Copyright &copy; 2017.All Right Reserved</div>
@@ -29,25 +24,11 @@
 <script type="text/ecmascript-6">
 import _user from "service/user-service.js";
 import { axiosMixin } from "static/js/mixin.js";
-import Util from "util/util.js";
-
-const _util = new Util();
-
+import { setToken, setUserInfo } from 'static/js/cache.js';
+import { mapActions } from 'vuex';
 export default {
   mixins: [axiosMixin],
   data() {
-    // var checkPhone = (rule, value, callback) => {
-    //   this.errMsg = "";
-    //   if (value === "") {
-    //     callback(new Error("请输入用户名"));
-    //   } else {
-    //     var phoneReg = /^0?1[35784][0-9][0-9]{8}$/;
-    //     if (!phoneReg.test(value) && value !== "admin") {
-    //       callback(new Error("请输入正确的手机号"));
-    //     }
-    //     callback();
-    //   }
-    // };
     var checkPwd = (rule, value, callback) => {
       this.errMsg = "";
       if (value === "") {
@@ -66,7 +47,6 @@ export default {
         password: ""
       },
       rules: {
-        // userName: [{ validator: checkPhone, trigger: "blur" }],
         password: [{ validator: checkPwd, trigger: "blur" }]
       },
       checked: false
@@ -80,15 +60,14 @@ export default {
             this.filterAxios(
               res,
               res => {
-                _util.setStorage("userInfo", {
-                  ...res,
-                  userName: this.ruleForm.userName
-                });
-                _util.setStorage("token", res.token);
+                setUserInfo({...res, userName: this.ruleForm.userName})
+                setToken(res.token);
                 const redirect = this.$route.query.redirect
                   ? decodeURIComponent(this.$route.fullPath.split("?redirect=")[1])
                   : null;
-                this.$router.push(redirect || "/dashboard");
+                this.getRightTree().then(() => {
+                  this.$router.push(redirect || "/dashboard");
+                });
               },
               errMsg => {
                 this.errMsg = errMsg;
@@ -99,7 +78,16 @@ export default {
           return false;
         }
       });
-    }
+    },
+    // 获取权限树
+    getRightTree() {
+      return _user.getRightTree().then(res => {
+        this.filterAxios(res, res => {
+          this.saveUserRight(res);
+        });
+      });
+    },
+    ...mapActions(['saveUserRight'])
   }
 };
 </script>

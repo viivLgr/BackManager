@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>银行列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="银行编码" prop="bankCode">
                 <el-input v-model="searchForm.bankCode" placeholder="请输入银行编码"></el-input>
@@ -16,10 +17,12 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
-        </div>
+      <!-- 添加 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
+      </div>
       <el-table
         :data="tableData"
         size="small"
@@ -34,13 +37,14 @@
         <el-table-column align="center" prop="bankBranchId" label="联行号" width="90"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -50,6 +54,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -97,8 +102,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _router from "service/router-service.js";
-import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -117,16 +122,29 @@ export default {
       }
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("路由管理", "银行列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取银行列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _router.getBankList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             bankListId: item.bankListId,
@@ -137,7 +155,8 @@ export default {
             bankBranchId: item.bankBranchId,
             bankPictureUrlBig: item.bankPictureUrlBig,
             bankPictureUrlSmall: item.bankPictureUrlSmall,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -152,9 +171,8 @@ export default {
     },
     // 添加 修改
     handleForm(row) {
-      const _this = this;
       if (row instanceof Object) {
-        _this.form = {
+        this.form = {
           title: "修改",
           bankListId: row.bankListId,
           bankCode: row.bankCode,
@@ -164,14 +182,14 @@ export default {
           bankBranchId: row.bankBranchId,
           bankPictureUrlBig: row.bankPictureUrlBig,
           bankPictureUrlSmall: row.bankPictureUrlSmall,
-          status: computedStatus(row.status)
+          status: row.status
         };
       } else {
-        _this.form = {
+        this.form = {
           title: "添加"
         };
       }
-      _this.addShow = true;
+      this.addShow = true;
     },
     formClose() {
       this.addShow = false;
@@ -199,11 +217,10 @@ export default {
       });
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        this._renderTableDate({ channelId: _this.channelId });
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate({ channelId: this.channelId });
       });
     }
   }

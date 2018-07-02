@@ -4,7 +4,7 @@
       <h2>角色列表</h2>
     </div>
     <div class="table">
-        <div class="table-btn">
+        <div class="table-btn" v-if="pageRight.add">
             <el-button size="mini" type="success" @click="handleForm('add')">添加角色</el-button>
         </div>
       <el-table
@@ -17,16 +17,17 @@
         <el-table-column align="center" prop="no" label="序号"></el-table-column>
         <el-table-column align="center" prop="roleName" label="角色名称"></el-table-column>
         <el-table-column align="center" prop="remark" label="备注"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150">
+        <el-table-column align="center" prop="operate" label="操作" width="150" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -36,6 +37,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       :small="true"
       v-show="addShow"
@@ -69,8 +71,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _user from "service/user-service.js";
-import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -85,22 +87,33 @@ export default {
       }
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("权限管理", "角色列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取角色列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _user.roleList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             roleId: item.roleId,
             roleName: item.roleName,
             remark: item.remark,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -162,13 +175,17 @@ export default {
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.table .table-btn{
+  margin-top: -30px;
+}
+</style>

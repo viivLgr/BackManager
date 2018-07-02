@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>渠道列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" :rules="searchRules" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="渠道编码" prop="channelCode">
                 <el-input v-model="searchForm.channelCode"></el-input>
@@ -22,10 +23,12 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm()">添加渠道</el-button>
-        </div>
+      <!-- 添加渠道 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm()">添加渠道</el-button>
+      </div>
       <el-table
         :data="tableData"
         size="small"
@@ -38,21 +41,22 @@
         <el-table-column align="center" prop="channelTypeName" label="渠道类型" width="100"></el-table-column>
         <el-table-column align="center" prop="productName" label="产品类型" width="100"></el-table-column>
         <el-table-column align="center" prop="gatewayGroup" label="网关组"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="sort" label="排序"></el-table-column>
         <el-table-column align="center" prop="allowTradeTime" label="渠道交易时间" width="150"></el-table-column>
         <el-table-column align="center" prop="dayMaxAmount" label="日限额(单元:分)" width="150"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" label="操作" width="300" fixed="right">
+        <el-table-column align="center" label="操作" width="300" fixed="right" v-if="pageRight.operate">
           <template slot-scope="scope">
-            <el-button @click="handleForm(scope.row, '详情')" type="warning" size="mini">详情</el-button>
-            <el-button @click="handleSupportBankList(scope.row.channelId, scope.row.channelName)" type="warning" size="mini">查看支持银行列表</el-button>
-            <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row, '修改')" type="warning" size="mini">修改</el-button>
+            <el-button v-if="pageRight.detail" @click="handleForm(scope.row, '详情')" type="warning" size="mini">详情</el-button>
+            <el-button v-if="pageRight.bankList" @click="handleSupportBankList(scope.row.channelId, scope.row.channelName)" type="warning" size="mini">查看支持银行列表</el-button>
+            <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleForm(scope.row, '修改')" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -62,6 +66,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -180,9 +185,9 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _router from "service/router-service.js";
 import _common from "service/common-service.js";
-import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
@@ -261,15 +266,39 @@ export default {
       signTypeList: []
     };
   },
-  created() {
-    this._renderTableDate();
-    this.getProductCodeList();
-    this.getChannelTypeList();
-    this.getRateTypeList();
-    this.getSettleTypeList();
-    this.getSignypeList();
-  },
   methods: {
+    init() {
+      this.initPageRight("路由管理", "渠道列表");
+      this._renderTableDate();
+      this.getProductCodeList();
+      this.getChannelTypeList();
+      this.getRateTypeList();
+      this.getSettleTypeList();
+      this.getSignTypeList();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加渠道" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "详情" && item.status === "VALID") {
+          this.pageRight.detail = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+        if (item.funcName === "查看支持的银行列表" && item.status === "VALID") {
+          this.pageRight.bankList = true;
+        }
+      });
+      const pageRight = this.pageRight;
+      if (pageRight.detail || pageRight.bankList || pageRight.update) {
+        this.pageRight.operate = true;
+      }
+    },
     // 获取渠道列表
     _renderTableDate(data) {
       this.loading = true;
@@ -288,7 +317,8 @@ export default {
             sort: item.sort,
             allowTradeTime: item.allowTradeTime,
             dayMaxAmount: item.dayMaxAmount,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -331,7 +361,7 @@ export default {
       });
     },
     // 获取签名方式类型
-    getSignypeList() {
+    getSignTypeList() {
       _common.getDictionaryList("SIGN_TYPE").then(res => {
         this.filterAxios(res, res => {
           this.signTypeList = res;
@@ -351,22 +381,20 @@ export default {
     },
     // 添加 修改
     handleForm(row, type) {
-      const _this = this;
       if (row instanceof Object) {
-        _this.getChannelDetail(row.channelId, type);
+        this.getChannelDetail(row.channelId, type);
       } else {
-        _this.form = {
+        this.form = {
           title: "添加"
         };
       }
-      _this.addShow = true;
+      this.addShow = true;
     },
     // 获取渠道详情
     getChannelDetail(channelId, type) {
-      const _this = this;
       _router.getChannelDetail(channelId).then(res => {
-        _this.filterAxios(res, res => {
-          _this.form = {
+        this.filterAxios(res, res => {
+          this.form = {
             channelId: channelId,
             channelCode: res.channelCode,
             channelName: res.channelName,
@@ -392,11 +420,11 @@ export default {
             status: res.status
           };
           if (type === "修改") {
-            _this.form.title = "修改";
-            _this.form.disabled = false;
+            this.form.title = "修改";
+            this.form.disabled = false;
           } else if (type === "详情") {
-            _this.form.title = "详情";
-            _this.form.disabled = true;
+            this.form.title = "详情";
+            this.form.disabled = true;
           }
         });
       });
@@ -428,11 +456,10 @@ export default {
       });
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     },
     // 查看支持银行列表

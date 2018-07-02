@@ -40,18 +40,14 @@
 </template>
 <script>
 import { validMixin, axiosMixin } from "static/js/mixin.js";
+import { getToken, getUserInfo, removeAllStorage } from 'static/js/cache.js';
 import _user from 'service/user-service.js';
-import Util from 'util/util.js';
-
-const _util = new Util();
 
 export default {
   mixins: [validMixin, axiosMixin],
   data() {
     return {
       searchShow: false,
-      messageLength: 2,
-      userInfo: {},
       form: {
         userid: "askdasd",
         pass: "",
@@ -64,7 +60,8 @@ export default {
     };
   },
   created() {
-    this.userInfo = _util.getStorage('userInfo');
+    this.token = getToken();
+    this.userInfo = getUserInfo();
     this.form = {
       userid: this.userInfo.userid
     }
@@ -74,8 +71,7 @@ export default {
       const _this = this;
       _user.logout().then(res => {
         _this.filterAxios(res, res => {
-          _util.removeStorage('userInfo');
-          _util.removeStorage('token');
+          removeAllStorage();
           this.$router.push("/login");
         });
       })

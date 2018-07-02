@@ -4,7 +4,8 @@
       <v-back path="back"/>
       <h2>产品列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
              <el-form-item label="状态" prop="status">
                 <el-select v-model="searchForm.status" placeholder="请选择">
@@ -18,7 +19,7 @@
         </el-form>
     </div>
     <div class="table">
-        <div class="table-btn">
+        <div class="table-btn" v-if="pageRight.add">
             <el-button size="mini" type="success" @click="handleForm('add')">添加</el-button>
         </div>
       <el-table
@@ -34,15 +35,15 @@
         <el-table-column align="center" prop="productName" label="产品名称" fixed width="100"></el-table-column>
         <el-table-column align="center" prop="rateTypeDesc" label="产品费率类型" width="140"></el-table-column>
         <el-table-column align="center" prop="rateDesc" label="产品费率" width="70"></el-table-column>
-        <template v-if="storeInfo.agentMerchantName">
+        <template v-if="merchantInfo.agentMerchantName">
           <el-table-column align="center" prop="merchantAgentName" label="代理商名称" width="84"></el-table-column>
           <el-table-column align="center" prop="merchantAgentRateTypeDesc" label="代理商费率类型" width="140"></el-table-column>
           <el-table-column align="center" prop="merchantAgentRateDesc" label="代理商费率" width="100"></el-table-column>
         </template>
-        <el-table-column align="center" prop="status" label="状态" width="100"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态" width="100"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
@@ -74,17 +75,17 @@
           <el-form-item label="商户名称">
             <el-input v-model="form.merchantName" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="代理商名称" v-if="storeInfo.agentMerchantName">
-            <el-input v-model="storeInfo.agentMerchantName" :disabled="true"></el-input>
+          <el-form-item label="代理商名称" v-if="merchantInfo.agentMerchantName">
+            <el-input v-model="merchantInfo.agentMerchantName" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="产品" prop="productValue">
             <el-select v-model="form.productValue" placeholder="请选择产品" @change="handleProductCodeChange">
-                <el-option v-for="(item, index) in selectProductList" :key="index" :label="item.dicName" :value="item.value"></el-option>
+              <el-option v-for="(item, index) in selectProductList" :key="index" :label="item.dicName" :value="item.value || item.dicCode"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="费率类型" prop="rateType">
-            <el-select v-model="form.rateType" placeholder="" :disabled="true">
-                <el-option v-for="(item, index) in selectTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
+            <el-select v-model="form.rateType" :placeholder="this.merchantInfo.agentMerchantName ? '' : '请选择费率类型'" :disabled="this.merchantInfo.agentMerchantName ? true : false">
+              <el-option v-for="(item, index) in rateTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="费率" prop="rate">
@@ -92,7 +93,7 @@
               <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
             </el-input>
           </el-form-item>
-          <el-form-item label="代理商费率" v-if="storeInfo.agentMerchantName">
+          <el-form-item label="代理商费率" v-if="merchantInfo.agentMerchantName">
             <el-input type="number" v-model="form.merchantAgentRate" :disabled="true">
               <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
             </el-input>
@@ -114,15 +115,16 @@
 <script type="text/ecmascript-6">
 import vBack from "components/Back.vue";
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _product from "service/product-service.js";
 import _common from "service/common-service.js";
-import { computedRateDesc, computedStatusDesc, computedStatus } from "static/js/format.js";
+import { computedRateDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
     const checkRate = (rule, value, callback) => {
       if (
-        this.storeInfo.agentMerchantName &&
+        this.merchantInfo.agentMerchantName &&
         this.form.merchantAgentRate < value
       ) {
         callback(new Error("费率须小于代理商费率"));
@@ -133,7 +135,7 @@ export default {
       callback();
     };
     return {
-      storeInfo: {},
+      merchantInfo: {},
       searchForm: {
         merchantId: "",
         status: ""
@@ -155,24 +157,38 @@ export default {
         formTitle: "添加"
       },
       selectProductList: [],
-      selectTypeList: []
+      rateTypeList: []
     };
   },
-  created() {
-    this.storeInfo = this.$route.query;
-    this.searchForm.merchantId = this.storeInfo.merchantId;
-    this.getProductList();
-    this.getRateTypeList().then(res => {
-      this._renderTableDate({ merchantId: this.storeInfo.merchantId });
-    });
-  },
   methods: {
+    init() {
+      this.initPageRight("商户管理", "商户列表");
+      this.merchantInfo = this.$route.query;
+      this.searchForm.merchantId = this.merchantInfo.merchantId;
+      this.getProductList();
+      this.getRateTypeList().then(res => {
+        this._renderTableDate({ merchantId: this.merchantInfo.merchantId });
+      });
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "产品查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "产品-添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "产品-修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取产品列表
     _renderTableDate(data) {
       this.loading = true;
       _product.getList(data).then(res => {
         this.renderTableDate(res, (item, index) => {
-          const typeDescList = this.selectTypeList.map(item => item.dicName);
+          const typeDescList = this.rateTypeList.map(item => item.dicName);
           return {
             no: index + 1,
             id: item.id,
@@ -190,7 +206,8 @@ export default {
               typeDescList[item.merchantAgentRateType - 1],
             merchantAgentRate: item.merchantAgentRate || "",
             merchantAgentRateDesc: computedRateDesc(item.merchantAgentRate, item.merchantAgentRateType),
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -211,9 +228,8 @@ export default {
     },
     // 添加 修改
     handleForm(row) {
-      const _this = this;
       if (row instanceof Object) {
-        _this.form = {
+        this.form = {
           formTitle: "修改",
           id: row.id,
           merchantId: row.merchantId,
@@ -221,21 +237,23 @@ export default {
           merchantAgentName: row.merchantAgentName,
           merchantAgentRate: row.merchantAgentRate,
           productCode: row.productCode,
-          productValue:
-            row.productCode + "-" + row.merchantAgentRate + "-" + row.rateType,
+          productValue: this.merchantInfo.agentMerchantName
+            ? (row.productCode + "-" + row.merchantAgentRate + "-" + row.rateType)
+            : row.productCode,
           rateType: row.rateType,
           rate: row.rate,
-          status: computedStatus(row.status)
+          status: row.status
         };
       } else {
-        _this.form = {
+        this.form = {
           formTitle: "添加",
-          merchantId: _this.storeInfo.merchantId,
-          merchantName: _this.storeInfo.merchantName,
-          agentMerchantName: _this.storeInfo.agentMerchantName
+          merchantId: this.merchantInfo.merchantId,
+          merchantName: this.merchantInfo.merchantName,
+          agentMerchantName: this.merchantInfo.agentMerchantName
         };
       }
-      _this.addShow = true;
+      console.log('form', this.form);
+      this.addShow = true;
     },
     formSubmit() {
       this.$refs.form.validate(valid => {
@@ -269,14 +287,14 @@ export default {
       _this.formClose();
       _this.filterAxios(res, res => {
         _this.successTips(msg);
-        _this._renderTableDate({ merchantId: this.storeInfo.merchantId });
+        _this._renderTableDate({ merchantId: this.merchantInfo.merchantId });
       });
     },
     // 获取可选择产品列表
     getProductList() {
       // 如果有代理商，可选择的产品列表为代理商已有的
-      if (this.storeInfo.agentMerchantName) {
-        _product.getAgentProductList(this.storeInfo.merchantId).then(res => {
+      if (this.merchantInfo.agentMerchantName) {
+        _product.getAgentProductList(this.merchantInfo.merchantId).then(res => {
           this.filterAxios(res, res => {
             res.map(item => {
               this.selectProductList.push({
@@ -304,18 +322,21 @@ export default {
     getRateTypeList() {
       return _common.getDictionaryList("PROD_RATE_TYPE").then(res => {
         this.filterAxios(res, res => {
-          this.selectTypeList = res;
+          this.rateTypeList = res;
         });
       });
     },
     // 根据商户号和产品code查询费率类型
     handleProductCodeChange() {
+      console.log('handleProductCodeChange', this.form.productValue)
       // 有代理商的时候查询代理商费率
-      if (this.storeInfo.agentMerchantName) {
+      if (this.merchantInfo.agentMerchantName) {
         const productValueList = this.form.productValue.split("-");
         this.form.productCode = productValueList[0];
         this.form.merchantAgentRate = productValueList[1];
         this.form.rateType = productValueList[2];
+      } else {
+        this.form.productCode = this.form.productValue;
       }
     }
   },

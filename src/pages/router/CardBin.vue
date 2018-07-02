@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>卡bin管理</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="银行卡号">
                 <el-input v-model="searchForm.bankCardNo" placeholder="请输入银行卡号"></el-input>
@@ -13,6 +14,7 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
       <el-table
         :data="tableData"
@@ -30,6 +32,7 @@
         <el-table-column align="center" prop="binLength" label="卡bin长度"></el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -52,23 +55,30 @@ export default {
       cardType: ["", "借记卡", "贷记卡", "贷记卡", "预付卡"]
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("路由管理", "卡bin管理");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+      });
+    },
     // 获取渠道列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _router.cardBinList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             cardBin: item.cardBin,
             bankCode: item.bankCode,
             bankName: item.bankName,
             cardName: item.cardName,
-            cardType: _this.cardType[item.cardType],
+            cardType: this.cardType[item.cardType],
             cardLength: item.cardLength,
             binLength: item.binLength
           };
@@ -76,10 +86,9 @@ export default {
       });
     },
     searchSubmit(searchForm) {
-      const _this = this;
       this.$refs[searchForm].validate(valid => {
         if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
+          this._renderTableDate(this.$refs[searchForm].model);
         } else {
           console.log("error submit!!");
           return false;

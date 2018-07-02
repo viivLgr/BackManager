@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>交易列表</h2>
     </div>
-    <div class="detail-input">
+    <!-- 搜索 -->
+    <div class="detail-input" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini" label-width="84px">
             <div class="row">
                 <el-form-item label="商户号">
@@ -100,13 +101,14 @@
         <el-table-column align="center" prop="payerAccount" label="银行卡号" width="100"></el-table-column>
         <el-table-column align="center" prop="createTime" label="交易创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="completeTime" label="交易完成时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" fixed="right" v-if="pageRight.detail">
           <template slot-scope="scope">
             <el-button @click="handleDetail(scope.row)" type="warning" size="mini">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -116,6 +118,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 详情 -->
     <el-dialog
       v-show="detailShow"
       :visible.sync="detailShow"
@@ -279,13 +282,24 @@ export default {
       tradeTypeList: []
     };
   },
-  created() {
-    this._renderTableDate();
-    this.getProductCodeList();
-    this.getTradeStatusList();
-    this.getTradeTypeList();
-  },
   methods: {
+    init() {
+      this.initPageRight("交易管理", "交易列表");
+      this._renderTableDate();
+      this.getProductCodeList();
+      this.getTradeStatusList();
+      this.getTradeTypeList();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "搜索" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "交易详情" && item.status === "VALID") {
+          this.pageRight.detail = true;
+        }
+      });
+    },
     // 获取交易列表
     _renderTableDate(data) {
       this.loading = true;
@@ -354,7 +368,6 @@ export default {
       _trade.getDetail(row.orderId).then(res => {
         this.filterAxios(res, res => {
           this.detailForm = res;
-          console.log(res);
         });
       });
       this.detailShow = true;

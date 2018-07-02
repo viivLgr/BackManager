@@ -1,8 +1,10 @@
 import { _axios } from "static/js/axios.js";
+
 const _common = {
   /**
    * 获取字典表
    * CARD_TYPE-卡类型
+   * BANK_ACCOUNT_TYPE-银行账户字典
    * CHANNEL_TYPE-渠道类型
    * MERCHANT_TYPE-商户类型
    * PAY_TYPE-支付方式

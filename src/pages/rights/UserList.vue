@@ -3,7 +3,7 @@
     <div class="header clearfix">
       <h2>用户列表</h2>
     </div>
-    <div class="operating">
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" :rules="searchRules" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="用户名" prop="userName">
                 <el-input v-model="searchForm.userName"></el-input>
@@ -23,7 +23,7 @@
         </el-form>
     </div>
     <div class="table">
-        <div class="table-btn">
+        <div class="table-btn" v-if="pageRight.add">
             <el-button size="mini" type="success" @click="handleForm('add')">添加用户</el-button>
         </div>
       <el-table
@@ -39,15 +39,16 @@
         <el-table-column align="center" prop="linkmanPhone" label="联系方式" width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="所属机构"></el-table-column>
         <el-table-column align="center" prop="linkmanEmail" label="邮箱" width="150"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -57,6 +58,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -118,8 +120,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _user from "service/user-service.js";
-import { computedStatusDesc } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin, validMixin],
   data() {
@@ -192,17 +194,30 @@ export default {
       roleList: []
     };
   },
-  created() {
-    this._renderTableDate();
-    this.getRoleList();
-  },
   methods: {
+    init() {
+      this.initPageRight("权限管理", "用户列表");
+      this._renderTableDate();
+      this.getRoleList();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "搜索" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取用户列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _user.userList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             userId: item.userId,
@@ -216,7 +231,8 @@ export default {
             roleId: item.roleId,
             wechat: item.wechat,
             qq: item.qq,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             operate: {
               add: true,
@@ -228,10 +244,9 @@ export default {
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
       this.$refs[searchForm].validate(valid => {
         if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
+          this._renderTableDate(this.$refs[searchForm].model);
         } else {
           console.log("error submit!!");
           return false;
@@ -240,10 +255,9 @@ export default {
     },
     // 获取roleList
     getRoleList() {
-      const _this = this;
-      _user.roleList().then(res => {
-        _this.filterAxios(res, res => {
-          this.roleList = res.list;
+      _user.getRoleList().then(res => {
+        this.filterAxios(res, res => {
+          this.roleList = res;
         });
       });
     },
@@ -301,13 +315,18 @@ export default {
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.table .table-btn{
+  padding: 0 20px 20px 0;
+  margin-top: -20px;
+}
+</style>

@@ -7,9 +7,12 @@ const _user = {
   logout: function () {
     return _axios('/sys/user/logout', 'POST');
   },
+  // 登录后获取权限树，根据权限树生成左侧菜单
+  getRightTree: function () {
+    return _axios('/sys/user/menu/permissionTree');
+  },
   // 用户权限用户列表
   userRightUserList: function (data) {
-    // return _axios('/sys/user/function/pageList', 'POST', data);
     return _axios('/sys/user/pageList/forPermission', 'POST', data);
   },
   // 获取用户权限
@@ -23,6 +26,10 @@ const _user = {
   // 用户列表
   userList: function (data) {
     return _axios('/sys/user/pageList', 'POST', data);
+  },
+  // 添加用户获取所需角色列表，无权限
+  getRoleList: function () {
+    return _axios('/sys/role/list');
   },
   // 添加用户
   addUser: function (data) {

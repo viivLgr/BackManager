@@ -1,15 +1,12 @@
 import axios from 'axios';
-import Util from 'util/util.js';
+import { getToken, getUserInfo } from 'static/js/cache.js';
 
-const _util = new Util();
-const host = 'http://192.168.31.134:8089';
-// const host = 'http://192.168.31.156:8081';
 export function _axios(url, method, data) {
   // 去掉空字段和空对象
   deleteEmptyProperty(data);
   return axios({
     method: method || 'GET',
-    url: host + url,
+    url: process.env.BASE_API + url,
     headers: getHeader(),
     data: data || {}
   });
@@ -20,12 +17,12 @@ function getHeader() {
     "Accept": "application/json;charset=utf-8",
     "Content-Type": "application/json;charset=utf-8"
   }
-  const token = localStorage.getItem('token');
+  const token = getToken();
   if (token) {
     header = {
       ...header,
       token: token,
-      userId: +_util.getStorage('userInfo').userId
+      userId: getUserInfo().userId
     }
   }
   return header;

@@ -3,7 +3,7 @@
     <div class="header clearfix">
       <h2>功能列表</h2>
     </div>
-    <div class="operating">
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" :rules="searchRules" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="功能" prop="funcName">
                 <el-input v-model="searchForm.funcName"></el-input>
@@ -19,6 +19,7 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 表格 -->
     <div class="table">
       <el-table
         v-loading="loading"
@@ -30,18 +31,19 @@
         <el-table-column align="center" prop="no" label="序号" width="100"></el-table-column>
         <el-table-column align="center" prop="funcName" label="功能" width="150"></el-table-column>
         <el-table-column align="center" prop="funcLevel" label="级别"></el-table-column>
-        <el-table-column align="center" prop="funcPath" label="URL" width="200"></el-table-column>
+        <el-table-column align="center" prop="funcPath" label="URL" width="320"></el-table-column>
         <el-table-column align="center" prop="parentName" label="上级"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150">
+        <el-table-column align="center" prop="operate" label="操作" v-if="pageRight.add || pageRight.update" width="150">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.operate.add" @click="handleAdd(scope.row)" type="success" size="mini">添加</el-button>
-            <el-button v-if="scope.row.operate.update" @click="handleUpdate(scope.row)" type="warning" size="mini">修改</el-button>
+            <el-button v-if="scope.row.operate.add && pageRight.add" @click="handleAdd(scope.row)" type="success" size="mini">添加</el-button>
+            <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleUpdate(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -51,6 +53,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -87,6 +90,7 @@
         <el-button size="small" type="primary" @click="addSubmit()">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 修改 -->
     <el-dialog
       v-show="updateShow"
       :visible.sync="updateShow"
@@ -119,7 +123,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
-import { computedStatusDesc, computedStatus } from "static/js/format.js";
+import { getStatusName } from "static/js/cache.js";
 import _feature from "service/feature-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -138,16 +142,29 @@ export default {
       }
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("权限管理", "功能列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "搜索" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取功能列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _feature.getList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             funcId: item.funcId,
@@ -156,10 +173,11 @@ export default {
             funcPath: item.funcPath,
             parentFuncId: item.parentFuncId,
             parentName: item.parentName,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             updateTime: item.modifiedTime,
             operate: {
-              add: item.funcLevel < 4 && item.status === 'VALID',
+              add: item.funcLevel < 4 && item.status === "VALID",
               update: true
             }
           };
@@ -195,12 +213,16 @@ export default {
         parentName: row.funcName
       };
     },
+    addClose() {
+      this.levelList = [1, 2, 3, 4];
+      this.addShow = false;
+      this.$refs["addForm"] && this.$refs["addForm"].resetFields();
+    },
     // 添加
     addSubmit() {
-      const _this = this;
       _feature.add(this.addForm).then(res => {
-        _this.formatResult(res, _this.updateClose, '添加成功');
-        _this.addClose();
+        this.formatResult(res, this.updateClose, "添加成功");
+        this.addClose();
       });
     },
     // 打开修改弹窗
@@ -212,25 +234,23 @@ export default {
         funcPath: row.funcPath,
         // funcLevel: row.funcLevel,
         // parentFuncId: row.parentFuncId,
-        status: computedStatus(row.status)
+        status: row.status
       };
     },
     // 修改
     updateSubmit() {
-      const _this = this;
-      const funcId = _this.updateForm.funcId;
-      delete _this.updateForm.funcId;
-      _feature.update(funcId, _this.updateForm).then(res => {
-        _this.formatResult(res, _this.updateClose, '修改成功');
-        _this.updateClose();
+      const funcId = this.updateForm.funcId;
+      delete this.updateForm.funcId;
+      _feature.update(funcId, this.updateForm).then(res => {
+        this.formatResult(res, this.updateClose, "修改成功");
+        this.updateClose();
       });
     },
     formatResult(res, callback, msg) {
-      const _this = this;
-      typeof callback === 'function' && callback()
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      typeof callback === "function" && callback();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     }
   }

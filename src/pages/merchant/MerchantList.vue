@@ -4,7 +4,7 @@
       <h2>商户列表</h2>
     </div>
     <!-- 查询 -->
-    <div class="detail-input">
+    <div class="detail-input" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini" label-width="100px">
             <el-form-item label="商户号">
                 <el-input v-model="searchForm.merchantId" placeholder="请输入商户号"></el-input>
@@ -24,9 +24,10 @@
         </el-form>
     </div>
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleStore()">添加</el-button>
-        </div>
+      <!-- 添加 - 当前 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleMerchant()">添加</el-button>
+      </div>
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -37,26 +38,27 @@
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantId" label="商户号" fixed width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="商户名称" fixed width="120"></el-table-column>
-        <el-table-column align="center" prop="merchantType" label="商户类型"></el-table-column>
+        <el-table-column align="center" prop="merchantTypeDesc" label="商户类型"></el-table-column>
         <el-table-column align="center" prop="linkmanName" label="联系人姓名" width="100"></el-table-column>
         <el-table-column align="center" prop="linkmanPhone" label="联系人手机号" width="100"></el-table-column>
         <el-table-column align="center" prop="linkmanEmail" label="联系人邮箱" width="150"></el-table-column>
-        <el-table-column align="center" prop="status" label="商户状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="商户状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="入网时间" width="150"></el-table-column>
         <el-table-column align="center" prop="agentMerchantName" label="代理商户" width="120"></el-table-column>
         <el-table-column align="center" prop="amount" label="商户余额(单位:分)" width="140"></el-table-column>
         <el-table-column align="center" prop="freezingAmount" label="冻结金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" fixed="right" width="480">
+        <el-table-column align="center" prop="operate" label="操作" fixed="right" width="480" v-if="pageRight.operate">
           <template slot-scope="scope">
-            <el-button @click="goProductList(scope.row)" type="warning" size="mini">产品列表</el-button>
-            <el-button  v-if="scope.row.operate.add" @click="handleStore(scope.row, 'add')" type="success" size="mini">添加</el-button>
-            <el-button @click="handleStore(scope.row, 'update')" type="warning" size="mini">修改</el-button>
-            <el-button @click="handleAddUser(scope.row)" type="success" size="mini">添加用户</el-button>
-            <el-button @click="handleAppInfo(scope.row)" type="warning" size="mini">修改应用信息</el-button>
+            <el-button v-if="pageRight.productList" @click="goProductList(scope.row)" type="warning" size="mini">产品列表</el-button>
+            <el-button v-if="scope.row.operate.add && pageRight.addItem" @click="handleMerchant(scope.row, 'add')" type="success" size="mini">添加</el-button>
+            <el-button v-if="pageRight.updateItem" @click="handleMerchant(scope.row, 'update')" type="warning" size="mini">修改</el-button>
+            <el-button v-if="pageRight.addUser" @click="handleAddUser(scope.row)" type="success" size="mini">添加用户</el-button>
+            <el-button v-if="pageRight.updateAppInfo" @click="handleAppInfo(scope.row)" type="warning" size="mini">修改应用信息</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -107,8 +109,9 @@
             </el-form-item>
             <el-form-item label="银行卡类型" prop="cardType">
               <el-select v-model="form.cardType" placeholder="请选择银行卡类型">
-                  <el-option label="借记卡" value="PSN_DEBIT"></el-option>
-                  <el-option label="对公账户" value="PUB"></el-option>
+                  <el-option v-for="(item, index) in cardAccountTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
+                  <!-- <el-option label="借记卡" value="DEBIT"></el-option>
+                  <el-option label="对公账户" value="CORPORATE"></el-option> -->
               </el-select>
             </el-form-item>
             <el-form-item label="银行卡号" prop="bankCardNo">
@@ -133,10 +136,16 @@
             <el-form-item label="应用密钥" prop="md5Key">
               <el-input v-model="form.md5Key" placeholder="请输入应用密钥"></el-input>
             </el-form-item>
-            <el-form-item label="状态">
+            <el-form-item label="状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择状态">
                 <el-option v-for="(item, index) in statusList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
               </el-select>
+            </el-form-item>
+          </div>
+          <div class="el-form-line">
+            <el-form-item label="IP地址" prop="ipWhiteList">
+              <el-input v-model="form.ipWhiteList" placeholder="请输入IP地址"></el-input>
+              <span class="tips">（IP地址可以是多个，多个用英文逗号（“,”)隔开，也可以是IP地址段，如：115.12.113.33-78）</span>
             </el-form-item>
           </div>
         </el-form>
@@ -239,47 +248,45 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { axiosMixin, listMixin } from "static/js/mixin.js";
-import _store from "service/store-service.js";
+import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
+import { getStatusName, setMerchantType, getmerchantTypeName } from "static/js/cache.js";
+import { trim } from 'static/js/format.js';
+import _merchant from "service/merchant-service.js";
 import _user from "service/user-service.js";
 import _common from "service/common-service.js";
-import { computedStatusDesc, computedAgentDesc } from "static/js/format.js";
 export default {
-  mixins: [axiosMixin, listMixin],
+  mixins: [axiosMixin, listMixin, validMixin],
   data() {
     const checkBranchNo = (rule, value, callback) => {
-      if (this.form.cardType === "PUB" && value === "") {
+      value = trim(value);
+      if (this.form.cardType === this.pubCardAccountTypeCode && !value) {
         callback(new Error("对公账户必须输入联行号"));
       } else {
         callback();
       }
     };
-    const checkPayPassword = (rule, value, callback) => {
-      if (this.form.title === "添加" && value === "") {
-        callback(new Error("支付密码不能为空"));
-      } else {
-        callback();
-      }
-    };
-    const checkMd5Key = (rule, value, callback) => {
-      if (this.form.title === "添加" && value === "") {
-        callback(new Error("应用密钥不能为空"));
-      } else {
-        callback();
-      }
-    };
+    // const checkPayPassword = (rule, value, callback) => {
+    //   if (this.form.title === "添加" && value === "") {
+    //     callback(new Error("支付密码不能为空"));
+    //   } else {
+    //     callback();
+    //   }
+    // };
+    // const checkMd5Key = (rule, value, callback) => {
+    //   if (this.form.title === "添加" && value === "") {
+    //     callback(new Error("应用密钥不能为空"));
+    //   } else {
+    //     callback();
+    //   }
+    // };
     const validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.addUserForm.checkPass !== "") {
-          this.$refs.addUserForm.validateField("checkPass");
-        }
-        callback();
+      if (this.addUserForm.checkPass !== "") {
+        this.$refs.addUserForm.validateField("checkPass");
       }
+      callback();
     };
     var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
+      if (value === "" || !value) {
         callback(new Error("请再次输入密码"));
       } else if (value !== this.addUserForm.password) {
         callback(new Error("两次输入密码不一致!"));
@@ -290,7 +297,7 @@ export default {
     return {
       addUserShow: false,
       updateAppInfoShow: false,
-      storeAppInfo: {},
+      merchantAppInfo: {},
       searchForm: {
         merchantId: "",
         merchantName: "",
@@ -347,7 +354,8 @@ export default {
         // 对公账户必须输入联行号
         branchNo: [{ validator: checkBranchNo, trigger: "blur" }],
         payPassword: [
-          { validator: checkPayPassword, trigger: "blur" },
+          { required: true, message: "请输入支付密码", trigger: "blur" },
+          // { validator: checkPayPassword, trigger: "blur" },
           {
             min: 6,
             max: 16,
@@ -355,7 +363,13 @@ export default {
             trigger: "blur"
           }
         ],
-        md5Key: [{ validator: checkMd5Key, trigger: "blur" }],
+        md5Key: [
+          { required: true, message: "请输入应用密钥", trigger: "blur" }
+          // { validator: checkMd5Key, trigger: "blur" }
+        ],
+        ipWhiteList: [
+          { required: true, message: "请输入IP地址", trigger: "blur" }
+        ],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
       },
       appInfoForm: {},
@@ -401,18 +415,52 @@ export default {
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]
       },
       roleList: [],
-      merchantTypeList: []
+      merchantTypeList: [],
+      cardAccountTypeList: [],
+      pubCardAccountTypeCode: ''
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("商户管理", "商户列表");
+      this._renderTableDate();
+      this.getMerchantTypeList();
+      this.getCardAccountTypeList();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加-当前" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "添加-指定" && item.status === "VALID") {
+          this.pageRight.addItem = true;
+        }
+        if (item.funcName === "添加用户" && item.status === "VALID") {
+          this.pageRight.addUser = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.updateItem = true;
+        }
+        if (item.funcName === "修改应用信息" && item.status === "VALID") {
+          this.pageRight.updateAppInfo = true;
+        }
+        if (item.funcName === "产品列表" && item.status === "VALID") {
+          this.pageRight.productList = true;
+        }
+      });
+      const pageRight = this.pageRight;
+      if (pageRight.addItem || pageRight.addUser || pageRight.updateItem || pageRight.productList || pageRight.updateAppInfo) {
+        this.pageRight.operate = true;
+      }
+    },
     // 获取列表
     _renderTableDate(data) {
       const _this = this;
       _this.loading = true;
-      _store.getStoreList(data).then(
+      _merchant.getMerchantList(data).then(
         res => {
           _this.renderTableDate(res, (item, index) => {
             return {
@@ -423,12 +471,14 @@ export default {
               linkmanName: item.linkmanName,
               linkmanPhone: item.linkmanPhone,
               linkmanEmail: item.linkmanEmail,
-              merchantType: computedAgentDesc(item.merchantType),
+              merchantType: item.merchantType,
+              merchantTypeDesc: getmerchantTypeName(item.merchantType),
               merchantAgentId: item.merchantAgentId,
               agentMerchantName: item.agentMerchantName,
               amount: item.amount,
               freezingAmount: item.freezingAmount,
-              status: computedStatusDesc(item.status),
+              status: item.status,
+              statusDesc: getStatusName(item.status),
               createTime: item.createTime,
               operate: {
                 add: item.merchantType === "MER_AGENT",
@@ -454,15 +504,12 @@ export default {
       });
     },
     // 添加商户
-    handleStore(row, type) {
+    handleMerchant(row, type) {
       const _this = this;
-      if (this.getMerchantTypeList.length === 0) {
-        this.getMerchantTypeList();
-      }
       if (row instanceof Object) {
         if (type && type === "update") {
           // 修改
-          _this.getStoreInfo(row.id);
+          _this.getMerchantInfo(row.id);
         } else {
           _this.form = {
             title: "添加",
@@ -478,28 +525,13 @@ export default {
       _this.addShow = true;
     },
     // 获取商户详细信息
-    getStoreInfo(id) {
+    getMerchantInfo(id) {
       const _this = this;
-      _store.getStoreDetailInfo(id).then(res => {
+      _merchant.getMerchantDetailInfo(id).then(res => {
         _this.filterAxios(res, res => {
           _this.form = {
-            title: "修改",
-            merchantId: res.merchantId,
-            merchantName: res.merchantName,
-            merchantType: res.merchantType,
-            linkmanName: res.linkmanName,
-            linkmanPhone: res.linkmanPhone,
-            linkmanEmail: res.linkmanEmail,
-            merchantAgentId: res.merchantAgentId + "",
-            merchantAgentName: res.merchantAgentName,
-            cardType: res.cardType,
-            bankCardNo: res.bankCardNo,
-            accountName: res.accountName,
-            bankName: res.bankName,
-            branchNo: res.branchNo,
-            payPassword: res.payPassword,
-            md5Key: res.md5Key,
-            status: res.status
+            ...res,
+            title: "修改"
           };
         });
       });
@@ -510,14 +542,14 @@ export default {
           if (this.form.title === "添加") {
             delete this.form.title;
             this.form.agentMerchantName && delete this.form.agentMerchantName;
-            _store.addStroreUser(this.form).then(res => {
+            _merchant.addStroreUser(this.form).then(res => {
               this.formatResult(res, "添加成功");
             });
           } else {
             // 修改
             delete this.form.title;
             this.form.agentMerchantName && delete this.form.agentMerchantName;
-            _store.updateStroreUser(this.form.id, this.form).then(res => {
+            _merchant.updateStroreUser(this.form.id, this.form).then(res => {
               this.formatResult(res, "修改成功");
             });
           }
@@ -551,7 +583,7 @@ export default {
       this.appInfoForm = {};
     },
     appSubmit() {
-      _store
+      _merchant
         .updateAppInfo(this.appInfoForm.merchantId, this.appInfoForm)
         .then(res => {
           this.filterAxios(res, res => {
@@ -562,15 +594,15 @@ export default {
     },
     // 获取应用信息详细信息
     getAppInfo(merchantId) {
-      _store.getStoreAppInfo(merchantId).then(res => {
+      _merchant.getMerchantAppInfo(merchantId).then(res => {
         this.filterAxios(res, res => {
-          this.storeAppInfo = res;
+          this.merchantAppInfo = res;
           this.appInfoForm = {
-            merchantId: this.storeAppInfo.merchantId,
-            appId: this.storeAppInfo.appId,
-            id: this.storeAppInfo.id,
-            md5Key: this.storeAppInfo.md5Key,
-            status: this.storeAppInfo.status
+            merchantId: this.merchantAppInfo.merchantId,
+            appId: this.merchantAppInfo.appId,
+            id: this.merchantAppInfo.id,
+            md5Key: this.merchantAppInfo.md5Key,
+            status: this.merchantAppInfo.status
           };
         });
       });
@@ -618,24 +650,46 @@ export default {
         }
       });
     },
-    // 获取roleList
+    // 获取角色列表
     getRoleList() {
-      const _this = this;
-      _user.roleList().then(res => {
-        _this.filterAxios(res, res => {
-          this.roleList = res.list;
+      _user.getRoleList().then(res => {
+        this.filterAxios(res, res => {
+          this.roleList = res;
         });
       });
     },
-    // merchantTypeList
+    // 获取商户类型
     getMerchantTypeList() {
-      const _this = this;
       _common.getDictionaryList("MERCHANT_TYPE").then(res => {
-        _this.filterAxios(res, res => {
+        this.filterAxios(res, res => {
           this.merchantTypeList = res;
+          setMerchantType(res);
+        });
+      });
+    },
+    // 获取银行账户列表
+    getCardAccountTypeList() {
+      _common.getDictionaryList("BANK_ACCOUNT_TYPE").then(res => {
+        this.filterAxios(res, res => {
+          this.cardAccountTypeList = res;
+          this.pubCardAccountTypeCode = res.filter(item => {
+            return item.dicName === '对公账户'
+          })[0].dicCode;
         });
       });
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.table .table-btn {
+  padding: 0 20px 20px 0;
+  margin-top: -20px;
+}
+.el-form-line .el-input {
+  width: inherit;
+}
+.tips {
+  display: inline-block;
+}
+</style>

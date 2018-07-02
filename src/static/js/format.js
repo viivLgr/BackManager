@@ -1,5 +1,4 @@
-
-// 计算费率显示
+// 计算费率显示单位
 export function computedRateDesc(rate, type) {
   if (type === "1") {
     return rate + "元";
@@ -8,39 +7,10 @@ export function computedRateDesc(rate, type) {
   }
 }
 
-// 计算状态显示
-export function computedStatusDesc(status) {
-  if (status === "VALID") {
-    return '生效';
-  } else if (status === "INVALID") {
-    return '失效';
-  }
-}
-
-// 计算状态值
-export function computedStatus(statusDesc) {
-  if (statusDesc === "生效") {
-    return 'VALID';
-  } else if (statusDesc === "失效") {
-    return 'INVALID';
-  }
-}
-// 计算代理类型描述
-export function computedAgentDesc(agentType) {
-  if (agentType === "MER_AGENT") {
-    return '代理商';
-  } else if (agentType === "COMMON") {
-    return '普通商户';
-  }
-}
-
-// 计算费率类型Desc
-export function computedRateTypeDesc(rateType) {
-  if (rateType === "1") {
-    return '按笔收费，单位：元';
-  } else if (rateType === "2") {
-    return '按百分比，小数格式';
-  }
+// 去除前后空格
+export function trim(str) {
+  str = str + '';
+  return str.replace(/^\s+|\s+$/g, "");
 }
 
 // 格式化金额

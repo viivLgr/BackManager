@@ -4,10 +4,12 @@
       <v-back path="back"/>
       <h2>接口列表</h2>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm('add')">添加</el-button>
-        </div>
+      <!-- 添加 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm('add')">添加</el-button>
+      </div>
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -18,10 +20,10 @@
         <el-table-column align="center" prop="no" label="序号" width="100" fixed></el-table-column>
         <el-table-column align="center" prop="interfaceName" label="接口名称" fixed></el-table-column>
         <el-table-column align="center" prop="interfaceVersion" label="接口版本号"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
@@ -80,8 +82,8 @@
 <script type="text/ecmascript-6">
 import vBack from "components/Back.vue";
 import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _app from "service/app-service.js";
-import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin, validMixin],
   components: {
@@ -94,28 +96,41 @@ export default {
       interfaceList: []
     };
   },
-  created() {
-    const data = this.$route.query;
-    this.searchForm = {
-      ...this.searchForm,
-      appId: data.appId
-    };
-    this.appId = data.appId;
-    this.merchantId = data.merchantId;
-    this._renderTableDate(this.searchForm);
-  },
   methods: {
+    init() {
+      this.initPageRight("应用管理", "应用列表");
+      const data = this.$route.query;
+      this.searchForm = {
+        ...this.searchForm,
+        id: data.id
+      };
+      this.appId = data.appId;
+      this.merchantId = data.merchantId;
+      this._renderTableDate(this.searchForm);
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "接口列表-添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "接口列表-修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取接口列表
     _renderTableDate(data) {
       this.loading = true;
-      _app.getInterfaceList(data).then(res => {
+      _app.getInterfaceList(this.searchForm.id, data).then(res => {
         this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
+            id: item.id,
             interfaceId: item.interfaceId,
             interfaceName: item.interfaceName,
             interfaceVersion: item.interfaceVersion,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -128,19 +143,19 @@ export default {
     },
     // 添加 修改
     handleForm(row) {
-      this.getInterfaceList();
       if (row instanceof Object) {
-        console.log(row.interfaceId)
         this.form = {
           formTitle: "修改",
+          id: row.id,
           appId: this.appId,
           merchantId: this.merchantId,
           interfaceId: row.interfaceId,
           interfaceName: row.interfaceName,
           interfaceVersion: row.interfaceVersion,
-          status: computedStatus(row.status)
+          status: row.status
         };
       } else {
+        this.getInterfaceList();
         this.form = {
           formTitle: "添加",
           appId: this.appId,
@@ -159,7 +174,7 @@ export default {
             });
           } else {
             delete this.form.formTitle;
-            _app.updateInterfaceList(this.form).then(res => {
+            _app.updateInterfaceList(this.form.id, this.form).then(res => {
               this.formatResult(res, "修改成功");
             });
           }
@@ -182,13 +197,19 @@ export default {
         this._renderTableDate(this.searchForm);
       });
     },
+    // 可选接口列表
     getInterfaceList() {
-      _app.getCanUseInterfaceList({ appId: this.appId }).then(res => {
+      _app.getCanUseInterfaceList(this.appId).then(res => {
         this.filterAxios(res, res => {
-          this.interfaceList = res.list;
+          this.interfaceList = res;
         });
       });
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.table .table-btn {
+  margin-top: -30px;
+}
+</style>

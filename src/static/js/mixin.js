@@ -2,13 +2,19 @@
  * @Author: viivLgr
  * @Date: 2018-06-01 14:16:31
  * @Last Modified by: viivLgr
- * @Last Modified time: 2018-06-14 18:23:07
+ * @Last Modified time: 2018-06-29 11:07:29
  */
 
 import {
   ERR_OK,
   NEED_LOGIN
 } from "service/config.js";
+import {
+  getPageRight,
+  getUserInfo,
+  setStatus,
+  getStatus
+} from 'static/js/cache.js';
 import {
   // passwordLevel,
   validQQ,
@@ -17,10 +23,9 @@ import {
   validBankNo,
   validChinses
 } from "static/js/validate.js";
-import Util from 'util/util.js';
+import { mapGetters } from 'vuex';
 import _common from 'service/common-service.js';
 
-const _util = new Util();
 // 请求mixin
 export const axiosMixin = {
   data() {
@@ -29,7 +34,7 @@ export const axiosMixin = {
     }
   },
   created() {
-    this.userInfo = _util.getStorage('userInfo');
+    this.userInfo = getUserInfo();
   },
   methods: {
     filterAxios: function (res, callback, failback) {
@@ -75,15 +80,43 @@ export const listMixin = {
       updateForm: {}
     }
   },
+  computed: {
+    ...mapGetters([
+      'userRight'
+    ])
+  },
   created() {
-    this.getStatusList();
+    this.statusList = getStatus();
+    if (!this.statusList) {
+      this.getStatusList();
+    }
+    this.init();
+  },
+  watch: {
+    userRight() {
+      this.init();
+    }
   },
   methods: {
+    init() {},
+    // 初始化页面权限
+    initPageRight(lv1, lv2) {
+      this.pageRight = getPageRight(lv1, lv2);
+      if (!this.pageRight.length) {
+        this.errorTips("您没有权限查看本页面");
+      } else {
+        this.computedRight();
+      }
+    },
+    // 计算当前页操作权限
+    computedRight() {
+    },
     // 获取状态列表
     getStatusList() {
       _common.getDictionaryList('RECORD_STATUS').then(res => {
         this.filterAxios(res, res => {
           this.statusList = res;
+          setStatus(res);
         })
       })
     },
@@ -96,17 +129,16 @@ export const listMixin = {
     },
     // 整理tableData
     renderTableDate: function (res, callback) {
-      const _this = this;
-      _this.filterAxios(res, res => {
+      this.filterAxios(res, res => {
         const list = res.list;
         let tempList = [];
         list.forEach((item, index) => {
           let temp = callback(item, index);
           tempList.push(temp);
         });
-        _this.tableData = tempList;
-        _this.loading = false;
-        _this.page = {
+        this.tableData = tempList;
+        this.loading = false;
+        this.page = {
           page: res.pageNum,
           rows: res.pageSize,
           total: res.total,

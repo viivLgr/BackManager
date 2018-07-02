@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>商户渠道列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="商户号" prop="merchantId">
                 <el-input v-model="searchForm.merchantId" placeholder="请输入商户号"></el-input>
@@ -19,10 +20,12 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
-        </div>
+      <!-- 添加 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
+      </div>
       <el-table
         :data="tableData"
         size="small"
@@ -39,16 +42,17 @@
         <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额(单位:分)" width="140"></el-table-column>
         <el-table-column align="center" prop="validTime" label="生效时间" width="150"></el-table-column>
         <el-table-column align="center" prop="invalidTime" label="失效时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -58,6 +62,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -125,7 +130,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
-import { getTimestamps, formatDate, computedStatusDesc, computedStatus } from "static/js/format.js";
+import { getStatusName } from "static/js/cache.js";
+import { getTimestamps, formatDate } from "static/js/format.js";
 import _router from "service/router-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -230,14 +236,28 @@ export default {
       merchantList: []
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
-    // 获取渠道列表
+    init() {
+      this.initPageRight("路由管理", "商户渠道列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
+    // 获取商户渠道列表
     _renderTableDate(data) {
       this.loading = true;
-      _router.getStoreChannelList(data).then(res => {
+      _router.getMerchantChannelList(data).then(res => {
         this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
@@ -252,7 +272,8 @@ export default {
             merDayMaxAmount: item.merDayMaxAmount,
             productCode: item.productCode,
             productCodeName: item.productCodeName,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             validTimeList: [
               getTimestamps(item.validTime),
               getTimestamps(item.invalidTime)
@@ -303,7 +324,7 @@ export default {
           merSingleMinAmount: row.merSingleMinAmount,
           merSingleMaxAmount: row.merSingleMaxAmount,
           validTimeList: row.validTimeList,
-          status: computedStatus(row.status)
+          status: row.status
         };
       } else {
         this.form = {
@@ -329,13 +350,13 @@ export default {
           delete this.form.validTimeList;
           if (this.form.title === "添加") {
             delete this.form.title;
-            _router.addStoreChannelList(this.form).then(res => {
+            _router.addMerchantChannelList(this.form).then(res => {
               this.formatResult(res, "添加成功");
             });
           } else {
             delete this.form.title;
             _router
-              .updateStoreChannelList(this.form.merchantChannelId, this.form)
+              .updateMerchantChannelList(this.form.merchantChannelId, this.form)
               .then(res => {
                 this.formatResult(res, "修改成功");
               });

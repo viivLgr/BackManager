@@ -4,7 +4,8 @@
       <v-back path="back"/>
       <h2>渠道支持银行列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" :rules="rules" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="银行编码" prop="bankCode">
                 <el-input v-model="searchForm.bankCode" placeholder="请输入银行编码"></el-input>
@@ -17,10 +18,12 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
-        </div>
+      <!-- 添加 -->
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm()">添加</el-button>
+      </div>
       <el-table
         :data="tableData"
         size="small"
@@ -38,16 +41,17 @@
         <el-table-column align="center" prop="bankBranchId" label="联行号" width="150"></el-table-column>
         <el-table-column align="center" prop="singleMinAmount" label="单笔最低金额(单位:分)" width="140"></el-table-column>
         <el-table-column align="center" prop="singleMaxAmount" label="单笔最高金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -57,6 +61,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -110,9 +115,9 @@
 <script type="text/ecmascript-6">
 import vBack from "components/Back.vue";
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _router from "service/router-service.js";
 import _common from "service/common-service.js";
-import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin],
   components: {
@@ -141,18 +146,31 @@ export default {
       }
     };
   },
-  created() {
-    this.searchForm.channelId = this.$route.query.channelId;
-    this.searchForm.channelName = this.$route.query.channelName;
-    this._renderTableDate({ channelId: this.searchForm.channelId });
-  },
   methods: {
-    // 获取渠道列表
+    init() {
+      this.initPageRight("路由管理", "渠道列表");
+      this.searchForm.channelId = this.$route.query.channelId;
+      this.searchForm.channelName = this.$route.query.channelName;
+      this._renderTableDate({ channelId: this.searchForm.channelId });
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "支持银行列表查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "支持银行列表添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "支持银行列表修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
+    // 获取渠道支持银行列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _router.getSupportBankList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             id: item.id,
@@ -169,7 +187,8 @@ export default {
             bankBranchId: item.bankBranchId,
             singleMinAmount: item.singleMinAmount,
             singleMaxAmount: item.singleMaxAmount,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -181,10 +200,9 @@ export default {
     },
     // 查询卡类型
     getCardType() {
-      const _this = this;
       _common.getDictionaryList("CARD_TYPE").then(res => {
-        _this.filterAxios(res, res => {
-          _this.cardTypeList = res;
+        this.filterAxios(res, res => {
+          this.cardTypeList = res;
         });
       });
     },
@@ -216,10 +234,9 @@ export default {
       });
     },
     searchSubmit(searchForm) {
-      const _this = this;
       this.$refs[searchForm].validate(valid => {
         if (valid) {
-          _this._renderTableDate(_this.$refs[searchForm].model);
+          this._renderTableDate(this.$refs[searchForm].model);
         } else {
           console.log("error submit!!");
           return false;
@@ -242,7 +259,7 @@ export default {
             singleMinAmount: row.singleMinAmount,
             singleMaxAmount: row.singleMaxAmount,
             supportiveBankType: row.supportiveBankType,
-            status: computedStatus(row.status)
+            status: row.status
           };
           if (this.bankList.length > 0) this.addShow = true;
         });

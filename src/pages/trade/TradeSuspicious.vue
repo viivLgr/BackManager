@@ -6,17 +6,17 @@
     <div class="detail-input">
         <el-form :inline="true" :model="searchForm" :rules="rules" ref="searchForm" class="demo-form-inline" size="mini" label-width="100px">
             <div>
-                <el-form-item label="商户号" prop="storeId">
-                    <el-input v-model="searchForm.storeId" placeholder="请输入商户号"></el-input>
+                <el-form-item label="商户号" prop="merchantId">
+                    <el-input v-model="searchForm.merchantId" placeholder="请输入商户号"></el-input>
                 </el-form-item>
-                <el-form-item label="商户名称" prop="storeName">
-                    <el-input v-model="searchForm.storeName" placeholder="请输入商户名称"></el-input>
+                <el-form-item label="商户名称" prop="merchantName">
+                    <el-input v-model="searchForm.merchantName" placeholder="请输入商户名称"></el-input>
                 </el-form-item>
                 <el-form-item label="订单号" prop="orderId">
                     <el-input v-model="searchForm.orderId" placeholder="请输入订单号"></el-input>
                 </el-form-item>
-                <el-form-item label="商户订单号" prop="storeOrderId">
-                    <el-input v-model="searchForm.storeOrderId" placeholder="请输入商户订单"></el-input>
+                <el-form-item label="商户订单号" prop="merchantOrderId">
+                    <el-input v-model="searchForm.merchantOrderId" placeholder="请输入商户订单"></el-input>
                 </el-form-item>
             </div>
             <div>
@@ -91,10 +91,10 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="id" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="storeId" label="商户名" fixed width="120"></el-table-column>
-        <el-table-column align="center" prop="storeName" label="商户名称" fixed></el-table-column>
+        <el-table-column align="center" prop="merchantId" label="商户名" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
         <el-table-column align="center" prop="orderId" label="订单号" fixed width="160"></el-table-column>
-        <el-table-column align="center" prop="storeOrderId" label="商户订单号" width="170"></el-table-column>
+        <el-table-column align="center" prop="merchantOrderId" label="商户订单号" width="170"></el-table-column>
         <el-table-column align="center" prop="tradeType" label="交易类型"></el-table-column>
         <el-table-column align="center" prop="payProduct" label="支付产品"></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
@@ -125,13 +125,13 @@
         <el-form :inline="true" ref="detailForm" :model="detailForm" size="mini" label-width="105px">
             <div>
                 <el-form-item label="商户号">
-                    <el-input v-model="detailForm.storeId"></el-input>
+                    <el-input v-model="detailForm.merchantId"></el-input>
                 </el-form-item>
                 <el-form-item label="商户名称">
-                    <el-input v-model="detailForm.storeName"></el-input>
+                    <el-input v-model="detailForm.merchantName"></el-input>
                 </el-form-item>
                 <el-form-item label="商户费率">
-                    <el-input v-model="detailForm.storeFees"></el-input>
+                    <el-input v-model="detailForm.merchantFees"></el-input>
                 </el-form-item>
             </div>
             <div>
@@ -150,7 +150,7 @@
                     <el-input v-model="detailForm.orderId"></el-input>
                 </el-form-item>
                 <el-form-item label="商户订单号">
-                    <el-input v-model="detailForm.storeOrderId"></el-input>
+                    <el-input v-model="detailForm.merchantOrderId"></el-input>
                 </el-form-item>
                 <el-form-item label="渠道订单号">
                     <el-input v-model="detailForm.channelOrderId"></el-input>
@@ -254,10 +254,10 @@ export default {
         ]
       },
       searchForm: {
-        storeId: "",
-        storeName: "",
+        merchantId: "",
+        merchantName: "",
         orderId: "",
-        storeOrderId: "",
+        merchantOrderId: "",
         tradeStatus: "",
         tradeType: "",
         payProduct: "",
@@ -269,16 +269,16 @@ export default {
         tradeTime: ""
       },
       rules: {
-        storeId: [
+        merchantId: [
           { required: false, message: "请输入商户号", trigger: "blur" }
         ],
-        storeName: [
+        merchantName: [
           { required: false, message: "请输入商户名称", trigger: "blur" }
         ],
         orderId: [
           { required: false, message: "请输入订单号", trigger: "blur" }
         ],
-        storeOrderId: [
+        merchantOrderId: [
           { required: false, message: "请输入商户订单", trigger: "blur" }
         ],
         tradeStatus: [
@@ -312,10 +312,10 @@ export default {
       tableData: [
         {
           id: "1",
-          storeId: "M201804200107",
-          storeName: "德御科技",
+          merchantId: "M201804200107",
+          merchantName: "德御科技",
           orderId: "WDC2018042714452814",
-          storeOrderId: "WZLD2018042618522149",
+          merchantOrderId: "WZLD2018042618522149",
           tradeType: "消费",
           payProduct: "网关",
           channelName: "XXXX",
@@ -330,10 +330,10 @@ export default {
         },
         {
           id: "2",
-          storeId: "M201804200107",
-          storeName: "德御科技",
+          merchantId: "M201804200107",
+          merchantName: "德御科技",
           orderId: "WDC2018042714452814",
-          storeOrderId: "WZLD2018042618522149",
+          merchantOrderId: "WZLD2018042618522149",
           tradeType: "消费",
           payProduct: "网关",
           channelName: "XXXX",
@@ -372,14 +372,14 @@ export default {
       let id = row.id;
       this.detailShow = true;
       this.detailForm = {
-        storeId: row.storeId,
-        storeName: row.storeName,
-        storeFees: row.storeFees,
+        merchantId: row.merchantId,
+        merchantName: row.merchantName,
+        merchantFees: row.merchantFees,
         channelCode: row.channelCode,
         channelName: row.channelName,
         channelFees: row.channelFees,
         orderId: row.orderId,
-        storeOrderId: row.storeOrderId,
+        merchantOrderId: row.merchantOrderId,
         channelOrderId: row.channelOrderId,
         tradeType: row.tradeType,
         payProduct: row.payProduct,

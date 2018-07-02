@@ -16,16 +16,19 @@ import TradeSuspicious from 'pages/trade/TradeSuspicious'
 import Reconciliation from 'pages/trade/Reconciliation'
 import ErrorHandling from 'pages/trade/ErrorHandling'
 import Reports from 'pages/trade/Reports'
-import StoreList from 'pages/store/StoreList'
-import ProductList from 'pages/store/ProductList'
+import MerchantList from 'pages/merchant/MerchantList'
+import ProductList from 'pages/merchant/ProductList'
 import AppList from 'pages/app/AppList'
 import OpenPlatList from 'pages/app/OpenPlatList'
 import InterfaceList from 'pages/app/InterfaceList'
 import ChannelManage from 'pages/router/ChannelManage'
 import ChannelSupportBank from 'pages/router/ChannelSupportBank'
-import StoreChannelList from 'pages/router/StoreChannelList'
+import MerchantChannelList from 'pages/router/MerchantChannelList'
 import CardBin from 'pages/router/CardBin'
 import BankList from 'pages/router/BankList'
+import ScheduledTask from 'pages/task/ScheduledTask'
+import HistoryTaskList from 'pages/task/HistoryTaskList'
+import NotFound from 'pages/NotFound'
 
 Vue.use(Router)
 
@@ -115,12 +118,12 @@ const routes = [
         component: Reports
       },
       {
-        path: '/store_list',
+        path: '/merchant_list',
         meta: {
           title: '商户列表',
           requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
         },
-        component: StoreList
+        component: MerchantList
       },
       {
         path: '/product_list',
@@ -171,8 +174,8 @@ const routes = [
         }
       },
       {
-        path: '/store_channel_list',
-        component: StoreChannelList,
+        path: '/Merchant_channel_list',
+        component: MerchantChannelList,
         meta: {
           title: '商户渠道列表',
           requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
@@ -193,6 +196,26 @@ const routes = [
           title: '银行列表',
           requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
         }
+      },
+      {
+        path: '/scheduled-task',
+        component: ScheduledTask,
+        meta: {
+          title: '定时任务管理',
+          requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
+        }
+      },
+      {
+        path: '/history_task_list',
+        component: HistoryTaskList,
+        meta: {
+          title: '运行历史任务',
+          requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
+        }
+      },
+      {
+        path: '/404',
+        component: NotFound
       }
     ]
   },
@@ -202,6 +225,10 @@ const routes = [
     meta: {
       title: '登录'
     }
+  },
+  {
+    path: '*',
+    redirect: '/404'
   }
 ]
 

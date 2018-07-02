@@ -1,6 +1,6 @@
 import { _axios } from "static/js/axios.js";
-const _store = {
-  getStoreList: function (data) {
+const _merchant = {
+  getMerchantList: function (data) {
     return _axios('/business/merchant/pageList', 'POST', data);
   },
   // 添加商户
@@ -12,11 +12,11 @@ const _store = {
     return _axios('/business/merchant/' + id + '/update', 'POST', data);
   },
   // 查询商户详细信息
-  getStoreDetailInfo: function(id) {
+  getMerchantDetailInfo: function(id) {
     return _axios('/business/merchant/' + id + '/detail');
   },
   // 查询应用信息详细信息
-  getStoreAppInfo: function(merchantId) {
+  getMerchantAppInfo: function(merchantId) {
     return _axios('/business/merchant/' + merchantId + '/merchantOpenApp/detail');
   },
   // 修改应用信息详细信息
@@ -25,4 +25,4 @@ const _store = {
   }
 }
 
-export default _store;
+export default _merchant;

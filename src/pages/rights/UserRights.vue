@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="header clearfix">
-      <h2>用户权限</h2>
+      <h2>用户权限列表</h2>
     </div>
-    <div class="operating">
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" :rules="searchRules" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="用户名" prop="userName">
                 <el-input v-model="searchForm.userName"></el-input>
@@ -24,11 +24,12 @@
         <el-table-column align="center" prop="no" label="序号"></el-table-column>
         <el-table-column align="center" prop="userName" label="用户名"></el-table-column>
         <el-table-column align="center" prop="linkmanPhone" label="联系方式"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="roleName" label="角色"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150">
+        <el-table-column align="center" prop="operate" label="操作" width="150" v-if="pageRight.update">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.operate.update" @click="handleUpdate(scope.row)" type="warning" size="mini">修改</el-button>
+            <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleUpdate(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -102,6 +103,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
+import { mapActions } from 'vuex';
 import _user from "service/user-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -119,32 +122,43 @@ export default {
       updateInfo: {}
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("权限管理", "用户权限列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "搜索" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
-      _this.$refs[searchForm].validate(valid => {
+      this.$refs[searchForm].validate(valid => {
         if (valid) {
           let username = this.$refs[searchForm].model.userName;
-          _this._renderTableDate({ userName: username });
+          this._renderTableDate({ userName: username });
         }
       });
     },
     // 获取用户列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _user.userRightUserList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             userId: item.userId,
             userName: item.userName,
+            roleName: item.roleName,
             linkmanPhone: item.linkmanPhone,
-            status: item.status === "VALID" ? "生效" : "失效",
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             updateTime: item.modifiedTime,
             operate: {
               update: true
@@ -180,6 +194,7 @@ export default {
           this.updateClose();
           this.filterAxios(res, res => {
             this.successTips("修改成功");
+            this.resetUserRight();
           });
         });
     },
@@ -228,7 +243,7 @@ export default {
                 const lv3Temp = _this.setItem(lv3, id1 + "-" + id2 + "-" + id3);
                 if (lv3.children && lv3.children.length > 0) {
                   const lv3TempChildren = [];
-                  lv3Temp.children.forEach((lv4, id4) => {
+                  lv3.children.forEach((lv4, id4) => {
                     // 第四级
                     const lv4Temp = _this.setItem(
                       lv4,
@@ -261,7 +276,18 @@ export default {
         parendId: item.funcLevel - 1,
         show: false
       };
-    }
+    },
+    // 重新获取用户权限
+    resetUserRight() {
+      _user.getRightTree().then(res => {
+        this.filterAxios(res, res => {
+          this.saveUserRight(res);
+        })
+      })
+    },
+    ...mapActions([
+      'saveUserRight'
+    ])
   }
 };
 </script>

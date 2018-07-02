@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import { getToken } from 'static/js/cache.js';
 
 Vue.config.productionTip = false
 
@@ -13,7 +15,7 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title + ' - 转折支付平台管理系统'
   }
   if (to.meta.requireAuth) { // 判断该路由是否需要登录权限
-    if (window.localStorage.getItem('token')) { // 获取当前的token是否存在
+    if (getToken()) { // 获取当前的token是否存在
       next();
     } else {
       console.log('to.fullPath', to.fullPath)
@@ -33,8 +35,6 @@ router.beforeEach((to, from, next) => {
 new Vue({
   el: '#app',
   router,
-  template: '<App/>',
-  components: {
-    App
-  }
+  store,
+  render: h => h(App)
 })

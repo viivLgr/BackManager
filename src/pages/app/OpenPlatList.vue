@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>开放平台接口列表</h2>
     </div>
-    <div class="operating">
+    <!-- 搜索 -->
+    <div class="operating" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini">
             <el-form-item label="接口名称">
                 <el-input v-model="searchForm.interfaceName"></el-input>
@@ -19,10 +20,11 @@
             </el-form-item>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
-        <div class="table-btn">
-            <el-button size="mini" type="success" @click="handleForm('add')">添加</el-button>
-        </div>
+      <div class="table-btn" v-if="pageRight.add">
+          <el-button size="mini" type="success" @click="handleForm('add')">添加</el-button>
+      </div>
       <el-table
         v-loading="loading"
         :data="tableData"
@@ -31,18 +33,19 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="interfaceName" label="接口名称" fixed></el-table-column>
+        <el-table-column align="center" prop="interfaceName" label="接口名称" fixed width="150"></el-table-column>
         <el-table-column align="center" prop="interfaceVersion" label="接口版本号"></el-table-column>
-        <el-table-column align="center" prop="status" label="状态"></el-table-column>
+        <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="180" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" width="180" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -52,6 +55,7 @@
         :total="page.total"
       />
     </div>
+    <!-- 添加 / 修改 -->
     <el-dialog
       v-show="addShow"
       :visible.sync="addShow"
@@ -84,8 +88,8 @@
 </template>
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin, validMixin } from "static/js/mixin.js";
+import { getStatusName } from "static/js/cache.js";
 import _app from "service/app-service.js";
-import { computedStatusDesc, computedStatus } from "static/js/format.js";
 export default {
   mixins: [axiosMixin, listMixin, validMixin],
   data() {
@@ -109,22 +113,36 @@ export default {
       roleList: []
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("应用管理", "开放平台接口列表");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "查询" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "添加" && item.status === "VALID") {
+          this.pageRight.add = true;
+        }
+        if (item.funcName === "修改" && item.status === "VALID") {
+          this.pageRight.update = true;
+        }
+      });
+    },
     // 获取用户列表
     _renderTableDate(data) {
-      const _this = this;
-      _this.loading = true;
+      this.loading = true;
       _app.getOpenAppList(data).then(res => {
-        _this.renderTableDate(res, (item, index) => {
+        this.renderTableDate(res, (item, index) => {
           return {
             no: index + 1,
             interfaceId: item.interfaceId,
             interfaceName: item.interfaceName,
             interfaceVersion: item.interfaceVersion,
-            status: computedStatusDesc(item.status),
+            status: item.status,
+            statusDesc: getStatusName(item.status),
             createTime: item.createTime,
             updateTime: item.modifiedTime,
             operate: {
@@ -136,28 +154,26 @@ export default {
     },
     // 查询
     searchSubmit(searchForm) {
-      const _this = this;
-      _this._renderTableDate(_this.searchForm);
+      this._renderTableDate(this.searchForm);
     },
     // 添加 修改
     handleForm(row) {
-      const _this = this;
       if (row instanceof Object) {
-        _this.form = {
+        this.form = {
           formTitle: "修改",
           interfaceId: row.interfaceId,
           interfaceName: row.interfaceName,
           interfaceVersion: row.interfaceVersion,
-          status: computedStatus(row.status)
+          status: row.status
         };
       } else {
-        _this.form = {
+        this.form = {
           formTitle: "添加",
           interfaceName: "",
           interfaceVersion: ""
         };
       }
-      _this.addShow = true;
+      this.addShow = true;
     },
     formSubmit() {
       this.$refs.form.validate(valid => {
@@ -185,11 +201,10 @@ export default {
       this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formatResult(res, msg) {
-      const _this = this;
-      _this.formClose();
-      _this.filterAxios(res, res => {
-        _this.successTips(msg);
-        _this._renderTableDate();
+      this.formClose();
+      this.filterAxios(res, res => {
+        this.successTips(msg);
+        this._renderTableDate();
       });
     }
   }

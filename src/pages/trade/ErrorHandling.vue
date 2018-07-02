@@ -3,7 +3,8 @@
     <div class="header clearfix">
       <h2>差错交易</h2>
     </div>
-    <div class="detail-input">
+    <!-- 搜索 -->
+    <div class="detail-input" v-if="pageRight.search">
         <el-form :inline="true" :model="searchForm" ref="searchForm" class="demo-form-inline" size="mini" label-width="100px">
             <div>
                 <el-form-item label="处理状态">
@@ -18,6 +19,7 @@
             </div>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
       <el-table
         :data="tableData"
@@ -43,13 +45,14 @@
         <el-table-column align="center" prop="processResult" label="处理结果"></el-table-column>
         <el-table-column align="center" prop="platTradeTime" label="创建时间" width="150"></el-table-column>
         <el-table-column align="center" prop="tradeFinishTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" fixed="right">
+        <el-table-column align="center" prop="operate" label="操作" fixed="right" v-if="pageRight.deal">
           <template slot-scope="scope">
-            <el-button @click="handleDetail(scope.row)" type="warning" size="mini">处理</el-button>
+            <el-button @click="handleForm(scope.row)" type="warning" size="mini">处理</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <div class="pagination">
       <el-pagination background layout="prev, pager, next" 
         v-if="page.totalPages > 1"
@@ -59,105 +62,25 @@
         :total="page.total"
       />
     </div>
+    <!-- 详情 -->
     <el-dialog
-      v-show="detailShow"
-      :visible.sync="detailShow"
-      title="交易详情"
-      width="66%"
-      :before-close="detailClose"
+      v-show="formShow"
+      :visible.sync="formShow"
+      title="处理结果"
+      width="30%"
+      :before-close="formClose"
       center
       >
-      <div class="detail-input">
-        <el-form :inline="true" ref="detailForm" :model="detailForm" size="mini" label-width="105px">
-            <div>
-                <el-form-item label="商户号">
-                    <el-input v-model="detailForm.storeId"></el-input>
-                </el-form-item>
-                <el-form-item label="商户名称">
-                    <el-input v-model="detailForm.storeName"></el-input>
-                </el-form-item>
-                <el-form-item label="商户费率">
-                    <el-input v-model="detailForm.storeFees"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="渠道编码">
-                    <el-input v-model="detailForm.channelCode"></el-input>
-                </el-form-item>
-                <el-form-item label="渠道名称">
-                    <el-input v-model="detailForm.channelName"></el-input>
-                </el-form-item>
-                <el-form-item label="渠道费率">
-                    <el-input v-model="detailForm.channelFees"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="订单号">
-                    <el-input v-model="detailForm.orderId"></el-input>
-                </el-form-item>
-                <el-form-item label="商户订单号">
-                    <el-input v-model="detailForm.storeOrderId"></el-input>
-                </el-form-item>
-                <el-form-item label="渠道订单号">
-                    <el-input v-model="detailForm.channelOrderId"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="订单类型">
-                    <el-input v-model="detailForm.tradeType"></el-input>
-                </el-form-item>
-                <el-form-item label="支付产品">
-                    <el-input v-model="detailForm.payProduct"></el-input>
-                </el-form-item>
-                <el-form-item label="交易状态">
-                    <el-input v-model="detailForm.tradeStatus"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="交易总金额">
-                    <el-input v-model="detailForm.tradeTotalAmount"></el-input>
-                </el-form-item>
-                <el-form-item label="实际金额">
-                    <el-input v-model="detailForm.tradeAmount"></el-input>
-                </el-form-item>
-                <el-form-item label="手续费">
-                    <el-input v-model="detailForm.fees"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="交易发生时间">
-                    <el-input v-model="detailForm.tradeCreateTime"></el-input>
-                </el-form-item>
-                <el-form-item label="发送渠道时间">
-                    <el-input v-model="detailForm.sendChannelTime"></el-input>
-                </el-form-item>
-                <el-form-item label="交易完成时间">
-                    <el-input v-model="detailForm.tradeFinishTime"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="收款人姓名">
-                    <el-input v-model="detailForm.payeeName"></el-input>
-                </el-form-item>
-                <el-form-item label="付款人姓名">
-                    <el-input v-model="detailForm.payerName"></el-input>
-                </el-form-item>
-                <el-form-item label="银行卡号">
-                    <el-input v-model="detailForm.bankCardNumber"></el-input>
-                </el-form-item>
-            </div>
-            <div>
-                <el-form-item label="分润人姓名">
-                    <el-input v-model="detailForm.profitName"></el-input>
-                </el-form-item>
-                <el-form-item label="分润人金额">
-                    <el-input v-model="detailForm.profitAmount"></el-input>
-                </el-form-item>
-            </div>
+      <div>
+        <el-form ref="form" :model="form" :rules="rules" size="mini" label-width="105px">
+          <el-form-item label="处理结果" prop="processResult">
+            <el-input type="textarea" v-model="form.processResult" placeholder="请描述处理结果,说明差错原因，最多255个字符" max="255" rows="4"></el-input>
+          </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="detailShow = false">返 回</el-button>
+        <el-button size="small" @click="formClose()">取 消</el-button>
+        <el-button size="small" type="primary" @click="formSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -173,16 +96,32 @@ export default {
         { dicCode: true, dicName: "处理" },
         { dicCode: false, dicName: "未处理" }
       ],
-      detailShow: false,
-      detailForm: {},
-      searchForm: {},
-      tableData: []
+      formShow: false,
+      form: {},
+      rules: {
+        processResult: [
+          { required: true, message: "请输入处理描述", trigger: "blur" },
+          { max: 255, message: "处理描述不得大于255个字符", trigger: "change" }
+        ]
+      },
+      searchForm: {}
     };
   },
-  created() {
-    this._renderTableDate();
-  },
   methods: {
+    init() {
+      this.initPageRight("交易管理", "差错交易");
+      this._renderTableDate();
+    },
+    computedRight() {
+      this.pageRight[0].children.map(item => {
+        if (item.funcName === "搜索" && item.status === "VALID") {
+          this.pageRight.search = true;
+        }
+        if (item.funcName === "处理" && item.status === "VALID") {
+          this.pageRight.deal = true;
+        }
+      });
+    },
     // 获取列表
     _renderTableDate(data) {
       this.loading = true;
@@ -214,27 +153,32 @@ export default {
     searchSubmit(searchForm) {
       this._renderTableDate(this.searchForm);
     },
-    detailClose() {
-      this.detailShow = false;
-      this.$refs["detailForm"].resetFields();
+    formClose() {
+      this.formShow = false;
+      this.$refs["form"].resetFields();
     },
-    detailSubmit() {
-      console.log("detailSubmit!");
-      _trade.updatePayCheckUpErrorList(this.detailForm.orderId).then(res => {
-        this.filterAxios(res, res => {
-          console.log("res", res);
-        });
+    formSubmit() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          _trade
+            .updatePayCheckUpErrorList(this.detailForm.errorId, this.detailForm)
+            .then(res => {
+              this.filterAxios(res, res => {
+                this.successTips("处理成功");
+              });
+            });
+        } else {
+          return false;
+        }
       });
     },
-    handleDetail(row) {
-      let id = row.id;
-      this.detailShow = true;
-      this.detailForm = {
-        orderId: row.orderId,
-        processFlag: row.processFlag,
+    handleForm(row) {
+      this.formShow = true;
+      this.formForm = {
+        errorId: row.errorId,
+        processFlag: true,
         processResult: row.processResult
       };
-      console.log("handleDetail!", row, id);
     }
   }
 };

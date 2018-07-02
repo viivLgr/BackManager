@@ -33,7 +33,7 @@ const _router = {
     return _axios('/business/route/channel/supBank/' + id + '/update', 'POST', data);
   },
   // 商户渠道列表
-  getStoreChannelList: function (data) {
+  getMerchantChannelList: function (data) {
     return _axios('/business/route/merchant/channel/pageList', 'POST', data);
   },
   // 根据商户号回显商户列表
@@ -41,11 +41,11 @@ const _router = {
     return _axios('/business/route/merchant/channel/availableMerchantList?merchantId=' + merchantId);
   },
   // 添加商户渠道
-  addStoreChannelList: function (data) {
+  addMerchantChannelList: function (data) {
     return _axios('/business/route/merchant/channel/add', 'POST', data);
   },
   // 修改商户渠道
-  updateStoreChannelList: function (merchantChannelId, data) {
+  updateMerchantChannelList: function (merchantChannelId, data) {
     return _axios('/business/route/merchant/channel/' + merchantChannelId + '/update', 'POST', data);
   },
   // 卡bin管理

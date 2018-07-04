@@ -34,7 +34,7 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantId" label="商户号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
+        <el-table-column align="center" prop="merchantName" label="商户名称" fixed min-width="120"></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码"></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称" min-width="120"></el-table-column>
         <el-table-column align="center" prop="productCodeName" label="产品类型" min-width="90"></el-table-column>
@@ -82,20 +82,23 @@
                   <el-option v-for="(item, index) in merchantList" :key="index" :label="item.merchantName" :value="item.merchantId"></el-option>
               </el-select>
             </el-form-item>
-          </template>
-          <template v-else>
-            <el-form-item label="商户号" prop="merchantId">
-              <el-input v-model="form.merchantId" placeholder="请输入商户号" :disabled="form.disabled"></el-input>
-            </el-form-item>
-            <el-form-item label="商户名称" prop="merchantName">
-              <el-input v-model="form.merchantName" placeholder="请输入商户名称" :disabled="true"></el-input>
-            </el-form-item>
-          </template>
-          <el-form-item label="渠道" prop="channelId">
+            <el-form-item label="渠道" v-if="channelList.length > 0" prop="channelId">
               <el-select v-model="form.channelId" placeholder="请选择渠道">
                   <el-option v-for="(item, index) in channelList" :key="index" :label="item.channelName" :value="item.channelId"></el-option>
               </el-select>
-          </el-form-item>
+            </el-form-item>
+          </template>
+          <template v-else>
+            <el-form-item label="商户号" prop="merchantId">
+              <el-input v-model="form.merchantId" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="商户名称" prop="merchantName">
+              <el-input v-model="form.merchantName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="渠道">
+              <el-input v-model="form.channelName" :disabled="true"></el-input>
+            </el-form-item>
+          </template>
           <el-form-item label="商户最小限额" prop="merSingleMinAmount">
             <el-input type="number" v-model="form.merSingleMinAmount" placeholder="请输入商户最小限额"></el-input>
           </el-form-item>
@@ -131,7 +134,7 @@
 <script type="text/ecmascript-6">
 import { axiosMixin, listMixin } from "static/js/mixin.js";
 import { getStatusName } from "static/js/cache.js";
-import { getTimestamps, formatDate } from "static/js/format.js";
+import { getTimestamps, formatDate, trim } from "static/js/format.js";
 import _router from "service/router-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
@@ -139,22 +142,35 @@ export default {
     const _this = this;
     // 根据商户号得到商户列表
     const validAddMerchantId = (rule, value, callback) => {
+      value = value ? trim(value) : '';
+      console.log('value', value)
+      if (this.form.title === "添加") {
+        this.getValiadMerchantList(value).then(
+          res => {
+            callback();
+          },
+          err => {
+            callback(err);
+          }
+        );
+      }
+    };
+    // 根据商户号得到商户可选渠道列表
+    const validAddMerchantIdList = (rule, value, callback) => {
+      value = value ? trim(value) : '';
       if (this.form.title === "添加") {
         if (value === "") {
-          this.merchantList = [];
-          callback(new Error("请输入商户号"));
+          this.channelList = [];
+          callback(new Error("请选择商户"));
         } else {
-          _router.validMerchantId(value).then(res => {
-            this.filterAxios(res, res => {
-              if (res === undefined) {
-                this.merchantList = [];
-                callback(new Error("没有找到您输入的商户号，请重新输入"));
-              } else {
-                this.merchantList = res;
-                callback();
-              }
-            });
-          });
+          this.getValiadChannelist(value).then(
+            res => {
+              callback();
+            },
+            err => {
+              callback(err);
+            }
+          );
         }
       }
     };
@@ -178,17 +194,20 @@ export default {
     return {
       searchForm: {},
       form: {
-        title: ""
+        title: "",
+        addMerchantId: ""
       },
       channelList: [],
       rules: {
-        addMerchantId: [{ validator: validAddMerchantId, trigger: "change" }],
+        addMerchantId: [
+          { validator: validAddMerchantId, trigger: "change" },
+          { validator: validAddMerchantId, trigger: "blur" }
+        ],
         merchantId: [
-          { required: true, message: "请输入商户号", trigger: "blur" }
+          { required: true, message: "请输入商户号", trigger: "blur" },
+          { validator: validAddMerchantIdList, trigger: "change" }
         ],
-        channelId: [
-          { required: true, message: "请选择渠道", trigger: "blur" }
-        ],
+        channelId: [{ required: true, message: "请选择渠道", trigger: "blur" }],
         merSingleMinAmount: [
           { required: true, message: "请输入商户最小限额", trigger: "blur" },
           { validator: validMerSingleMinAmount, trigger: "blur" }
@@ -289,10 +308,44 @@ export default {
         });
       });
     },
-    // 获取渠道列表
+    // 获取可选商户列表
+    getValiadMerchantList(value) {
+      return new Promise((resolve, reject) => {
+        _router.validMerchantIdGetMerchantList(value).then(res => {
+          this.filterAxios(res, res => {
+            if (res === undefined) {
+              this.merchantList = [];
+              reject(new Error("您输入的商户号没有可选商户列表，请重新输入"));
+            } else {
+              this.merchantList = res;
+              resolve();
+            }
+          });
+        });
+      });
+    },
+    // 获取可选渠道列表
+    getValiadChannelist(value) {
+      return new Promise((resolve, reject) => {
+        _router.validMerchantIdGetChannelList(value).then(res => {
+          this.filterAxios(res, res => {
+            if (res === undefined) {
+              this.channelList = [];
+              this.form.channelId = '';
+              reject(new Error("您输入的商户号没有可选渠道列表，请重新选择"));
+            } else {
+              this.channelList = res;
+              resolve();
+            }
+          });
+        });
+      });
+    },
+    // 获取全部渠道列表
     getChannelList() {
       _router.getChannelList().then(res => {
         this.filterAxios(res, res => {
+          this.channelList = [];
           this.channelList = res.list;
         });
       });
@@ -309,18 +362,15 @@ export default {
     },
     // 添加 修改
     handleForm(row) {
-      if (!this.channelList.length) {
-        this.getChannelList();
-      }
       if (row instanceof Object) {
-        console.log("channelId", row);
         this.form = {
           title: "修改",
           disabled: true,
           merchantChannelId: row.merchantChannelId,
           merchantId: row.merchantId,
           merchantName: row.merchantName,
-          channelId: row.channelId,
+          channelId: row.channelCode,
+          channelName: row.channelName,
           merSingleMinAmount: row.merSingleMinAmount,
           merSingleMaxAmount: row.merSingleMaxAmount,
           validTimeList: row.validTimeList,

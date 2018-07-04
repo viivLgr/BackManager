@@ -237,32 +237,32 @@ export default {
           { required: true, message: "请输入渠道商户号", trigger: "blur" }
         ],
         accountNo: [
-          { required: true, message: "请输入账户号", trigger: "blur" }
+          { required: false, message: "请输入账户号", trigger: "blur" }
         ],
         accountName: [
-          { required: true, message: "请输入账户名", trigger: "blur" }
+          { required: false, message: "请输入账户名", trigger: "blur" }
         ],
         signType: [
           { required: true, message: "请选择签名方式", trigger: "blur" }
         ],
         certPath: [
-          { required: true, message: "请输入证书路径", trigger: "blur" }
+          { required: false, message: "请输入证书路径", trigger: "blur" }
         ],
         certPwd: [
-          { required: true, message: "请输入证书密码", trigger: "blur" }
+          { required: false, message: "请输入证书密码", trigger: "blur" }
         ],
-        secretKey: [{ required: true, message: "请输入密钥", trigger: "blur" }],
+        secretKey: [{ required: false, message: "请输入密钥", trigger: "blur" }],
         channelPubKey: [
-          { required: true, message: "请输入渠道公钥", trigger: "blur" }
+          { required: false, message: "请输入渠道公钥", trigger: "blur" }
         ],
         pubKey: [
-          { required: true, message: "请输入转折公钥", trigger: "blur" }
+          { required: false, message: "请输入转折公钥", trigger: "blur" }
         ],
         prvKey: [
-          { required: true, message: "请输入转折私钥", trigger: "blur" }
+          { required: false, message: "请输入转折私钥", trigger: "blur" }
         ],
         channelAppid: [
-          { required: true, message: "请输入appid", trigger: "blur" }
+          { required: false, message: "请输入appid", trigger: "blur" }
         ],
         allowTradeTime: [
           { required: true, message: "请输入渠道交易时间", trigger: "blur" }
@@ -272,7 +272,7 @@ export default {
         ],
         rate: [{ required: true, message: "请输入费率", trigger: "blur" }],
         rateType: [
-          { required: true, message: "请选择费率类型", trigger: "blur" }
+          { required: false, message: "请选择费率类型", trigger: "blur" }
         ],
         settleType: [
           { required: true, message: "请选择结算方式", trigger: "blur" }

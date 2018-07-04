@@ -37,8 +37,12 @@ const _router = {
     return _axios('/business/route/merchant/channel/pageList', 'POST', data);
   },
   // 根据商户号回显商户列表
-  validMerchantId: function(merchantId) {
+  validMerchantIdGetMerchantList: function(merchantId) {
     return _axios('/business/route/merchant/channel/availableMerchantList?merchantId=' + merchantId);
+  },
+  // 根据商户号回显可选渠道列表
+  validMerchantIdGetChannelList: function(merchantId) {
+    return _axios('/business/route/merchant/channel/availableChannelList?merchantId=' + merchantId);
   },
   // 添加商户渠道
   addMerchantChannelList: function (data) {

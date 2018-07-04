@@ -150,7 +150,7 @@ export default {
       rules: {
         roleId: [{ required: true, message: "请选择角色", trigger: "blur" }],
         linkmanName: [
-          { required: true, message: "请输入姓名", trigger: "blur" }
+          { required: false, message: "请输入姓名", trigger: "blur" }
         ],
         userName: [
           { required: true, message: "请输入用户名", trigger: "blur" }
@@ -179,11 +179,11 @@ export default {
           }
         ],
         qq: [
-          { required: true, message: "请输入QQ号", trigger: "blur" },
+          { required: false, message: "请输入QQ号", trigger: "blur" },
           { validator: this.checkQQ, trigger: "blur" }
         ],
         wechat: [
-          { required: true, message: "请输入微信号", trigger: "blur" },
+          { required: false, message: "请输入微信号", trigger: "blur" },
           { validator: this.checkWechat, trigger: "blur" }
         ],
         status: [{ required: true, message: "请选择状态", trigger: "blur" }]

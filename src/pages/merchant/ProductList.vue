@@ -328,7 +328,6 @@ export default {
     },
     // 根据商户号和产品code查询费率类型
     handleProductCodeChange() {
-      console.log('handleProductCodeChange', this.form.productValue)
       // 有代理商的时候查询代理商费率
       if (this.merchantInfo.agentMerchantName) {
         const productValueList = this.form.productValue.split("-");

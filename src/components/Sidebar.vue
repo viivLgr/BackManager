@@ -31,19 +31,19 @@
           </el-submenu>
         </template>
         <template v-else-if="item.list">
-          <el-submenu :index="item.index" :key="index" router :disabled="!item.show">
+          <el-submenu :index="item.index" :key="index" router v-if="item.show">
             <template slot="title" v-if="item.icon">
               <i :class="item.icon" />{{item.title}}
             </template>
             <template v-for="(list, i) in item.list">
-              <el-menu-item :index="list.index" :key="i" router :disabled="!list.show">
+              <el-menu-item :index="list.index" :key="i" router v-if="list.show">
                 <i :class="list.icon" />{{list.title}}
               </el-menu-item>
             </template>
           </el-submenu>
         </template>
         <template v-else>
-          <el-menu-item :index="item.index" :key="index" :disabled="!item.show">
+          <el-menu-item :index="item.index" :key="index" v-if="item.show">
             <i :class="item.icon" />{{item.title}}
           </el-menu-item>
         </template>

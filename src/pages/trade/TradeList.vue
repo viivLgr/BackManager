@@ -77,6 +77,7 @@
             </div>
         </el-form>
     </div>
+    <!-- 内容 -->
     <div class="table">
       <el-table
         v-loading="loading"
@@ -356,7 +357,7 @@ export default {
         this.searchForm.createTimeStart =
           this.searchForm.tradeTime[0] + " 00:00:00";
         this.searchForm.createTimeEnd =
-          this.searchForm.tradeTime[1] + " 00:00:00";
+          this.searchForm.tradeTime[1] + " 23:59:59";
       }
       this._renderTableDate(this.searchForm);
     },

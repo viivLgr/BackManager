@@ -273,9 +273,11 @@ export default {
       if (pageRight.profitDay || pageRight.profitMonth) {
         this.pageRight.profit = true;
       }
-      this.activeName = this.tabs[0];
+      // tab
       if (!this.tabs.length) {
         this.errorTips("您没有权限查看本页面");
+      } else {
+        this.activeName = this.tabs[0];
       }
     },
     // 切换tab

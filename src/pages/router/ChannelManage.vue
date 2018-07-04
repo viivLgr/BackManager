@@ -76,7 +76,7 @@
       center
       >
       <div class="detail-input">
-        <el-form :inline="true" ref="form" :model="form" :rules="this.form.title === '修改' ? rules : {}" size="small" label-width="110px">
+        <el-form :inline="true" ref="form" :model="form" :rules="rules" size="small" label-width="110px">
             <div>
                 <el-form-item label="渠道编码" prop="channelCode">
                     <el-input v-model="form.channelCode" placeholder="请输入渠道编码" :disabled="form.disabled"></el-input>
@@ -104,13 +104,24 @@
                 </el-form-item>
             </div>
             <div>
+                <el-form-item label="账户号" prop="accountNo">
+                    <el-input v-model="form.accountNo" placeholder="请输入账户号" :disabled="form.disabled"></el-input>
+                </el-form-item>
+                <el-form-item label="账户名" prop="accountName">
+                    <el-input v-model="form.accountName" placeholder="请输入账户名" :disabled="form.disabled"></el-input>
+                </el-form-item>
                 <el-form-item label="签名方式" prop="signType">
                     <el-select v-model="form.signType" placeholder="请选择签名方式" :disabled="form.disabled">
                         <el-option v-for="(item, index) in signTypeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
                     </el-select>
                 </el-form-item>
+            </div>
+            <div>
                 <el-form-item label="证书路径" prop="certPath">
                     <el-input v-model="form.certPath" placeholder="请输入证书路径" :disabled="form.disabled"></el-input>
+                </el-form-item>
+                <el-form-item label="证书密码" prop="certPwd">
+                    <el-input v-model="form.certPwd" placeholder="请输入证书密码" :disabled="form.disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="密钥" prop="secretKey">
                     <el-input v-model="form.secretKey" placeholder="请输入密钥" :disabled="form.disabled"></el-input>
@@ -162,6 +173,7 @@
                     <el-time-picker
                       :disabled="form.disabled"
                       v-model="form.settleTime"
+                      value-format="HH:mm:ss"
                       placeholder="请选择结算时间">
                     </el-time-picker>
                 </el-form-item>
@@ -206,7 +218,8 @@ export default {
       form: {},
       rules: {
         channelCode: [
-          { required: true, message: "请输入渠道编码", trigger: "blur" }
+          { required: true, message: "请输入渠道编码", trigger: "blur" },
+          { max: 8, message: "渠道编码最多8位", trigger: "change" }
         ],
         channelName: [
           { required: true, message: "请输入渠道名称", trigger: "blur" }
@@ -223,11 +236,20 @@ export default {
         channelMerId: [
           { required: true, message: "请输入渠道商户号", trigger: "blur" }
         ],
+        accountNo: [
+          { required: true, message: "请输入账户号", trigger: "blur" }
+        ],
+        accountName: [
+          { required: true, message: "请输入账户名", trigger: "blur" }
+        ],
         signType: [
           { required: true, message: "请选择签名方式", trigger: "blur" }
         ],
         certPath: [
           { required: true, message: "请输入证书路径", trigger: "blur" }
+        ],
+        certPwd: [
+          { required: true, message: "请输入证书密码", trigger: "blur" }
         ],
         secretKey: [{ required: true, message: "请输入密钥", trigger: "blur" }],
         channelPubKey: [
@@ -404,6 +426,9 @@ export default {
             gatewayGroup: res.gatewayGroup,
             channelMerId: res.channelMerId,
             signType: res.signType,
+            accountName: res.accountName,
+            accountNo: res.accountNo,
+            certPwd: res.certPwd,
             certPath: res.certPath,
             secretKey: res.secretKey,
             channelPubKey: res.channelPubKey,
@@ -437,7 +462,7 @@ export default {
     formSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          delete this.form.disabled; // 去掉确认密码属性
+          delete this.form.disabled;
           if (this.form.title === "添加") {
             delete this.form.title;
             _router.addChannel(this.form).then(res => {

@@ -60,7 +60,7 @@ export default {
             this.filterAxios(
               res,
               res => {
-                setUserInfo({...res, userName: this.ruleForm.userName})
+                setUserInfo({...res, userName: this.ruleForm.userName});
                 setToken(res.token);
                 const redirect = this.$route.query.redirect
                   ? decodeURIComponent(this.$route.fullPath.split("?redirect=")[1])

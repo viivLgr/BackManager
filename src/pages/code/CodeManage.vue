@@ -27,14 +27,14 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="dicCode" label="字典编码" fixed width="140"></el-table-column>
+        <el-table-column align="center" prop="dicCode" label="字典编码" fixed min-width="140"></el-table-column>
         <el-table-column align="center" prop="dicName" label="字典名称" fixed></el-table-column>
-        <el-table-column align="center" prop="parentCode" label="上级字典编码" width="140"></el-table-column>
-        <el-table-column align="center" prop="rootCode" label="根字典编码" width="140"></el-table-column>
+        <el-table-column align="center" prop="parentCode" label="上级字典编码" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="rootCode" label="根字典编码" min-width="140"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.add || pageRight.update">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" fixed="right" v-if="pageRight.add || pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.add && pageRight.add" @click="handleForm(scope.row, '添加')" type="warning" size="mini">添加</el-button>
             <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleForm(scope.row, '修改')" type="warning" size="mini">修改</el-button>

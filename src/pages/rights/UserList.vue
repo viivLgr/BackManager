@@ -33,15 +33,15 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="no" label="序号" width="100" fixed></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" min-width="100" fixed></el-table-column>
         <el-table-column align="center" prop="userName" label="用户名" fixed></el-table-column>
         <el-table-column align="center" prop="linkmanName" label="姓名"></el-table-column>
-        <el-table-column align="center" prop="linkmanPhone" label="联系方式" width="120"></el-table-column>
+        <el-table-column align="center" prop="linkmanPhone" label="联系方式" min-width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="所属机构"></el-table-column>
-        <el-table-column align="center" prop="linkmanEmail" label="邮箱" width="150"></el-table-column>
+        <el-table-column align="center" prop="linkmanEmail" label="邮箱" min-width="150"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

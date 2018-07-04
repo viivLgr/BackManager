@@ -31,19 +31,19 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantId" label="商户号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantName" label="商户名称" fixed width="100"></el-table-column>
-        <el-table-column align="center" prop="productName" label="产品名称" fixed width="100"></el-table-column>
-        <el-table-column align="center" prop="rateTypeDesc" label="产品费率类型" width="140"></el-table-column>
-        <el-table-column align="center" prop="rateDesc" label="产品费率" width="70"></el-table-column>
+        <el-table-column align="center" prop="merchantName" label="商户名称" fixed min-width="100"></el-table-column>
+        <el-table-column align="center" prop="productName" label="产品名称" fixed min-width="100"></el-table-column>
+        <el-table-column align="center" prop="rateTypeDesc" label="产品费率类型" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="rateDesc" label="产品费率" min-width="70"></el-table-column>
         <template v-if="merchantInfo.agentMerchantName">
-          <el-table-column align="center" prop="merchantAgentName" label="代理商名称" width="84"></el-table-column>
-          <el-table-column align="center" prop="merchantAgentRateTypeDesc" label="代理商费率类型" width="140"></el-table-column>
-          <el-table-column align="center" prop="merchantAgentRateDesc" label="代理商费率" width="100"></el-table-column>
+          <el-table-column align="center" prop="merchantAgentName" label="代理商名称" min-width="84"></el-table-column>
+          <el-table-column align="center" prop="merchantAgentRateTypeDesc" label="代理商费率类型" min-width="140"></el-table-column>
+          <el-table-column align="center" prop="merchantAgentRateDesc" label="代理商费率" min-width="100"></el-table-column>
         </template>
-        <el-table-column align="center" prop="statusDesc" label="状态" width="100"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="statusDesc" label="状态" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

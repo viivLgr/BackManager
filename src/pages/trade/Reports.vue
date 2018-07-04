@@ -70,14 +70,14 @@
         <template v-if="(activeName === 'report-merchant-day' || activeName === 'report-merchant-month') && pageRight.merchant">
             <el-table-column align="center" prop="merchantName" label="商户"></el-table-column>
         </template>
-        <el-table-column align="center" prop="totalRecords" label="交易总笔数" width="90"></el-table-column>
+        <el-table-column align="center" prop="totalRecords" label="交易总笔数" min-width="90"></el-table-column>
         <el-table-column align="center" prop="successRecords" label="成功笔数"></el-table-column>
         <el-table-column align="center" prop="failRecords" label="失败笔数"></el-table-column>
-        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="merchantTotalFee" label="商户手续费(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="agentTotalFee" label="代理商手续费(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="merchantTotalFee" label="商户手续费(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="agentTotalFee" label="代理商手续费(单位:分)" min-width="140"></el-table-column>
       </el-table>
     </div>
     <!-- 渠道 -->
@@ -95,10 +95,10 @@
         <el-table-column align="center" prop="totalRecords" label="交易总笔数"></el-table-column>
         <el-table-column align="center" prop="successRecords" label="成功笔数"></el-table-column>
         <el-table-column align="center" prop="failRecords" label="失败笔数"></el-table-column>
-        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="totalFee" label="手续费总金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="totalAmount" label="交易总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="successAmount" label="成功总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="failAmount" label="失败总金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="totalFee" label="手续费总金额(单位:分)" min-width="140"></el-table-column>
       </el-table>
     </div>
     <!-- 利润 -->

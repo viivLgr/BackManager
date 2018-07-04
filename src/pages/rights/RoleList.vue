@@ -20,7 +20,7 @@
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="createTime" label="创建时间"></el-table-column>
         <el-table-column align="center" prop="updateTime" label="修改时间"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" v-if="pageRight.update">
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

@@ -91,21 +91,21 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="id" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantId" label="商户名" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="merchantId" label="商户名" fixed min-width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
-        <el-table-column align="center" prop="orderId" label="订单号" fixed width="160"></el-table-column>
-        <el-table-column align="center" prop="merchantOrderId" label="商户订单号" width="170"></el-table-column>
+        <el-table-column align="center" prop="orderId" label="订单号" fixed min-width="160"></el-table-column>
+        <el-table-column align="center" prop="merchantOrderId" label="商户订单号" min-width="170"></el-table-column>
         <el-table-column align="center" prop="tradeType" label="交易类型"></el-table-column>
         <el-table-column align="center" prop="payProduct" label="支付产品"></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
         <el-table-column align="center" prop="tradeAmount" label="交易金额"></el-table-column>
         <el-table-column align="center" prop="fees" label="手续费"></el-table-column>
         <el-table-column align="center" prop="tradeStatus" label="交易状态"></el-table-column>
-        <el-table-column align="center" prop="payerName" label="付款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="payeeName" label="收款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="bankCardNumber" label="银行卡号" width="100"></el-table-column>
-        <el-table-column align="center" prop="tradeCreateTime" label="交易创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="tradeFinishTime" label="交易完成时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="payerName" label="付款人姓名" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="payeeName" label="收款人姓名" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="bankCardNumber" label="银行卡号" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="tradeCreateTime" label="交易创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="tradeFinishTime" label="交易完成时间" min-width="150"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right">
           <template slot-scope="scope">
             <el-button @click="handleDetail(scope.row)" type="warning" size="mini">详情</el-button>

@@ -32,19 +32,19 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" fixed min-width="120"></el-table-column>
         <el-table-column align="center" prop="bankCode" label="银行编码" fixed></el-table-column>
         <el-table-column align="center" prop="bankName" label="银行名称" fixed></el-table-column>
         <el-table-column align="center" prop="bankShortName" label="简称"></el-table-column>
         <el-table-column align="center" prop="bankShortNameEn" label="英文简称"></el-table-column>
-        <el-table-column align="center" prop="supportiveBankTypeName" label="支持银行卡类型" width="120"></el-table-column>
-        <el-table-column align="center" prop="bankBranchId" label="联行号" width="150"></el-table-column>
-        <el-table-column align="center" prop="singleMinAmount" label="单笔最低金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="singleMaxAmount" label="单笔最高金额(单位:分)" width="140"></el-table-column>
+        <el-table-column align="center" prop="supportiveBankTypeName" label="支持银行卡类型" min-width="120"></el-table-column>
+        <el-table-column align="center" prop="bankBranchId" label="联行号" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="singleMinAmount" label="单笔最低金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="singleMaxAmount" label="单笔最高金额(单位:分)" min-width="140"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

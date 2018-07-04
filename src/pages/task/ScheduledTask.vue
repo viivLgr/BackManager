@@ -30,7 +30,7 @@
         </el-form>
     </div>
     <!-- 内容 -->
-    <div class="table">
+    <div class="table table-selection">
       <div class="table-btn" v-if="pageRight.topOperate">
           <el-button v-if="pageRight.add" size="mini" type="success" @click="handleForm('add')">添加</el-button>
           <el-button v-if="pageRight.batchDelete" size="mini" type="danger" @click="handleBatch('delete')">删除</el-button>
@@ -50,19 +50,20 @@
         <el-table-column
             fixed
             type="selection"
+            align="center"
             width="55">
         </el-table-column>
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="jobTypeDesc" label="任务类型" fixed width="100"></el-table-column>
-        <el-table-column align="center" prop="jobName" label="任务名称" width="140" fixed></el-table-column>
-        <el-table-column align="center" prop="jobClass" label="任务类名" width="350"></el-table-column>
-        <el-table-column align="center" prop="jobProcTime" label="运行时间表达式" width="140"></el-table-column>
-        <el-table-column align="center" prop="jobGroup" label="任务分组" width="140"></el-table-column>
-        <el-table-column align="center" prop="jobParam" label="任务参数" width="140"></el-table-column>
+        <el-table-column align="center" prop="jobTypeDesc" label="任务类型" fixed min-width="100"></el-table-column>
+        <el-table-column align="center" prop="jobName" label="任务名称" min-width="140" fixed></el-table-column>
+        <el-table-column align="center" prop="jobClass" label="任务类名" min-width="350"></el-table-column>
+        <el-table-column align="center" prop="jobProcTime" label="运行时间表达式" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="jobGroup" label="任务分组" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="jobParam" label="任务参数" min-width="140"></el-table-column>
         <el-table-column align="center" prop="jobStatusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="lastGetRunstatusTime" label="最新运行状态获取时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="lastGetRunstatusTime" label="最新运行状态获取时间" min-width="150"></el-table-column>
         <el-table-column align="center" prop="runStatus" label="运行状态"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="200" fixed="right" v-if="pageRight.operate">
+        <el-table-column align="center" prop="operate" label="操作" min-width="200" fixed="right" v-if="pageRight.operate">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleForm(scope.row, '修改')" type="warning" size="mini">修改</el-button>
             <el-button v-if="pageRight.taskList" @click="goHistoryTaskList(scope.row.taskId)" type="info" size="mini">运行历史任务</el-button>
@@ -367,8 +368,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.table .table-btn {
-  padding: 0 20px 20px 0;
-  margin-top: -20px;
+.table-selection {
+  .table-btn {
+    padding: 0 20px 20px 0;
+    margin-top: -20px;
+  }
 }
 </style>

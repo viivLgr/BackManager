@@ -34,10 +34,10 @@
         <el-table-column align="center" prop="bankName" label="银行名称" fixed></el-table-column>
         <el-table-column align="center" prop="bankShortName" label="简称"></el-table-column>
         <el-table-column align="center" prop="bankShortNameEn" label="英文简称"></el-table-column>
-        <el-table-column align="center" prop="bankBranchId" label="联行号" width="90"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="bankBranchId" label="联行号" min-width="90"></el-table-column>
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

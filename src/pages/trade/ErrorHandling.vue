@@ -31,20 +31,20 @@
         <el-table-column align="center" prop="platTradeTime" label="交易日期" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
         <el-table-column align="center" prop="channelName" label="渠道名称"></el-table-column>
-        <el-table-column align="center" prop="channelMerchantId" label="渠道商户号" width="90"></el-table-column>
-        <el-table-column align="center" prop="channelOrderNo" label="渠道订单号" width="90"></el-table-column>
-        <el-table-column align="center" prop="sendChannelOrderNo" label="平台上送订单号" width="110"></el-table-column>
+        <el-table-column align="center" prop="channelMerchantId" label="渠道商户号" min-width="90"></el-table-column>
+        <el-table-column align="center" prop="channelOrderNo" label="渠道订单号" min-width="90"></el-table-column>
+        <el-table-column align="center" prop="sendChannelOrderNo" label="平台上送订单号" min-width="110"></el-table-column>
         <el-table-column align="center" prop="channelName" label="交易时间"></el-table-column>
-        <el-table-column align="center" prop="tradeAmount" label="支付金额(单位:分)" width="150"></el-table-column>
-        <el-table-column align="center" prop="fees" label="手续费(单位:分)" width="120"></el-table-column>
-        <el-table-column align="center" prop="tradeStatus" label="渠道交易状态" width="100"></el-table-column>
-        <el-table-column align="center" prop="status" label="平台交易状态" width="100"></el-table-column>
-        <el-table-column align="center" prop="outRespCode" label="渠道返回码" width="90"></el-table-column>
-        <el-table-column align="center" prop="outRespDesc" label="渠道返回描述" width="100"></el-table-column>
+        <el-table-column align="center" prop="tradeAmount" label="支付金额(单位:分)" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="fees" label="手续费(单位:分)" min-width="120"></el-table-column>
+        <el-table-column align="center" prop="tradeStatus" label="渠道交易状态" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="status" label="平台交易状态" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="outRespCode" label="渠道返回码" min-width="90"></el-table-column>
+        <el-table-column align="center" prop="outRespDesc" label="渠道返回描述" min-width="100"></el-table-column>
         <el-table-column align="center" prop="processFlag" label="处理状态"></el-table-column>
         <el-table-column align="center" prop="processResult" label="处理结果"></el-table-column>
-        <el-table-column align="center" prop="platTradeTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="tradeFinishTime" label="修改时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="platTradeTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="tradeFinishTime" label="修改时间" min-width="150"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right" v-if="pageRight.deal">
           <template slot-scope="scope">
             <el-button @click="handleForm(scope.row)" type="warning" size="mini">处理</el-button>

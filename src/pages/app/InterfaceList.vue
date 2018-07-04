@@ -17,13 +17,13 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="no" label="序号" width="100" fixed></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" min-width="100" fixed></el-table-column>
         <el-table-column align="center" prop="interfaceName" label="接口名称" fixed></el-table-column>
         <el-table-column align="center" prop="interfaceVersion" label="接口版本号"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="100" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="100" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

@@ -36,18 +36,18 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantId" label="商户号" fixed width="120"></el-table-column>
-        <el-table-column align="center" prop="merchantName" label="商户名称" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="merchantId" label="商户号" fixed min-width="120"></el-table-column>
+        <el-table-column align="center" prop="merchantName" label="商户名称" fixed min-width="120"></el-table-column>
         <el-table-column align="center" prop="merchantTypeDesc" label="商户类型"></el-table-column>
-        <el-table-column align="center" prop="linkmanName" label="联系人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="linkmanPhone" label="联系人手机号" width="100"></el-table-column>
-        <el-table-column align="center" prop="linkmanEmail" label="联系人邮箱" width="150"></el-table-column>
+        <el-table-column align="center" prop="linkmanName" label="联系人姓名" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="linkmanPhone" label="联系人手机号" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="linkmanEmail" label="联系人邮箱" min-width="150"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="商户状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="入网时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="agentMerchantName" label="代理商户" width="120"></el-table-column>
-        <el-table-column align="center" prop="amount" label="商户余额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="freezingAmount" label="冻结金额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" fixed="right" width="480" v-if="pageRight.operate">
+        <el-table-column align="center" prop="createTime" label="入网时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="agentMerchantName" label="代理商户" min-width="120"></el-table-column>
+        <el-table-column align="center" prop="amount" label="商户余额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="freezingAmount" label="冻结金额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" fixed="right" min-width="480" v-if="pageRight.operate">
           <template slot-scope="scope">
             <el-button v-if="pageRight.productList" @click="goProductList(scope.row)" type="warning" size="mini">产品列表</el-button>
             <el-button v-if="scope.row.operate.add && pageRight.addItem" @click="handleMerchant(scope.row, 'add')" type="success" size="mini">添加</el-button>

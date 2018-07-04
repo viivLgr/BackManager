@@ -52,14 +52,14 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" width="100" fixed></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" min-width="100" fixed></el-table-column>
         <el-table-column align="center" prop="channelRespCode" label="渠道错误码"></el-table-column>
-        <el-table-column align="center" prop="channelRespDesc" label="渠道错误码描述" width="160"></el-table-column>
+        <el-table-column align="center" prop="channelRespDesc" label="渠道错误码描述" min-width="160"></el-table-column>
         <el-table-column align="center" prop="respCode" label="平台错误码"></el-table-column>
-        <el-table-column align="center" prop="respDesc" label="平台错误码描述" width="160"></el-table-column>
+        <el-table-column align="center" prop="respDesc" label="平台错误码描述" min-width="160"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

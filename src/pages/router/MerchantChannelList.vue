@@ -36,16 +36,16 @@
         <el-table-column align="center" prop="merchantId" label="商户号" fixed></el-table-column>
         <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码"></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" width="120"></el-table-column>
-        <el-table-column align="center" prop="productCodeName" label="产品类型" width="90"></el-table-column>
-        <el-table-column align="center" prop="merSingleMinAmount" label="商户最小限额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额(单位:分)" width="140"></el-table-column>
-        <el-table-column align="center" prop="validTime" label="生效时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="invalidTime" label="失效时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" min-width="120"></el-table-column>
+        <el-table-column align="center" prop="productCodeName" label="产品类型" min-width="90"></el-table-column>
+        <el-table-column align="center" prop="merSingleMinAmount" label="商户最小限额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="merSingleMaxAmount" label="商户最大限额(单位:分)" min-width="140"></el-table-column>
+        <el-table-column align="center" prop="validTime" label="生效时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="invalidTime" label="失效时间" min-width="150"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" width="150" fixed="right" v-if="pageRight.update">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" min-width="150" fixed="right" v-if="pageRight.update">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
           </template>

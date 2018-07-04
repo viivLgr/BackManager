@@ -28,14 +28,14 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="no" label="序号" width="100"></el-table-column>
-        <el-table-column align="center" prop="funcName" label="功能" width="150"></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="funcName" label="功能" min-width="150"></el-table-column>
         <el-table-column align="center" prop="funcLevel" label="级别"></el-table-column>
-        <el-table-column align="center" prop="funcPath" label="URL" width="320"></el-table-column>
+        <el-table-column align="center" prop="funcPath" label="URL" min-width="320"></el-table-column>
         <el-table-column align="center" prop="parentName" label="上级"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" v-if="pageRight.add || pageRight.update" width="150">
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" v-if="pageRight.add || pageRight.update" min-width="150">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.add && pageRight.add" @click="handleAdd(scope.row)" type="success" size="mini">添加</el-button>
             <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleUpdate(scope.row)" type="warning" size="mini">修改</el-button>

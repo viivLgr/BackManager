@@ -37,17 +37,17 @@
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="channelCode" label="渠道编码" fixed></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" fixed width="120"></el-table-column>
-        <el-table-column align="center" prop="channelTypeName" label="渠道类型" width="100"></el-table-column>
-        <el-table-column align="center" prop="productName" label="产品类型" width="100"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" fixed min-width="120"></el-table-column>
+        <el-table-column align="center" prop="channelTypeName" label="渠道类型" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="productName" label="产品类型" min-width="100"></el-table-column>
         <el-table-column align="center" prop="gatewayGroup" label="网关组"></el-table-column>
         <el-table-column align="center" prop="statusDesc" label="状态"></el-table-column>
         <el-table-column align="center" prop="sort" label="排序"></el-table-column>
-        <el-table-column align="center" prop="allowTradeTime" label="渠道交易时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="dayMaxAmount" label="日限额(单元:分)" width="150"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="150"></el-table-column>
-        <el-table-column align="center" label="操作" width="300" fixed="right" v-if="pageRight.operate">
+        <el-table-column align="center" prop="allowTradeTime" label="渠道交易时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="dayMaxAmount" label="日限额(单元:分)" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="150"></el-table-column>
+        <el-table-column align="center" label="操作" min-width="300" fixed="right" v-if="pageRight.operate">
           <template slot-scope="scope">
             <el-button v-if="pageRight.detail" @click="handleForm(scope.row, '详情')" type="warning" size="mini">详情</el-button>
             <el-button v-if="pageRight.bankList" @click="handleSupportBankList(scope.row.channelId, scope.row.channelName)" type="warning" size="mini">查看支持银行列表</el-button>
@@ -77,7 +77,7 @@
       >
       <div class="detail-input">
         <el-form :inline="true" ref="form" :model="form" :rules="rules" size="small" label-width="110px">
-            <div>
+            <div class="row">
                 <el-form-item label="渠道编码" prop="channelCode">
                     <el-input v-model="form.channelCode" placeholder="请输入渠道编码" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -90,7 +90,7 @@
                     </el-select>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="产品类型" prop="productCode">
                     <el-select v-model="form.productCode" placeholder="请选择产品类型" :disabled="form.disabled">
                         <el-option v-for="(item, index) in productCodeList" :key="index" :label="item.dicName" :value="item.dicCode"></el-option>
@@ -103,7 +103,7 @@
                     <el-input v-model="form.channelMerId" placeholder="请输入渠道商户号" :disabled="form.disabled"></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="账户号" prop="accountNo">
                     <el-input v-model="form.accountNo" placeholder="请输入账户号" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -116,7 +116,7 @@
                     </el-select>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="证书路径" prop="certPath">
                     <el-input v-model="form.certPath" placeholder="请输入证书路径" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -127,7 +127,7 @@
                     <el-input v-model="form.secretKey" placeholder="请输入密钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="渠道公钥" prop="channelPubKey">
                     <el-input v-model="form.channelPubKey" placeholder="请输入渠道公钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -138,7 +138,7 @@
                     <el-input v-model="form.prvKey" placeholder="请输入转折私钥" :disabled="form.disabled"></el-input>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="appid" prop="channelAppid">
                     <el-input v-model="form.channelAppid" placeholder="请输入appid" :disabled="form.disabled"></el-input>
                 </el-form-item>
@@ -153,7 +153,7 @@
                     </el-select>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="渠道费率" prop="rate">
                     <el-input v-model="form.rate" placeholder="请输入渠道费率" :disabled="form.disabled">
                       <el-button slot="append">{{form.rateType === '1' ? '元' : '分'}}</el-button>
@@ -168,7 +168,7 @@
                     </el-select>
                 </el-form-item>
             </div>
-            <div>
+            <div class="row">
                 <el-form-item label="结算时间" prop="settleTime">
                     <el-time-picker
                       :disabled="form.disabled"
@@ -500,3 +500,11 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.row {
+  display: flex;
+  .el-form-item {
+    flex: 1;
+  }
+}
+</style>

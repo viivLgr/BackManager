@@ -74,6 +74,8 @@
                 <el-form-item class="btn-item">
                     <el-button type="primary" @click="searchSubmit('searchForm')">查询</el-button>
                 </el-form-item>
+                <el-form-item></el-form-item>
+                <el-form-item></el-form-item>
             </div>
         </el-form>
     </div>
@@ -87,21 +89,21 @@
         header-cell-class-name="table-th"
         style="width: 100%">
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
-        <el-table-column align="center" prop="merchantId" label="商户号" fixed width="120"></el-table-column>
+        <el-table-column align="center" prop="merchantId" label="商户号" fixed min-width="120"></el-table-column>
         <el-table-column align="center" prop="merchantName" label="商户名称" fixed></el-table-column>
-        <el-table-column align="center" prop="orderId" label="订单号" fixed width="160"></el-table-column>
-        <el-table-column align="center" prop="orderNo" label="商户订单号" width="170"></el-table-column>
+        <el-table-column align="center" prop="orderId" label="订单号" fixed min-width="160"></el-table-column>
+        <el-table-column align="center" prop="orderNo" label="商户订单号" min-width="170"></el-table-column>
         <el-table-column align="center" prop="tradeTypeName" label="交易类型"></el-table-column>
         <el-table-column align="center" prop="productName" label="支付产品"></el-table-column>
-        <el-table-column align="center" prop="channelName" label="渠道名称" width="150"></el-table-column>
-        <el-table-column align="center" prop="payAmount" label="交易金额(单位:分)" width="150"></el-table-column>
-        <el-table-column align="center" prop="fee" label="手续费(单位:分)" width="120"></el-table-column>
+        <el-table-column align="center" prop="channelName" label="渠道名称" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="payAmount" label="交易金额(单位:分)" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="fee" label="手续费(单位:分)" min-width="120"></el-table-column>
         <el-table-column align="center" prop="statusName" label="交易状态"></el-table-column>
-        <el-table-column align="center" prop="payerName" label="付款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="payeeName" label="收款人姓名" width="100"></el-table-column>
-        <el-table-column align="center" prop="payerAccount" label="银行卡号" width="100"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="交易创建时间" width="150"></el-table-column>
-        <el-table-column align="center" prop="completeTime" label="交易完成时间" width="150"></el-table-column>
+        <el-table-column align="center" prop="payerName" label="付款人姓名" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="payeeName" label="收款人姓名" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="payerAccount" label="银行卡号" min-width="100"></el-table-column>
+        <el-table-column align="center" prop="createTime" label="交易创建时间" min-width="150"></el-table-column>
+        <el-table-column align="center" prop="completeTime" label="交易完成时间" min-width="150"></el-table-column>
         <el-table-column align="center" prop="operate" label="操作" fixed="right" v-if="pageRight.detail">
           <template slot-scope="scope">
             <el-button @click="handleDetail(scope.row)" type="warning" size="mini">详情</el-button>
@@ -226,6 +228,7 @@
                         <el-button slot="append">分</el-button>
                     </el-input>
                 </el-form-item>
+                <el-form-item></el-form-item>
             </div>
         </el-form>
       </div>

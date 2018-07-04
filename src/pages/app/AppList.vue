@@ -32,14 +32,14 @@
         border
         header-cell-class-name="table-th"
         style="width: 100%">
-        <el-table-column align="center" prop="no" label="序号" width="100" fixed></el-table-column>
-        <el-table-column align="center" prop="appId" label="应用ID" fixed width="250"></el-table-column>
-        <el-table-column align="center" prop="merchantId" label="商户号" width="120"></el-table-column>
-        <el-table-column align="center" prop="md5Key" label="md5密钥" width="150"></el-table-column>
+        <el-table-column align="center" prop="no" label="序号" min-width="100" fixed></el-table-column>
+        <el-table-column align="center" prop="appId" label="应用ID" fixed min-width="250"></el-table-column>
+        <el-table-column align="center" prop="merchantId" label="商户号" min-width="120"></el-table-column>
+        <el-table-column align="center" prop="md5Key" label="md5密钥" min-width="150"></el-table-column>
         <el-table-column align="center" prop="status" label="状态"></el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="updateTime" label="修改时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="operate" label="操作" fixed="right" width="180" v-if="pageRight.operate">
+        <el-table-column align="center" prop="createTime" label="创建时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="updateTime" label="修改时间" min-width="160"></el-table-column>
+        <el-table-column align="center" prop="operate" label="操作" fixed="right" min-width="180" v-if="pageRight.operate">
           <template slot-scope="scope">
             <el-button v-if="scope.row.operate.update && pageRight.update" @click="handleForm(scope.row)" type="warning" size="mini">修改</el-button>
             <el-button v-if="pageRight.interfaceList" @click="handelInterface(scope.row)" type="success" size="mini">接口列表</el-button>

@@ -15,7 +15,7 @@
         <el-table-column align="center" prop="no" label="序号"></el-table-column>
         <el-table-column align="center" prop="taskId" label="任务ID"></el-table-column>
         <el-table-column align="center" prop="jobName" label="任务名称"></el-table-column>
-        <el-table-column align="center" prop="jobClass" label="任务类名" width="450"></el-table-column>
+        <el-table-column align="center" prop="jobClass" label="任务类名" min-width="450"></el-table-column>
         <el-table-column align="center" prop="runResult" label="运行结果"></el-table-column>
         <el-table-column align="center" prop="completeTime" label="完成时间"></el-table-column>
       </el-table>

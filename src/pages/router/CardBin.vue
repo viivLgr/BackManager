@@ -25,8 +25,8 @@
         <el-table-column align="center" prop="no" label="序号" fixed></el-table-column>
         <el-table-column align="center" prop="cardBin" label="卡bin" fixed></el-table-column>
         <el-table-column align="center" prop="bankCode" label="银行编码" fixed></el-table-column>
-        <el-table-column align="center" prop="bankName" label="银行名称" width="200"></el-table-column>
-        <el-table-column align="center" prop="cardName" label="银行卡名称" width="200"></el-table-column>
+        <el-table-column align="center" prop="bankName" label="银行名称" min-width="200"></el-table-column>
+        <el-table-column align="center" prop="cardName" label="银行卡名称" min-width="200"></el-table-column>
         <el-table-column align="center" prop="cardType" label="银行卡类型"></el-table-column>
         <el-table-column align="center" prop="cardLength" label="卡长度"></el-table-column>
         <el-table-column align="center" prop="binLength" label="卡bin长度"></el-table-column>

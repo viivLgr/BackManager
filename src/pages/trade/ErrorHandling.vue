@@ -154,8 +154,8 @@ export default {
       this._renderTableDate(this.searchForm);
     },
     formClose() {
-      this.formShow = false;
       this.$refs["form"].resetFields();
+      this.formShow = false;
     },
     formSubmit() {
       this.$refs.form.validate(valid => {

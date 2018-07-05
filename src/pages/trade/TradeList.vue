@@ -365,8 +365,8 @@ export default {
       this._renderTableDate(this.searchForm);
     },
     detailClose() {
-      this.detailShow = false;
       this.$refs["detailForm"].resetFields();
+      this.detailShow = false;
     },
     handleDetail(row) {
       _trade.getDetail(row.orderId).then(res => {

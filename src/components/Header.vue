@@ -79,8 +79,8 @@ export default {
       this.searchShow = true;
     },
     searchClose() {
-      this.searchShow = false;
       this.$refs["form"].resetFields();
+      this.searchShow = false;
     },
     submitForm() {
       this.$refs["form"].validate(valid => {

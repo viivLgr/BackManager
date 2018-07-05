@@ -192,9 +192,9 @@ export default {
       this.addShow = true;
     },
     formClose() {
+      this.$refs["form"] && this.$refs["form"].resetFields();
       this.addShow = false;
       this.form = {};
-      this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formSubmit() {
       this.$refs.form.validate(valid => {

@@ -215,8 +215,8 @@ export default {
     },
     addClose() {
       this.levelList = [1, 2, 3, 4];
-      this.addShow = false;
       this.$refs["addForm"] && this.$refs["addForm"].resetFields();
+      this.addShow = false;
     },
     // 添加
     addSubmit() {

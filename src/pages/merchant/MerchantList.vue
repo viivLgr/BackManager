@@ -578,8 +578,8 @@ export default {
       this.updateAppInfoShow = true;
     },
     updateAppInfoClose() {
-      this.updateAppInfoShow = false;
       this.$refs["appInfoForm"].resetFields();
+      this.updateAppInfoShow = false;
       this.appInfoForm = {};
     },
     appSubmit() {
@@ -629,9 +629,9 @@ export default {
       _this.addUserShow = true;
     },
     addUserClose() {
+      this.$refs["addUserForm"] && this.$refs["addUserForm"].resetFields();
       this.addUserShow = false;
       this.addUserForm = {};
-      this.$refs["addUserForm"] && this.$refs["addUserForm"].resetFields();
     },
     addUserSubmit() {
       this.$refs.addUserForm.validate(valid => {

@@ -125,9 +125,9 @@ export default {
     const checkRate = (rule, value, callback) => {
       if (
         this.merchantInfo.agentMerchantName &&
-        this.form.merchantAgentRate < value
+        value < this.form.merchantAgentRate
       ) {
-        callback(new Error("费率须小于代理商费率"));
+        callback(new Error("费率须大于代理商费率"));
       }
       if (value < 0) {
         callback(new Error("费率不得小于0"));
@@ -222,9 +222,9 @@ export default {
       this._renderTableDate(this.$refs[searchForm].model);
     },
     formClose() {
+      this.$refs["form"] && this.$refs["form"].resetFields();
       this.addShow = false;
       this.form = {};
-      this.$refs["form"] && this.$refs["form"].resetFields();
     },
     // 添加 修改
     handleForm(row) {
@@ -289,6 +289,9 @@ export default {
         _this.successTips(msg);
         _this._renderTableDate({ merchantId: this.merchantInfo.merchantId });
       });
+    },
+    getAgentRate() {
+      return _product.get
     },
     // 获取可选择产品列表
     getProductList() {

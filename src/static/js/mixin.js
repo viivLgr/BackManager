@@ -2,7 +2,7 @@
  * @Author: viivLgr
  * @Date: 2018-06-01 14:16:31
  * @Last Modified by: viivLgr
- * @Last Modified time: 2018-06-29 11:07:29
+ * @Last Modified time: 2018-07-05 11:23:10
  */
 
 import {
@@ -23,7 +23,9 @@ import {
   validBankNo,
   validChinses
 } from "static/js/validate.js";
-import { mapGetters } from 'vuex';
+import {
+  mapGetters
+} from 'vuex';
 import _common from 'service/common-service.js';
 
 // 请求mixin
@@ -109,8 +111,7 @@ export const listMixin = {
       }
     },
     // 计算当前页操作权限
-    computedRight() {
-    },
+    computedRight() {},
     // 获取状态列表
     getStatusList() {
       _common.getDictionaryList('RECORD_STATUS').then(res => {
@@ -148,13 +149,13 @@ export const listMixin = {
     },
     // 关闭add弹窗
     addClose() {
-      this.addShow = false;
       this.$refs["addForm"] && this.$refs["addForm"].resetFields();
+      this.addShow = false;
     },
     // 关闭update弹窗
     updateClose() {
-      this.updateShow = false;
       this.$refs["updateForm"] && this.$refs["updateForm"].resetFields();
+      this.updateShow = false;
     }
   }
 }

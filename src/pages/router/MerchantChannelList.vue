@@ -105,6 +105,9 @@
           <el-form-item label="商户最大限额" prop="merSingleMaxAmount">
             <el-input type="number" v-model="form.merSingleMaxAmount" placeholder="请输入商户最大限额"></el-input>
           </el-form-item>
+          <el-form-item label="商户日限额" prop="merDayMaxAmount">
+            <el-input type="number" v-model="form.merDayMaxAmount" placeholder="请输入商户日限额"></el-input>
+          </el-form-item>
           <el-form-item label="生效时间" prop="validTimeList">
             <el-date-picker
                 v-model="form.validTimeList"
@@ -139,88 +142,14 @@ import _router from "service/router-service.js";
 export default {
   mixins: [axiosMixin, listMixin],
   data() {
-    const _this = this;
-    // 根据商户号得到商户列表
-    const validAddMerchantId = (rule, value, callback) => {
-      value = value ? trim(value) : '';
-      console.log('value', value)
-      if (this.form.title === "添加") {
-        this.getValiadMerchantList(value).then(
-          res => {
-            callback();
-          },
-          err => {
-            callback(err);
-          }
-        );
-      }
-    };
-    // 根据商户号得到商户可选渠道列表
-    const validAddMerchantIdList = (rule, value, callback) => {
-      value = value ? trim(value) : '';
-      if (this.form.title === "添加") {
-        if (value === "") {
-          this.channelList = [];
-          callback(new Error("请选择商户"));
-        } else {
-          this.getValiadChannelist(value).then(
-            res => {
-              callback();
-            },
-            err => {
-              callback(err);
-            }
-          );
-        }
-      }
-    };
-    const validMerSingleMinAmount = (rule, value, callback) => {
-      if (value < 0) {
-        callback(new Error("最小限额必须大于0"));
-      } else if (_this.form.merSingleMaxAmount !== "") {
-        _this.$refs.form.validateField("merSingleMaxAmount");
-      }
-      callback();
-    };
-    const validMerSingleMaxAmount = (rule, value, callback) => {
-      if (value <= _this.form.merSingleMinAmount) {
-        callback(new Error("最大限额必须大于最小限额"));
-      } else if (value > 999999999999) {
-        callback(new Error("最大限额不得大于999999999999"));
-      } else {
-        callback();
-      }
-    };
     return {
       searchForm: {},
       form: {
-        title: "",
+        title: "添加",
         addMerchantId: ""
       },
       channelList: [],
-      rules: {
-        addMerchantId: [
-          { validator: validAddMerchantId, trigger: "change" },
-          { validator: validAddMerchantId, trigger: "blur" }
-        ],
-        merchantId: [
-          { required: true, message: "请输入商户号", trigger: "blur" },
-          { validator: validAddMerchantIdList, trigger: "change" }
-        ],
-        channelId: [{ required: true, message: "请选择渠道", trigger: "blur" }],
-        merSingleMinAmount: [
-          { required: true, message: "请输入商户最小限额", trigger: "blur" },
-          { validator: validMerSingleMinAmount, trigger: "blur" }
-        ],
-        merSingleMaxAmount: [
-          { required: true, message: "请输入商户最大限额", trigger: "blur" },
-          { validator: validMerSingleMaxAmount, trigger: "blur" }
-        ],
-        validTimeList: [
-          { required: true, message: "请选择生效时间", trigger: "blur" }
-        ],
-        status: [{ required: true, message: "请选择状态", trigger: "blur" }]
-      },
+      rules: {},
       pickerOptions: {
         shortcuts: [
           {
@@ -331,7 +260,7 @@ export default {
           this.filterAxios(res, res => {
             if (res === undefined) {
               this.channelList = [];
-              this.form.channelId = '';
+              this.form.channelId = "";
               reject(new Error("您输入的商户号没有可选渠道列表，请重新选择"));
             } else {
               this.channelList = res;
@@ -369,26 +298,77 @@ export default {
           merchantChannelId: row.merchantChannelId,
           merchantId: row.merchantId,
           merchantName: row.merchantName,
-          channelId: row.channelCode,
+          channelId: row.channelId,
           channelName: row.channelName,
           merSingleMinAmount: row.merSingleMinAmount,
           merSingleMaxAmount: row.merSingleMaxAmount,
           validTimeList: row.validTimeList,
           status: row.status
         };
+        this.rules = this.getUpdateRules();
       } else {
         this.form = {
           title: "添加",
           disabled: false
         };
+        this.rules = this.getAddRules();
       }
       this.addShow = true;
     },
+    // 添加校验
+    getAddRules() {
+      return {
+        addMerchantId: [
+          { validator: this.validAddMerchantId, trigger: "change" },
+          { validator: this.validAddMerchantId, trigger: "blur" }
+        ],
+        merchantId: [
+          { required: true, message: "请输入商户号", trigger: "blur" },
+          { validator: this.validAddMerchantIdList, trigger: "change" }
+        ],
+        channelId: [{ required: true, message: "请选择渠道", trigger: "blur" }],
+        merSingleMinAmount: [
+          { required: true, message: "请输入商户最小限额", trigger: "blur" },
+          { validator: this.validMerSingleMinAmount, trigger: "blur" }
+        ],
+        merSingleMaxAmount: [
+          { required: true, message: "请输入商户最大限额", trigger: "blur" },
+          { validator: this.validMerSingleMaxAmount, trigger: "blur" }
+        ],
+        merDayMaxAmount: [
+          { required: true, message: "请输入商户日限额", trigger: "blur" },
+          { validator: this.validMerDayMaxAmount, trigger: "blur" }
+        ],
+        validTimeList: [
+          { required: true, message: "请选择生效时间", trigger: "blur" }
+        ],
+        status: [{ required: true, message: "请选择状态", trigger: "blur" }]
+      };
+    },
+    // 修改校验
+    getUpdateRules() {
+      return {
+        merSingleMinAmount: [
+          { required: true, message: "请输入商户最小限额", trigger: "blur" },
+          { validator: this.validMerSingleMinAmount, trigger: "blur" }
+        ],
+        merSingleMaxAmount: [
+          { required: true, message: "请输入商户最大限额", trigger: "blur" },
+          { validator: this.validMerSingleMaxAmount, trigger: "blur" }
+        ],
+        validTimeList: [
+          { required: true, message: "请选择生效时间", trigger: "blur" }
+        ],
+        status: [{ required: true, message: "请选择状态", trigger: "blur" }]
+      }
+    },
     formClose() {
+      this.$refs.form && this.$refs.form.resetFields();
       this.addShow = false;
       this.form = {};
       this.merchantList = [];
-      this.$refs["form"] && this.$refs["form"].resetFields();
+      this.channelList = [];
+      this.rules = {};
     },
     formSubmit() {
       this.$refs.form.validate(valid => {
@@ -423,6 +403,69 @@ export default {
         this.successTips(msg);
         this._renderTableDate({ channelId: this.channelId });
       });
+    },
+    // 校验
+    // 根据商户号得到商户列表
+    validAddMerchantId(rule, value, callback) {
+      value = value ? trim(value) : "";
+      if (this.form.title === "添加") {
+        this.getValiadMerchantList(value).then(
+          res => {
+            callback();
+          },
+          err => {
+            callback(err);
+          }
+        );
+      }
+    },
+    // 根据商户号得到商户可选渠道列表
+    validAddMerchantIdList(rule, value, callback) {
+      value = value ? trim(value) : "";
+      if (this.form.title === "添加") {
+        if (value === "") {
+          this.channelList = [];
+          callback(new Error("请选择商户"));
+        } else {
+          this.getValiadChannelist(value).then(
+            res => {
+              callback();
+            },
+            err => {
+              callback(err);
+            }
+          );
+        }
+      }
+    },
+    // 校验最小限额
+    validMerSingleMinAmount(rule, value, callback) {
+      if (value < 0) {
+        callback(new Error("最小限额必须大于0"));
+      } else if (this.form.merSingleMaxAmount !== "") {
+        this.$refs.form.validateField("merSingleMaxAmount");
+      }
+      callback();
+    },
+    // 校验最大限额
+    validMerSingleMaxAmount (rule, value, callback) {
+      if (value <= this.form.merSingleMinAmount) {
+        callback(new Error("最大限额必须大于最小限额"));
+      } else if (value > 999999999999) {
+        callback(new Error("最大限额不得大于999999999999"));
+      } else {
+        callback();
+      }
+    },
+    // 校验日限额
+    validMerDayMaxAmount (rule, value, callback) {
+      if (value < this.form.merSingleMinAmount) {
+        callback(new Error("日限额必须大于或等于最小限额"));
+      } else if (value > this.form.merSingleMaxAmount) {
+        callback(new Error("日限额必须小于或等于最大限额"));
+      } else {
+        callback();
+      }
     }
   }
 };

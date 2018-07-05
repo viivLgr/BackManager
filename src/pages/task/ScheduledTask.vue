@@ -300,9 +300,9 @@ export default {
       });
     },
     formClose() {
+      this.$refs["form"] && this.$refs["form"].resetFields();
       this.addShow = false;
       this.form = {};
-      this.$refs["form"] && this.$refs["form"].resetFields();
     },
     formatResult(res, msg) {
       this.filterAxios(res, res => {

@@ -362,8 +362,8 @@ export default {
       });
     },
     detailClose() {
-      this.detailShow = false;
       this.$refs["detailForm"].resetFields();
+      this.detailShow = false;
     },
     detailSubmit() {
       console.log("detailSubmit!");

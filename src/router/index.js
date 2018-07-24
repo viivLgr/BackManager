@@ -231,8 +231,10 @@ const routes = [
     redirect: '/404'
   }
 ]
-
+const debug = process.env.NODE_ENV === 'development'
 export default new Router({
-  base: "/",
-  routes
+  base: !debug ? "/manage-front/" : "",
+  // base: "/",
+  routes,
+  mode: !debug ? "history" : "hash"
 })
